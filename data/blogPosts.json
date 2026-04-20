@@ -1,0 +1,62 @@
+[
+  {
+    "id": "post-001",
+    "title": "GTA Housing Market Update: Spring 2026",
+    "excerpt": "The Greater Toronto Area continues to see shifting dynamics as interest rates stabilize. Here's what buyers and sellers need to know heading into spring.",
+    "category": "Market Updates",
+    "author": "Max Realty Team",
+    "date": "2026-04-15",
+    "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop",
+    "readTime": "5 min read"
+  },
+  {
+    "id": "post-002",
+    "title": "First-Time Buyer's Guide to Ontario Land Transfer Tax",
+    "excerpt": "Understanding land transfer tax is critical for budgeting your home purchase. Learn about provincial and Toronto municipal LTT, plus first-time buyer rebates.",
+    "category": "Buying Guides",
+    "author": "Max Realty Team",
+    "date": "2026-04-08",
+    "image": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&h=400&fit=crop",
+    "readTime": "7 min read"
+  },
+  {
+    "id": "post-003",
+    "title": "Why Top Agents Are Leaving Big Brokerages",
+    "excerpt": "More independent agents are seeking flexible commission structures and real broker support. Here's what's driving the shift in Ontario's real estate industry.",
+    "category": "Agent Tips",
+    "author": "Max Realty Team",
+    "date": "2026-03-28",
+    "image": "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&h=400&fit=crop",
+    "readTime": "4 min read"
+  },
+  {
+    "id": "post-004",
+    "title": "Commercial Real Estate: Understanding Cap Rates in the GTA",
+    "excerpt": "Cap rates are a fundamental metric for evaluating commercial investment properties. We break down what they mean and how to use them in the current GTA market.",
+    "category": "Investing",
+    "author": "Max Realty Team",
+    "date": "2026-03-20",
+    "image": "https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=600&h=400&fit=crop",
+    "readTime": "6 min read"
+  },
+  {
+    "id": "post-005",
+    "title": "Pre-Construction Condos in the GTA: What to Know Before You Buy",
+    "excerpt": "Pre-construction purchases can be a smart investment strategy, but they come with unique risks. Here's our guide to navigating the GTA pre-con market.",
+    "category": "Buying Guides",
+    "author": "Max Realty Team",
+    "date": "2026-03-12",
+    "image": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&h=400&fit=crop",
+    "readTime": "8 min read"
+  },
+  {
+    "id": "post-006",
+    "title": "Retail Plaza Investments: A Deep Dive into GTA Opportunities",
+    "excerpt": "Retail plazas remain one of the most stable commercial real estate investments in the GTA. Learn what makes a good plaza investment and where to look.",
+    "category": "Commercial",
+    "author": "Max Realty Team",
+    "date": "2026-03-05",
+    "image": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop",
+    "readTime": "6 min read"
+  }
+]
