@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Modern real estate brokerage in Thornhill, Ontario. 100% commission plans for agents. Expert guidance for GTA buyers, sellers & investors.",
 };
 
-const HERO_IMG = "https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?w=1920&q=85";
+const HERO_IMG = "https://www.maxrealtysolutions.com/files/flashbanner/411282/Toronto_1.jpg";
 const AGENT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/agent-meeting-CjY9jHheSwuevRu6dL7bU8.webp";
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";
