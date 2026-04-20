@@ -17,6 +17,7 @@ const deals = [
     type: "Retail Plaza",
     category: "Development Land",
     desc: "Multi-tenant retail shopping plaza with significant development land potential on Bayview Avenue in Markham.",
+    image: "https://www.maxrealtysolutions.com/files/u411282/1(1).png",
   },
   {
     title: "3280 Dufferin St & 16 Orfus Rd",
@@ -24,6 +25,7 @@ const deals = [
     type: "Commercial Complex",
     category: "Multi-Tenant",
     desc: "Large-scale multi-tenant commercial complex at the intersection of Dufferin Street and Orfus Road in Toronto.",
+    image: "https://www.maxrealtysolutions.com/files/u411282/3.png",
   },
   {
     title: "5999–6023 Yonge St",
@@ -31,6 +33,7 @@ const deals = [
     type: "Mixed-Use",
     category: "Commercial",
     desc: "Mixed-use commercial property spanning multiple units along Yonge Street in Toronto's mid-town corridor.",
+    image: "https://www.maxrealtysolutions.com/files/u411282/5999-6023%20Yonge%20Street%20Toronto%20ON.png",
   },
   {
     title: "16599 Yonge St",
@@ -38,6 +41,7 @@ const deals = [
     type: "Retail Plaza",
     category: "Multi-Tenant",
     desc: "Multi-tenant retail plaza anchored by national brands including RBC Royal Bank, Dairy Queen, and Tim Hortons on Yonge Street in Newmarket.",
+    image: "https://www.maxrealtysolutions.com/files/u411282/16599%20Yonge%20St%20Newmarket%20ON.png",
   },
 ];
 
@@ -120,16 +124,21 @@ export default function CommercialPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {deals.map((deal) => (
-              <div key={deal.title} className="border border-stone-border rounded-lg p-6 hover:border-burgundy/20 transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-2.5 py-1 text-xs font-medium text-burgundy bg-burgundy/10 rounded">{deal.type}</span>
-                  <span className="text-xs text-charcoal/40 flex items-center gap-1"><MapPin size={12} /> {deal.location}</span>
+              <div key={deal.title} className="border border-stone-border rounded-lg overflow-hidden hover:border-burgundy/20 transition-colors">
+                <div className="relative w-full aspect-video">
+                  <Image src={deal.image} alt={deal.title} fill className="object-cover" />
                 </div>
-                <h3 className="font-serif text-lg font-semibold text-charcoal mb-2">{deal.title}</h3>
-                <p className="text-sm text-charcoal/60 mb-4">{deal.desc}</p>
-                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-border">
-                  <div><p className="text-xs text-charcoal/40">Property Type</p><p className="text-sm font-semibold text-charcoal">{deal.type}</p></div>
-                  <div><p className="text-xs text-charcoal/40">Category</p><p className="text-sm font-semibold text-charcoal">{deal.category}</p></div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-2.5 py-1 text-xs font-medium text-burgundy bg-burgundy/10 rounded">{deal.type}</span>
+                    <span className="text-xs text-charcoal/40 flex items-center gap-1"><MapPin size={12} /> {deal.location}</span>
+                  </div>
+                  <h3 className="font-serif text-lg font-semibold text-charcoal mb-2">{deal.title}</h3>
+                  <p className="text-sm text-charcoal/60 mb-4">{deal.desc}</p>
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-border">
+                    <div><p className="text-xs text-charcoal/40">Property Type</p><p className="text-sm font-semibold text-charcoal">{deal.type}</p></div>
+                    <div><p className="text-xs text-charcoal/40">Category</p><p className="text-sm font-semibold text-charcoal">{deal.category}</p></div>
+                  </div>
                 </div>
               </div>
             ))}
