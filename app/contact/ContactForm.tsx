@@ -6,9 +6,14 @@ export default function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", type: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, subject: 'New Contact Form Submission - Max Realty Solutions' })
+    });
+    if (res.ok) setSubmitted(true);
   };
 
   if (submitted) {

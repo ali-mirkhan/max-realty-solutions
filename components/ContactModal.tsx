@@ -21,14 +21,14 @@ export default function ContactModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setForm({ name: "", email: "", phone: "", message: "" });
-      onClose();
-    }, 2000);
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, subject: 'New Lead Inquiry - Max Realty Solutions' })
+    });
+    if (res.ok) { setSubmitted(true); setTimeout(() => { setSubmitted(false); onClose(); }, 2000); }
   };
 
   return (
