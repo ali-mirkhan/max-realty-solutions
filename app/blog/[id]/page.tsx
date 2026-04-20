@@ -26,8 +26,14 @@ function mapStoryToPost(story: Record<string, any>): BlogPost {
 }
 
 export async function generateStaticParams() {
-  // Include static post IDs so existing URLs keep working
-  return staticPosts.map((p) => ({ id: p.id }));
+  // Merge Storyblok slugs + static post IDs so all known URLs are pre-rendered
+  const stories: Record<string, any>[] = await fetchStories("blog/");
+  const storyIds = stories.map((s) => ({ id: s.slug }));
+  const staticIds = staticPosts.map((p) => ({ id: p.id }));
+  // Deduplicate by id
+  const seen = new Set(storyIds.map((x) => x.id));
+  const extra = staticIds.filter((x) => !seen.has(x.id));
+  return [...storyIds, ...extra];
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
