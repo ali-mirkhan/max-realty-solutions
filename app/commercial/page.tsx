@@ -11,9 +11,34 @@ export const metadata: Metadata = {
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
 
 const deals = [
-  { title: "Multi-Tenant Retail Plaza", location: "Vaughan, ON", value: "$18.5M", type: "Acquisition", capRate: "6.2%", sqft: "28,000", desc: "12-unit retail plaza with national anchor tenant. Long-term leases with built-in escalations." },
-  { title: "Highway 7 Commercial Complex", location: "Markham, ON", value: "$24M", type: "Disposition", capRate: "5.8%", sqft: "42,000", desc: "Mixed-use commercial complex with retail and office space. High-traffic corridor with excellent visibility." },
-  { title: "Steeles Ave Retail Strip", location: "Thornhill, ON", value: "$12.2M", type: "Acquisition", capRate: "6.5%", sqft: "18,500", desc: "8-unit retail strip with strong tenant mix. Recently renovated with modern amenities." },
+  {
+    title: "5180–5220 Bayview Ave",
+    location: "Markham, ON",
+    type: "Retail Plaza",
+    category: "Development Land",
+    desc: "Multi-tenant retail shopping plaza with significant development land potential on Bayview Avenue in Markham.",
+  },
+  {
+    title: "3280 Dufferin St & 16 Orfus Rd",
+    location: "Toronto, ON",
+    type: "Commercial Complex",
+    category: "Multi-Tenant",
+    desc: "Large-scale multi-tenant commercial complex at the intersection of Dufferin Street and Orfus Road in Toronto.",
+  },
+  {
+    title: "5999–6023 Yonge St",
+    location: "Toronto, ON",
+    type: "Mixed-Use",
+    category: "Commercial",
+    desc: "Mixed-use commercial property spanning multiple units along Yonge Street in Toronto's mid-town corridor.",
+  },
+  {
+    title: "16599 Yonge St",
+    location: "Newmarket, ON",
+    type: "Retail Plaza",
+    category: "Multi-Tenant",
+    desc: "Multi-tenant retail plaza anchored by national brands including RBC Royal Bank, Dairy Queen, and Tim Hortons on Yonge Street in Newmarket.",
+  },
 ];
 
 export default function CommercialPage() {
@@ -93,7 +118,7 @@ export default function CommercialPage() {
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">Notable Transactions</h2>
             <p className="text-charcoal/60">A selection of commercial deals that demonstrate our expertise and market reach.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {deals.map((deal) => (
               <div key={deal.title} className="border border-stone-border rounded-lg p-6 hover:border-burgundy/20 transition-colors">
                 <div className="flex items-center justify-between mb-4">
@@ -102,17 +127,13 @@ export default function CommercialPage() {
                 </div>
                 <h3 className="font-serif text-lg font-semibold text-charcoal mb-2">{deal.title}</h3>
                 <p className="text-sm text-charcoal/60 mb-4">{deal.desc}</p>
-                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-stone-border">
-                  <div><p className="text-xs text-charcoal/40">Value</p><p className="text-sm font-semibold text-burgundy">{deal.value}</p></div>
-                  <div><p className="text-xs text-charcoal/40">Cap Rate</p><p className="text-sm font-semibold text-charcoal">{deal.capRate}</p></div>
-                  <div><p className="text-xs text-charcoal/40">Size</p><p className="text-sm font-semibold text-charcoal">{deal.sqft} sqft</p></div>
+                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-border">
+                  <div><p className="text-xs text-charcoal/40">Property Type</p><p className="text-sm font-semibold text-charcoal">{deal.type}</p></div>
+                  <div><p className="text-xs text-charcoal/40">Category</p><p className="text-sm font-semibold text-charcoal">{deal.category}</p></div>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-charcoal/40 mt-6">
-            * Transaction details shown are representative examples for illustration purposes.
-          </p>
         </div>
       </section>
 
