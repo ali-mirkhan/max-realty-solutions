@@ -12,7 +12,7 @@ const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448
 
 const deals = [
   {
-    title: "5180–5220 Bayview Ave",
+    title: "8180–8220 Bayview Ave",
     location: "Markham, ON",
     type: "Retail Plaza",
     category: "Development Land",
@@ -125,8 +125,8 @@ export default function CommercialPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {deals.map((deal) => (
               <div key={deal.title} className="border border-stone-border rounded-lg overflow-hidden hover:border-burgundy/20 transition-colors">
-                <div className="relative w-full aspect-video">
-                  <Image src={deal.image} alt={deal.title} fill className="object-cover" />
+                <div className="relative w-full aspect-video" style={{ backgroundColor: "#F7F5F0" }}>
+                  <Image src={deal.image} alt={deal.title} fill className="object-contain" />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
