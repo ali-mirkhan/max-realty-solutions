@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, TrendingUp, Users, Building2, DollarSign,
-  Briefcase, Home as HomeIcon, BarChart3, Star, CheckCircle2,
+  Briefcase, Home as HomeIcon, BarChart3, Star, CheckCircle2, Shield,
 } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import properties from "@/data/properties.json";
@@ -12,7 +12,7 @@ import type { Property } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
   description:
-    "Modern real estate brokerage in Thornhill, Ontario. 100% commission plans for agents. Expert guidance for GTA buyers, sellers & investors.",
+    "Find your home in the Greater Toronto Area. Expert guidance for GTA buyers, sellers & investors. Residential, commercial, and investment properties.",
 };
 
 const HERO_IMG = "https://www.maxrealtysolutions.com/files/flashbanner/411282/Toronto_1.jpg";
@@ -22,7 +22,20 @@ const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/Nu
 
 const featuredProperties = (properties as Property[]).slice(0, 4);
 
+const neighbourhoods = [
+  { name: "Thornhill", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
+  { name: "Vaughan", img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&q=80" },
+  { name: "Markham", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80" },
+  { name: "Richmond Hill", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80" },
+  { name: "Toronto", img: "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=400&q=80" },
+  { name: "Mississauga", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80" },
+];
+
 const testimonials = [
+  {
+    name: "Michael T.", role: "Home Buyer", years: "Purchased in Thornhill 2025",
+    quote: "The team at Max Realty made buying our first home seamless. They knew the Thornhill market inside out and negotiated a price well below asking. Couldn't be happier.",
+  },
   {
     name: "Sarah M.", role: "Residential Agent", years: "8 years experience",
     quote: "Switching to Max Realty was the best career decision I've made. I keep significantly more of every deal, and the broker support is genuine — not just a promise on a website.",
@@ -52,18 +65,18 @@ export default function HomePage() {
               Thornhill &middot; Vaughan &middot; Greater Toronto Area
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Keep More of Your Commission
+              Find Your Home in the Greater Toronto Area
             </h1>
             <p className="text-lg lg:text-xl text-[#E8E4DE]/90 leading-relaxed mb-8 max-w-xl">
-              A modern real estate brokerage built for independent agents and serious buyers,
-              sellers &amp; investors across the GTA.
+              Search thousands of listings across Thornhill, Vaughan, Markham, Richmond Hill and the GTA.
+              Residential, commercial, and investment properties.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/join" className="btn-primary">
-                Join Max Realty <ArrowRight size={16} />
+              <Link href="/properties" className="btn-primary">
+                Search Properties <ArrowRight size={16} />
               </Link>
-              <Link href="/properties" className="btn-ghost-white">
-                Browse Properties
+              <Link href="/contact" className="btn-ghost-white">
+                Get a Free Consultation
               </Link>
             </div>
           </div>
@@ -75,9 +88,9 @@ export default function HomePage() {
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
-              { value: "$35M+", label: "Commercial Deals Closed" },
-              { value: "100%", label: "Commission Plans Available" },
-              { value: "GTA-Wide", label: "Coverage Area" },
+              { value: "$35M+", label: "In Commercial Transactions" },
+              { value: "500+", label: "Happy Clients Served" },
+              { value: "GTA-Wide", label: "Market Coverage" },
               { value: "RECO", label: "Licensed & Regulated" },
             ].map((stat) => (
               <div key={stat.label}>
@@ -93,127 +106,122 @@ export default function HomePage() {
       <section className="py-20 lg:py-28">
         <div className="container">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="section-label">Two Paths, One Brokerage</p>
+            <p className="section-label">How We Can Help You</p>
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
-              Built for Agents &amp; Clients
+              Built for Clients &amp; Agents
             </h2>
             <p className="text-charcoal/60 leading-relaxed">
-              Whether you&apos;re an agent looking for a better brokerage or a client seeking experienced
-              guidance, Max Realty delivers.
+              Whether you&apos;re searching for your next home or looking for a better brokerage, Max Realty delivers.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {[
-              {
-                icon: Briefcase, title: "For Agents", link: "/join", cta: "Learn about our plans",
-                items: [
+            {/* For Clients — first, prominent */}
+            <div className="bg-stone-light rounded-lg p-8 lg:p-10">
+              <div className="w-12 h-12 rounded-full bg-burgundy/10 flex items-center justify-center mb-6">
+                <HomeIcon size={22} className="text-burgundy" />
+              </div>
+              <h3 className="font-serif text-2xl font-semibold text-charcoal mb-4">For Clients</h3>
+              <ul className="space-y-3 mb-6">
+                {[
+                  "Search MLS listings updated in real time",
+                  "Expert guidance for buyers, sellers & investors",
+                  "Residential, commercial & pre-construction",
+                  "Free market valuations and consultations",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-charcoal/80">
+                    <CheckCircle2 size={16} className="text-burgundy mt-0.5 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/properties" className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
+                Browse Listings <ArrowRight size={14} />
+              </Link>
+            </div>
+            {/* For Agents — second, less prominent */}
+            <div className="bg-white border border-stone-border rounded-lg p-8 lg:p-10">
+              <div className="w-12 h-12 rounded-full bg-burgundy/10 flex items-center justify-center mb-6">
+                <Briefcase size={22} className="text-burgundy" />
+              </div>
+              <h3 className="font-serif text-2xl font-semibold text-charcoal mb-4">For Agents</h3>
+              <ul className="space-y-3 mb-6">
+                {[
                   "Higher earnings — keep more of every deal",
                   "Flexible commission structures to fit your style",
                   "Real broker support, not corporate layers",
                   "Commercial + residential opportunities",
-                ],
-              },
-              {
-                icon: HomeIcon, title: "For Clients", link: "/properties", cta: "Browse properties",
-                items: [
-                  "Experienced guidance for buyers, sellers & investors",
-                  "Residential + commercial expertise under one roof",
-                  "Deep GTA market knowledge and local insight",
-                  "Investment-minded approach to every transaction",
-                ],
-              },
-            ].map((card) => (
-              <div key={card.title} className="bg-stone-light rounded-lg p-8 lg:p-10">
-                <div className="w-12 h-12 rounded-full bg-burgundy/10 flex items-center justify-center mb-6">
-                  <card.icon size={22} className="text-burgundy" />
-                </div>
-                <h3 className="font-serif text-2xl font-semibold text-charcoal mb-4">{card.title}</h3>
-                <ul className="space-y-3 mb-6">
-                  {card.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-charcoal/80">
-                      <CheckCircle2 size={16} className="text-burgundy mt-0.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link href={card.link} className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
-                  {card.cta} <ArrowRight size={14} />
-                </Link>
-              </div>
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-charcoal/80">
+                    <CheckCircle2 size={16} className="text-burgundy mt-0.5 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/join" className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
+                Learn about our plans <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SEARCH BY AREA ── */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <p className="section-label">Explore the GTA</p>
+            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
+              Browse Properties by Neighbourhood
+            </h2>
+            <p className="text-charcoal/60">We serve buyers, sellers and investors across the Greater Toronto Area</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {neighbourhoods.map((n) => (
+              <Link key={n.name} href="/properties" className="group relative rounded-lg overflow-hidden h-40 block">
+                <Image
+                  src={n.img}
+                  alt={n.name}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/20 to-transparent" />
+                <span className="absolute bottom-4 left-4 text-white font-bold text-lg leading-tight">{n.name}</span>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── COMMISSION PLANS ── */}
-      <section className="py-20 lg:py-28 bg-white">
+      {/* ── WHY BUY OR SELL WITH US ── */}
+      <section className="py-20 lg:py-28 bg-stone-light">
         <div className="container">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="section-label">Commission Plans</p>
+            <p className="section-label">The Max Realty Advantage</p>
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
-              Choose the Plan That Fits You
+              Your Trusted GTA Real Estate Partner
             </h2>
-            <p className="text-charcoal/60 leading-relaxed">
-              Flexible structures designed for every stage of your career. No hidden fees, no surprises.
-            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {[
-              {
-                label: "Plan 1", title: "Independent Agent", highlight: "100%",
-                sub: "commission", featured: false,
-                items: ["Monthly fee model", "100% commission kept by agent", "Per-transaction desk fee applies", "Full broker support included"],
-              },
-              {
-                label: "Plan 2", title: "Traditional Split", highlight: "80/20",
-                sub: "split", featured: true,
-                items: ["Agent keeps 80% of commission", "No monthly fee", "Full broker support included", "Great for growing agents"],
-              },
-              {
-                label: "Plan 3", title: "Mentored / New Agent", highlight: "50/50",
-                sub: "split", featured: false,
-                items: ["50/50 split for first 3–5 transactions", "Active broker mentorship & guidance", "Transitions to better split on completion", "Ideal for new licensees"],
-              },
-            ].map((plan) => (
-              <div
-                key={plan.label}
-                className={`rounded-lg p-8 relative ${plan.featured ? "border-2 border-burgundy" : "border border-stone-border hover:border-burgundy/30 transition-colors"}`}
-              >
-                {plan.featured && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-burgundy text-white text-xs font-semibold rounded-full">
-                    Most Popular
-                  </div>
-                )}
-                <div className="text-xs font-medium uppercase tracking-widest text-burgundy mb-2">{plan.label}</div>
-                <h3 className="font-serif text-xl font-semibold text-charcoal mb-2">{plan.title}</h3>
-                <p className="font-serif text-3xl font-bold text-burgundy mb-4">
-                  {plan.highlight}
-                  <span className="text-base font-normal text-charcoal/50 ml-1">{plan.sub}</span>
-                </p>
-                <ul className="space-y-2.5 mb-6">
-                  {plan.items.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-charcoal/70">
-                      <CheckCircle2 size={14} className="text-burgundy mt-0.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/join"
-                  className={`block text-center py-2.5 text-sm font-semibold rounded-md transition-colors ${
-                    plan.featured
-                      ? "text-white bg-burgundy hover:bg-burgundy-dark"
-                      : "text-burgundy border border-burgundy/30 hover:bg-burgundy/5"
-                  }`}
-                >
-                  {plan.featured ? "Apply Now" : "Learn More"}
-                </Link>
+              { icon: TrendingUp, title: "Market Expertise", desc: "Deep knowledge of GTA neighbourhoods, pricing trends, and investment opportunities built over years of local transactions." },
+              { icon: Shield, title: "Fully Licensed & Regulated", desc: "RECO-registered brokerage with full compliance under TRESA. Your transaction is protected every step of the way." },
+              { icon: Users, title: "Dedicated Agent Support", desc: "You work with one dedicated agent from search to close — not a call centre or rotating team." },
+              { icon: BarChart3, title: "Free Tools & Resources", desc: "Use our free mortgage calculator, land transfer tax estimator, and affordability tools to plan your purchase with confidence." },
+            ].map((item) => (
+              <div key={item.title} className="bg-white rounded-lg p-6 border border-stone-border">
+                <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center mb-4">
+                  <item.icon size={18} className="text-burgundy" />
+                </div>
+                <h3 className="font-sans text-sm font-semibold text-charcoal mb-2">{item.title}</h3>
+                <p className="text-sm text-charcoal/60">{item.desc}</p>
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-charcoal/40 mt-8">
-            * Commission figures shown are placeholder examples. Contact us for confirmed plan details.
-          </p>
+          <div className="text-center mt-10">
+            <Link href="/services" className="btn-primary">
+              Explore Our Services <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -281,6 +289,42 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── TESTIMONIALS ── */}
+      <section className="py-20 lg:py-28">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <p className="section-label">What People Say About Us</p>
+            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
+              Hear From Our Clients &amp; Agents
+            </h2>
+            <p className="text-charcoal/60 leading-relaxed">
+              Real stories from clients and agents who chose Max Realty Solutions.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {testimonials.map((t) => (
+              <div key={t.name} className="bg-white border border-stone-border rounded-lg p-8">
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={14} className="text-burgundy fill-burgundy" />
+                  ))}
+                </div>
+                <p className="text-sm text-charcoal/70 leading-relaxed mb-6 italic">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center text-sm font-semibold text-burgundy">
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-charcoal">{t.name}</p>
+                    <p className="text-xs text-charcoal/50">{t.role} &middot; {t.years}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── WHY AGENTS SWITCH ── */}
       <section className="py-20 lg:py-28 bg-white">
         <div className="container">
@@ -324,42 +368,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="py-20 lg:py-28">
-        <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="section-label">Agent Testimonials</p>
-            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
-              Hear From Our Agents
-            </h2>
-            <p className="text-charcoal/60 leading-relaxed">
-              Real stories from agents who made the switch to Max Realty Solutions.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-white border border-stone-border rounded-lg p-8">
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={14} className="text-burgundy fill-burgundy" />
-                  ))}
-                </div>
-                <p className="text-sm text-charcoal/70 leading-relaxed mb-6 italic">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center text-sm font-semibold text-burgundy">
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-charcoal">{t.name}</p>
-                    <p className="text-xs text-charcoal/50">{t.role} &middot; {t.years}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── CTA BANNER ── */}
       <section className="relative py-20 lg:py-24 overflow-hidden">
         <div className="absolute inset-0">
@@ -371,11 +379,11 @@ export default function HomePage() {
             Ready to Get Started?
           </h2>
           <p className="text-[#E8E4DE]/80 max-w-xl mx-auto mb-8">
-            Whether you&apos;re an agent looking for a better brokerage or a client ready to buy, sell,
-            or invest — we&apos;re here for you.
+            Whether you&apos;re ready to buy, sell, or invest in the GTA — or an agent looking for a better
+            brokerage — we&apos;re here for you.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/join" className="btn-primary">Join Max Realty <ArrowRight size={16} /></Link>
+            <Link href="/properties" className="btn-primary">Search Properties <ArrowRight size={16} /></Link>
             <Link href="/contact" className="btn-ghost-white">Contact Us</Link>
           </div>
         </div>
