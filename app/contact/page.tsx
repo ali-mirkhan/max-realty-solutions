@@ -42,6 +42,13 @@ export default function ContactPage() {
                     </div>
                   </li>
                   <li className="flex gap-3">
+                    <Phone size={18} className="text-burgundy shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-charcoal/40 uppercase tracking-wider mb-0.5">Fax</p>
+                      <span className="text-sm text-charcoal">647-499-5895</span>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
                     <Mail size={18} className="text-burgundy shrink-0 mt-0.5" />
                     <div>
                       <p className="text-xs text-charcoal/40 uppercase tracking-wider mb-0.5">Email</p>

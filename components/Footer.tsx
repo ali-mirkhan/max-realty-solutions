@@ -77,6 +77,10 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <span className="block text-[#E8E4DE]/50 text-xs uppercase tracking-wider mb-0.5">Fax</span>
+                <span>647-499-5895</span>
+              </li>
+              <li>
                 <span className="block text-[#E8E4DE]/50 text-xs uppercase tracking-wider mb-0.5">Email</span>
                 <a href="mailto:info@maxrealtysolutions.com" className="hover:text-white transition-colors">
                   info@maxrealtysolutions.com
