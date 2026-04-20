@@ -80,16 +80,17 @@ export default function AboutPage() {
           </div>
           <div className="max-w-3xl mx-auto">
             <div className="grid md:grid-cols-[240px_1fr] gap-8 items-start">
-              <div className="w-60 h-60 mx-auto md:mx-0 rounded-lg bg-stone-border flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 rounded-full bg-burgundy/10 flex items-center justify-center mx-auto mb-3">
-                    <Users size={32} className="text-burgundy" />
-                  </div>
-                  <p className="text-xs text-charcoal/40">Photo placeholder</p>
-                </div>
+              <div className="w-60 mx-auto md:mx-0 rounded-lg overflow-hidden">
+                <Image
+                  src="/shahin-mirkhan.jpg"
+                  alt="Shahin Mirkhan"
+                  width={240}
+                  height={357}
+                  className="w-full h-auto object-cover rounded-lg"
+                />
               </div>
               <div>
-                <h3 className="font-serif text-2xl font-semibold text-charcoal mb-1">Broker of Record</h3>
+                <h3 className="font-serif text-2xl font-semibold text-charcoal mb-1">Shahin Mirkhan</h3>
                 <p className="text-sm text-burgundy font-medium mb-4">Founder &amp; Broker of Record, Max Realty Solutions</p>
                 <div className="space-y-3 text-sm text-charcoal/70 leading-relaxed">
                   <p>With over a decade of experience in both residential and commercial real estate, our Broker of Record brings a unique combination of market knowledge, transaction expertise, and a genuine commitment to agent success.</p>
