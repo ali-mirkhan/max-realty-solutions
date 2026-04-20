@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,16 +23,18 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 bg-stone-warm/95 backdrop-blur-md border-b border-stone-border">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-border">
       <div className="container flex items-center justify-between h-16 lg:h-20">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="font-serif text-xl lg:text-2xl font-bold text-burgundy tracking-tight">
-            Max Realty
-          </span>
-          <span className="font-sans text-xs lg:text-sm font-medium text-charcoal/60 uppercase tracking-widest">
-            Solutions
-          </span>
+        <Link href="/" className="flex items-center shrink-0">
+          <Image
+            src="/logo.png"
+            alt="Max Realty Solutions Ltd., Brokerage"
+            width={160}
+            height={54}
+            className="h-10 lg:h-12 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop Nav */}
@@ -74,7 +77,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-stone-warm border-t border-stone-border pb-4">
+        <div className="lg:hidden bg-white border-t border-stone-border pb-4">
           <nav className="container flex flex-col gap-1 pt-3">
             {navLinks.map((link) => (
               <Link
