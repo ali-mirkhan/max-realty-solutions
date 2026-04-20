@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/properties", label: "Properties" },
   { href: "/services", label: "Services" },
   { href: "/commercial", label: "Commercial" },
+  { href: "/property-management", label: "Property Management" },
   { href: "/tools", label: "Tools" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },

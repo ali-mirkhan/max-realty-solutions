@@ -95,12 +95,13 @@ export default function CommercialPage() {
             <p className="section-label">What We Do</p>
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal">Commercial Services</h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { icon: Building2, title: "Retail Plaza Transactions", desc: "Acquisition and disposition of multi-tenant retail plazas with thorough due diligence and market analysis." },
               { icon: BarChart3, title: "Investment Analysis", desc: "Comprehensive ROI projections, cap rate analysis, and cash flow modelling for informed investment decisions." },
               { icon: DollarSign, title: "Commercial Leasing", desc: "Tenant representation and landlord services for retail, office, and industrial spaces across the GTA." },
               { icon: TrendingUp, title: "Development Opportunities", desc: "Identification and evaluation of development-ready land and value-add commercial properties." },
+              { icon: Building2, title: "Property Management", desc: "Full-service management for retail plazas, mixed-use buildings, and commercial properties. Tenant relations, lease administration, maintenance, and financial reporting." },
             ].map((item) => (
               <div key={item.title} className="bg-stone-light rounded-lg p-6">
                 <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center mb-4">

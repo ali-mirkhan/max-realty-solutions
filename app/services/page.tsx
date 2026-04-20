@@ -17,6 +17,7 @@ const services = [
   { icon: Building2, title: "Commercial Real Estate", cta: "View Commercial", link: "/commercial", desc: "Our commercial division specializes in retail plazas, office spaces, and investment properties. With experience in large-scale transactions ranging from $10M to $35M+, we bring serious expertise to every commercial deal." },
   { icon: BarChart3, title: "Investment Advisory", cta: "Start Investing", link: "/contact", desc: "Build and grow your real estate portfolio with data-driven investment guidance. We analyze cap rates, ROI projections, and market trends to help you identify the most profitable opportunities in the GTA." },
   { icon: Hammer, title: "Pre-Construction", cta: "Learn More", link: "/contact", desc: "Access exclusive pre-construction opportunities across the Greater Toronto Area. We help investors and end-users navigate builder incentives, assignment clauses, and the unique considerations of buying before completion." },
+  { icon: Building2, title: "Property Management", cta: "Learn More", link: "/property-management", desc: "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, LTB compliance, and financial reporting — all handled for you." },
 ];
 
 export default function ServicesPage() {
