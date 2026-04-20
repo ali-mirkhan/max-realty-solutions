@@ -27,10 +27,10 @@ export default function PropertyInquiry({ address }: { address: string }) {
           Request Information
         </button>
         <a
-          href="tel:+19055551234"
+          href="tel:+14162266008"
           className="block w-full py-2.5 text-sm font-semibold text-burgundy border border-burgundy/30 rounded-md hover:bg-burgundy/5 transition-colors text-center"
         >
-          Call (905) 555-1234
+          Call 416-226-6008
         </a>
       </div>
       <div className="bg-stone-light rounded-lg p-6">
