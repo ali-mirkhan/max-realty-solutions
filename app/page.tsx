@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Modern real estate brokerage in Thornhill, Ontario. 100% commission plans for agents. Expert guidance for GTA buyers, sellers & investors.",
 };
 
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/hero-banner-TESXMtySZ9ZM5BSEABjZkG.webp";
+const HERO_IMG = "https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?w=1920&q=85";
 const AGENT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/agent-meeting-CjY9jHheSwuevRu6dL7bU8.webp";
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";
@@ -44,7 +44,7 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image src={HERO_IMG} alt="Luxury home in the Greater Toronto Area" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/80 via-charcoal/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/55 via-charcoal/30 to-transparent" />
         </div>
         <div className="relative container py-20 lg:py-32">
           <div className="max-w-2xl">
