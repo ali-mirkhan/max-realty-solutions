@@ -15,7 +15,14 @@ export interface Property {
   yearBuilt: number;
   lotSize: string;
   propertyTax: number;
-  mls: string;
+  mls?: string;
+  // DDF-supplied extras (optional — not present in static data)
+  province?: string;
+  postalCode?: string;
+  images?: string[];
+  office?: string;
+  parking?: number;
+  agentName?: string;
 }
 
 export interface BlogPost {
