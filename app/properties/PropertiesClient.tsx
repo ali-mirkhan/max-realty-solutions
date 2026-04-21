@@ -178,10 +178,14 @@ export default function PropertiesClient() {
                 ? "Loading listings..."
                 : `${total.toLocaleString()} ${total === 1 ? "property" : "properties"} found`}
               {!loading && source === "nsp" && (
-                <span className="ml-2 text-xs text-charcoal/30">· National Shared Pool</span>
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded">
+                  National Pool
+                </span>
               )}
               {!loading && source === "member" && (
-                <span className="ml-2 text-xs text-charcoal/30">· Member Feed</span>
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 text-xs font-medium text-burgundy bg-burgundy/5 border border-burgundy/20 rounded">
+                  Brokerage Listings
+                </span>
               )}
               {!loading && source === "static" && (
                 <span className="ml-2 text-xs text-charcoal/30">· Featured Listings</span>

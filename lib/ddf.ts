@@ -77,7 +77,11 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       body: "grant_type=client_credentials",
     });
     if (!res.ok) {
-      console.error(`DDF OAuth ${cacheKey} failed: ${res.status}`);
+      let errBody = "";
+      try { errBody = await res.text(); } catch { /* ignore */ }
+      console.error(
+        `[DDF] OAuth token failed for ${cacheKey} — HTTP ${res.status}: ${errBody.slice(0, 300)}`
+      );
       return null;
     }
     const data = (await res.json()) as TokenResponse;
@@ -207,6 +211,7 @@ export async function fetchListings(
   const token = await getAccessToken(useNSP);
 
   if (!token) {
+    console.error(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — credentials missing or OAuth rejected`);
     if (useNSP) return fetchListings(params, false);
     return { listings: [], total: 0, feed: "none" };
   }
@@ -228,7 +233,11 @@ export async function fetchListings(
     });
 
     if (!res.ok) {
-      console.error(`DDF ${useNSP ? "NSP" : "Member"} API error: ${res.status}`);
+      let errBody = "";
+      try { errBody = await res.text(); } catch { /* ignore */ }
+      console.error(
+        `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${res.status}: ${errBody.slice(0, 300)}`
+      );
       if (useNSP) return fetchListings(params, false);
       return { listings: [], total: 0, feed: "error" };
     }
@@ -237,7 +246,10 @@ export async function fetchListings(
     const values: DDFRawListing[] = data.value ?? [];
     const total: number = data["@odata.count"] ?? values.length;
 
+    console.log(`[DDF] ${useNSP ? "NSP" : "Member"} feed returned ${values.length} listings (total: ${total})`);
+
     if (values.length === 0 && useNSP) {
+      console.log("[DDF] NSP returned 0 results — falling back to Member feed");
       return fetchListings(params, false);
     }
 
