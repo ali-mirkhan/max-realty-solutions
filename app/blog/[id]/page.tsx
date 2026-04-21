@@ -8,6 +8,7 @@ import { ArrowLeft, Clock, User, Calendar, ArrowRight } from "lucide-react";
 import staticBlogPosts from "@/data/blogPosts.json";
 import type { BlogPost } from "@/lib/types";
 import { fetchStory, fetchStories } from "@/lib/storyblok";
+import ShareButtons from "@/components/ShareButtons";
 
 const staticPosts = staticBlogPosts as BlogPost[];
 
@@ -122,6 +123,11 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
                     </p>
                   </>
                 )}
+              </div>
+
+              {/* Share */}
+              <div className="mt-10 pt-6 border-t border-stone-border">
+                <ShareButtons title={post.title} />
               </div>
             </div>
 

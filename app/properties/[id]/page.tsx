@@ -7,6 +7,7 @@ import PropertyInquiry from "./PropertyInquiry";
 import allProperties from "@/data/properties.json";
 import type { Property } from "@/lib/types";
 import { formatPrice, formatCAD } from "@/lib/utils";
+import ShareButtons from "@/components/ShareButtons";
 
 const properties = allProperties as Property[];
 
@@ -62,9 +63,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               <p className="text-sm text-charcoal/50 flex items-center gap-1 mb-4">
                 <MapPin size={14} /> {property.city}, {property.neighbourhood}, Ontario
               </p>
-              <p className="font-serif text-3xl font-bold text-burgundy mb-8">
-                {formatPrice(property.price, property.type, property.status)}
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <p className="font-serif text-3xl font-bold text-burgundy">
+                  {formatPrice(property.price, property.type, property.status)}
+                </p>
+                <ShareButtons title={`${property.address}, ${property.city}`} />
+              </div>
 
               {/* Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

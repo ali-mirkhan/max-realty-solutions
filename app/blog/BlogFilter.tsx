@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, User } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
+import CardShare from "@/components/CardShare";
 
 export default function BlogFilter({ posts, categories }: { posts: BlogPost[]; categories: string[] }) {
   const [active, setActive] = useState("All");
@@ -43,7 +44,10 @@ export default function BlogFilter({ posts, categories }: { posts: BlogPost[]; c
                     <p className="text-sm text-charcoal/60 leading-relaxed mb-4 line-clamp-2">{post.excerpt}</p>
                     <div className="flex items-center justify-between text-xs text-charcoal/40">
                       <span className="flex items-center gap-1"><User size={12} /> {post.author}</span>
-                      <span className="flex items-center gap-1"><Clock size={12} /> {post.readTime}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-1"><Clock size={12} /> {post.readTime}</span>
+                        <CardShare url={`${typeof window !== "undefined" ? window.location.origin : ""}/blog/${post.id}`} title={post.title} />
+                      </div>
                     </div>
                   </div>
                 </div>
