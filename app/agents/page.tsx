@@ -59,53 +59,65 @@ export default function AgentsPage() {
         <div className="container">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {agents.map((agent) => (
-              <div key={agent.id} className="bg-white border border-stone-border rounded-lg overflow-hidden hover:border-burgundy/20 hover:shadow-lg transition-all">
+              <div
+                key={agent.id}
+                className="flex flex-col bg-white rounded-lg overflow-hidden border border-stone-border hover:shadow-xl transition-all duration-200"
+                style={{ borderTop: "3px solid #7D1A2D" }}
+              >
                 {/* Photo */}
-                <Link href={`/agents/${agent.id}`} className="block">
-                  <div className="aspect-[4/3] relative overflow-hidden bg-stone-light">
+                <Link href={`/agents/${agent.id}`} className="block shrink-0">
+                  <div
+                    className="relative overflow-hidden"
+                    style={{ height: "280px", backgroundColor: "#F2EDE6" }}
+                  >
                     {agent.photo ? (
                       <Image
                         src={agent.photo}
                         alt={agent.name}
                         fill
-                        className="object-cover object-top hover:scale-105 transition-transform duration-300"
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        style={{ objectPosition: "top center" }}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
                       <Initials name={agent.name} />
                     )}
+                    {/* Bottom fade overlay */}
+                    <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                   </div>
                 </Link>
 
-                {/* Info */}
-                <div className="p-6">
-                  <Link href={`/agents/${agent.id}`} className="group">
-                    <h2 className="font-serif text-lg font-semibold text-charcoal group-hover:text-burgundy transition-colors mb-0.5">
-                      {agent.name}
-                    </h2>
-                  </Link>
-                  <p className="text-xs text-burgundy font-medium uppercase tracking-wide mb-4">{agent.title}</p>
+                {/* Info — flex-grow so button stays at bottom */}
+                <div className="flex flex-col flex-1 p-6">
+                  <div className="flex-1">
+                    <Link href={`/agents/${agent.id}`} className="group">
+                      <h2 className="font-serif text-lg font-semibold text-charcoal group-hover:text-burgundy transition-colors mb-0.5">
+                        {agent.name}
+                      </h2>
+                    </Link>
+                    <p className="text-xs text-burgundy font-medium uppercase tracking-wide mb-4">{agent.title}</p>
 
-                  <div className="space-y-2 mb-4">
-                    {agent.phone && (
-                      <a href={`tel:${agent.phone.replace(/\D/g, "")}`} className="flex items-center gap-2 text-sm text-charcoal/60 hover:text-burgundy transition-colors">
-                        <Phone size={13} className="shrink-0" />
-                        {agent.phone}
-                      </a>
-                    )}
-                    {agent.email && (
-                      <a href={`mailto:${agent.email}`} className="flex items-center gap-2 text-sm text-charcoal/60 hover:text-burgundy transition-colors truncate">
-                        <Mail size={13} className="shrink-0" />
-                        {agent.email}
-                      </a>
+                    <div className="space-y-2 mb-4">
+                      {agent.phone && (
+                        <a href={`tel:${agent.phone.replace(/\D/g, "")}`} className="flex items-center gap-2 text-sm text-charcoal/60 hover:text-burgundy transition-colors">
+                          <Phone size={13} className="shrink-0" />
+                          {agent.phone}
+                        </a>
+                      )}
+                      {agent.email && (
+                        <a href={`mailto:${agent.email}`} className="flex items-center gap-2 text-sm text-charcoal/60 hover:text-burgundy transition-colors truncate">
+                          <Mail size={13} className="shrink-0" />
+                          {agent.email}
+                        </a>
+                      )}
+                    </div>
+
+                    {agent.languages.length > 0 && (
+                      <p className="text-xs text-charcoal/40 mb-4">
+                        Languages: {agent.languages.join(", ")}
+                      </p>
                     )}
                   </div>
-
-                  {agent.languages.length > 0 && (
-                    <p className="text-xs text-charcoal/40 mb-4">
-                      Languages: {agent.languages.join(", ")}
-                    </p>
-                  )}
 
                   <AgentContactButton name={agent.name} />
                 </div>
