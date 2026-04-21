@@ -1,10 +1,56 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Property } from "@/lib/types";
 
 const TOKEN_ENDPOINT = "https://identity.crea.ca/connect/token";
 const DDF_ENDPOINT = "https://ddfapi.realtor.ca/odata/v1/Property";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop";
+
+// Typed shape of a raw DDF OData listing record
+interface DDFMedia {
+  MediaURL?: string;
+}
+
+interface DDFRawListing {
+  ListingKey?: string | number;
+  ListingId?: string;
+  UnparsedAddress?: string;
+  City?: string;
+  StateOrProvince?: string;
+  PostalCode?: string;
+  ListPrice?: number | null;
+  TotalActualRent?: number | null;
+  LeaseAmount?: number | null;
+  PropertySubType?: string;
+  StructureType?: string[];
+  StandardStatus?: string;
+  BedroomsTotal?: number | null;
+  BathroomsTotalInteger?: number | null;
+  BathroomsPartial?: number | null;
+  LivingArea?: number | null;
+  BuildingAreaTotal?: number | null;
+  AboveGradeFinishedArea?: number | null;
+  PublicRemarks?: string;
+  Media?: DDFMedia[];
+  ListOfficeName?: string;
+  YearBuilt?: number | null;
+  ParkingTotal?: number | null;
+  ListAgentFullName?: string;
+  LotSizeDimensions?: string;
+  TaxAnnualAmount?: number | null;
+  SubdivisionName?: string;
+  OriginalEntryTimestamp?: string;
+}
+
+interface DDFListingsResponse {
+  value?: DDFRawListing[];
+  "@odata.count"?: number;
+  "@odata.nextLink"?: string;
+}
+
+interface TokenResponse {
+  access_token?: string;
+  expires_in?: number;
+}
 
 // Module-level token cache (server process lifetime)
 interface TokenCache { token: string; expiresAt: number }
@@ -29,16 +75,15 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: "grant_type=client_credentials",
-      cache: "no-store",
     });
     if (!res.ok) {
       console.error(`DDF OAuth ${cacheKey} failed: ${res.status}`);
       return null;
     }
-    const data = await res.json();
-    const token: string | undefined = data.access_token;
+    const data = (await res.json()) as TokenResponse;
+    const token = data.access_token;
     if (!token) return null;
-    const ttl: number = (data.expires_in ?? 3600) - 60;
+    const ttl = (data.expires_in ?? 3600) - 60;
     tokenCache.set(cacheKey, { token, expiresAt: Date.now() + ttl * 1000 });
     return token;
   } catch (err) {
@@ -48,7 +93,6 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
 }
 
 function parseCityNeighbourhood(raw: string): { city: string; neighbourhood: string } {
-  // DDF sends "Toronto (Bridle Path-Sunnybrook)" — split into city and neighbourhood
   const m = raw?.match(/^(.+?)\s*\((.+)\)$/);
   if (m) return { city: m[1].trim(), neighbourhood: m[2].trim() };
   return { city: raw ?? "", neighbourhood: "" };
@@ -79,9 +123,8 @@ function normalizeStatus(raw: string, rentPerMonth: number | null): string {
   return raw;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function transformListing(raw: Record<string, any>): Property {
-  const media: Array<{ MediaURL?: string }> = Array.isArray(raw.Media) ? raw.Media : [];
+function transformListing(raw: DDFRawListing): Property {
+  const media: DDFMedia[] = Array.isArray(raw.Media) ? raw.Media : [];
   const images = media.filter((m) => m?.MediaURL).map((m) => m.MediaURL as string);
 
   const { city, neighbourhood } = parseCityNeighbourhood(raw.City ?? "");
@@ -137,8 +180,6 @@ function buildFilter(params: ListingsParams): string {
   if (params.city && params.city !== "All") {
     clauses.push(`City eq '${escapeOData(params.city)}'`);
   }
-  // Price filter: DDF leases use TotalActualRent (ListPrice is null for them)
-  // Only apply price filters when explicitly set
   if (params.minPrice && params.minPrice > 0) {
     clauses.push(
       `(ListPrice ge ${params.minPrice} or TotalActualRent ge ${params.minPrice})`
@@ -155,8 +196,6 @@ function buildFilter(params: ListingsParams): string {
   if (params.baths && params.baths > 0) {
     clauses.push(`BathroomsTotalInteger ge ${params.baths}`);
   }
-  // Note: PropertyType doesn't exist in CREA DDF OData — type is derived from PropertySubType
-  // Type filtering is done client-side in the API route
 
   return clauses.join(" and ");
 }
@@ -168,7 +207,6 @@ export async function fetchListings(
   const token = await getAccessToken(useNSP);
 
   if (!token) {
-    // NSP credentials unavailable or invalid — fall back to member feed
     if (useNSP) return fetchListings(params, false);
     return { listings: [], total: 0, feed: "none" };
   }
@@ -182,7 +220,6 @@ export async function fetchListings(
   url.searchParams.set("$skip", String(skip));
   url.searchParams.set("$orderby", "OriginalEntryTimestamp desc");
   url.searchParams.set("$count", "true");
-  // Note: $expand=Media slows queries; fetch Media in the single-listing call only
 
   try {
     const res = await fetch(url.toString(), {
@@ -196,15 +233,14 @@ export async function fetchListings(
       return { listings: [], total: 0, feed: "error" };
     }
 
-    const data = await res.json();
-    const values: Record<string, unknown>[] = data.value ?? [];
+    const data = (await res.json()) as DDFListingsResponse;
+    const values: DDFRawListing[] = data.value ?? [];
     const total: number = data["@odata.count"] ?? values.length;
 
     if (values.length === 0 && useNSP) {
       return fetchListings(params, false);
     }
 
-    // Client-side type filter (PropertyType doesn't exist in DDF OData)
     let filtered = values.map(transformListing);
     if (params.type && params.type !== "All" && params.type !== "all") {
       const t = params.type.toLowerCase();
@@ -229,7 +265,6 @@ export async function fetchListing(id: string): Promise<Property | null> {
     if (!token) continue;
 
     try {
-      // Try entity key lookup — DDF uses string keys
       const url = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')?$expand=Media`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -237,13 +272,12 @@ export async function fetchListing(id: string): Promise<Property | null> {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as DDFRawListing;
         if (data?.ListingKey || data?.ListingId) {
           return transformListing(data);
         }
       }
 
-      // Fallback: filter query by ListingKey
       const filterUrl = new URL(DDF_ENDPOINT);
       filterUrl.searchParams.set("$filter", `ListingKey eq '${escapeOData(id)}'`);
       filterUrl.searchParams.set("$top", "1");
@@ -255,7 +289,7 @@ export async function fetchListing(id: string): Promise<Property | null> {
       });
 
       if (res2.ok) {
-        const data2 = await res2.json();
+        const data2 = (await res2.json()) as DDFListingsResponse;
         const item = data2?.value?.[0];
         if (item) return transformListing(item);
       }

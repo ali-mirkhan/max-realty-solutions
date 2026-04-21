@@ -17,13 +17,16 @@ const staticProperties = staticData as Property[];
 
 async function getProperty(id: string): Promise<Property | null> {
   // Try live DDF first
+  // Check static data first — avoids DDF network call during static generation
+  const staticProp = staticProperties.find((p) => p.id === id);
+  if (staticProp) return staticProp;
+
+  // Only reach here for DDF listing keys (dynamic rendering, not pre-rendered)
   try {
-    const live = await fetchListing(id);
-    if (live) return live;
+    return await fetchListing(id);
   } catch {
-    // fall through to static
+    return null;
   }
-  return staticProperties.find((p) => p.id === id) ?? null;
 }
 
 // Pre-render static property pages; DDF IDs are rendered on demand (dynamicParams=true default)
