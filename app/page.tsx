@@ -62,14 +62,15 @@ export default function HomePage() {
         <div className="relative container py-20 lg:py-32">
           <div className="max-w-2xl">
             <p className="text-[#E8E4DE]/80 text-sm font-medium uppercase tracking-widest mb-4">
-              Thornhill &middot; Vaughan &middot; Greater Toronto Area
+              Greater Toronto Area
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               Find Your Home in the Greater Toronto Area
             </h1>
             <p className="text-lg lg:text-xl text-[#E8E4DE]/90 leading-relaxed mb-8 max-w-xl">
-              Search thousands of listings across Thornhill, Vaughan, Markham, Richmond Hill and the GTA.
-              Residential, commercial, and investment properties.
+              Your gateway to premium real estate investment opportunities across the GTA. Delivering expert
+              guidance in residential, commercial, and investment real estate — backed by decades of
+              distinguished experience.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/properties" className="btn-primary">
@@ -111,7 +112,7 @@ export default function HomePage() {
               Built for Clients &amp; Agents
             </h2>
             <p className="text-charcoal/60 leading-relaxed">
-              Whether you&apos;re searching for your next home or looking for a better brokerage, Max Realty delivers.
+              Whether you&apos;re searching for your next property or looking for a better brokerage — Max Realty Solutions delivers on both fronts.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
@@ -123,10 +124,11 @@ export default function HomePage() {
               <h3 className="font-serif text-2xl font-semibold text-charcoal mb-4">For Clients</h3>
               <ul className="space-y-3 mb-6">
                 {[
-                  "Search MLS listings updated in real time",
-                  "Expert guidance for buyers, sellers & investors",
-                  "Residential, commercial & pre-construction",
-                  "Free market valuations and consultations",
+                  "Premium MLS & off-market opportunities across the GTA",
+                  "Strategic advisory for investors, owners & businesses",
+                  "Commercial, industrial & investment property expertise",
+                  "Full-service property management solutions",
+                  "Complimentary market valuations & private consultations",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-charcoal/80">
                     <CheckCircle2 size={16} className="text-burgundy mt-0.5 shrink-0" />
@@ -146,10 +148,11 @@ export default function HomePage() {
               <h3 className="font-serif text-2xl font-semibold text-charcoal mb-4">For Agents</h3>
               <ul className="space-y-3 mb-6">
                 {[
-                  "Higher earnings — keep more of every deal",
-                  "Flexible commission structures to fit your style",
-                  "Real broker support, not corporate layers",
-                  "Commercial + residential opportunities",
+                  "Flexible commission structures — keep more of every deal",
+                  "Hands-on broker support from an experienced team",
+                  "Exposure to commercial, industrial & investment real estate",
+                  "Gain experience in asset & property management",
+                  "Access to both commercial & residential opportunities",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-charcoal/80">
                     <CheckCircle2 size={16} className="text-burgundy mt-0.5 shrink-0" />
