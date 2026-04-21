@@ -20,6 +20,7 @@ interface Agent {
   languages: string[];
   specialization: string;
   bio: string;
+  objectPosition?: string;
 }
 
 const agents = agentsData as Agent[];
@@ -76,7 +77,7 @@ export default function AgentsPage() {
                         alt={agent.name}
                         fill
                         className="object-cover hover:scale-105 transition-transform duration-300"
-                        style={{ objectPosition: "top center" }}
+                        style={{ objectPosition: agent.objectPosition ?? "top center" }}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
