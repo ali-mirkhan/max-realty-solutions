@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Shield, Users, Eye, Heart } from "lucide-react";
+import { ArrowRight, Shield, Users, Eye, Heart, Phone, Mail } from "lucide-react";
+import agentsData from "@/data/agents.json";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -99,6 +100,56 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Preview */}
+      <section className="py-20 lg:py-28 bg-stone-light">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <p className="section-label">Our Team</p>
+            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
+              The People Behind Max Realty
+            </h2>
+            <p className="text-charcoal/60">Experienced professionals dedicated to your real estate success.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            {(agentsData as any[]).slice(0, 4).map((agent) => (
+              <Link key={agent.id} href={`/agents/${agent.id}`} className="group bg-white border border-stone-border rounded-lg overflow-hidden hover:border-burgundy/20 hover:shadow-md transition-all">
+                <div className="aspect-[4/3] relative bg-stone-light overflow-hidden">
+                  {agent.photo ? (
+                    <Image
+                      src={agent.photo}
+                      alt={agent.name}
+                      fill
+                      className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-burgundy/10">
+                      <span className="text-2xl font-serif font-bold text-burgundy">
+                        {agent.name.split(" ").map((p: string) => p[0]).slice(0, 2).join("")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-serif text-sm font-semibold text-charcoal group-hover:text-burgundy transition-colors">{agent.name}</h3>
+                  <p className="text-xs text-burgundy font-medium mt-0.5">{agent.title}</p>
+                  {agent.phone && (
+                    <p className="text-xs text-charcoal/50 flex items-center gap-1 mt-2">
+                      <Phone size={11} /> {agent.phone}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href="/agents" className="btn-primary">
+              Meet the Full Team <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>

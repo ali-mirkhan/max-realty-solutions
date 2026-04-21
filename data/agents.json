@@ -1,0 +1,46 @@
+[
+  {
+    "id": "shahin-mirkhan",
+    "name": "Shahin Mirkhan",
+    "title": "Founder & Broker of Record",
+    "phone": "416-828-0059",
+    "email": "info@maxrealtysolutions.com",
+    "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1771458042.jpg",
+    "languages": ["English", "Farsi"],
+    "specialization": "Commercial Real Estate, Retail Plazas, Residential",
+    "bio": "Through over 30 years of direct experience in entrepreneurial real estate business environments, Shahin has negotiated over $2 billion in real estate transactions including multiple property types for domestic and foreign clients. He founded Max Realty Solutions to build a brokerage where agents thrive and clients receive exceptional service on every transaction."
+  },
+  {
+    "id": "hootan-ghovanloo",
+    "name": "Hootan Ghovanloo",
+    "title": "Vice-President & Broker",
+    "phone": "416-880-9090",
+    "email": "info@maxrealtysolutions.com",
+    "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1609710207.png",
+    "languages": ["English", "Farsi"],
+    "specialization": "Residential & Commercial Real Estate, GTA",
+    "bio": "Hootan brings extensive brokerage expertise to Max Realty Solutions as Vice-President and Broker. Fluent in English and Farsi, he serves a diverse client base across the Greater Toronto Area with a focus on delivering results for both buyers and sellers."
+  },
+  {
+    "id": "ali-mirkhan",
+    "name": "Ali Mirkhan",
+    "title": "VP Operations",
+    "phone": "416-838-4545",
+    "email": "info@maxrealtysolutions.com",
+    "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1622641502.png",
+    "languages": ["English"],
+    "specialization": "Operations, Technology, Residential Real Estate",
+    "bio": "Ali leads operations at Max Realty Solutions, overseeing the day-to-day functions of the brokerage and driving the technology and marketing initiatives that keep the team ahead of the curve in the competitive GTA market."
+  },
+  {
+    "id": "fred-hamrahi",
+    "name": "Fred Hamrahi",
+    "title": "Sales Representative",
+    "phone": "416-226-6008",
+    "email": "info@maxrealtysolutions.com",
+    "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1651606198.jpg",
+    "languages": ["English"],
+    "specialization": "Residential Real Estate, GTA",
+    "bio": "Fred is a dedicated Sales Representative at Max Realty Solutions with a client-first approach to every transaction. He works with buyers and sellers across the Greater Toronto Area, providing expert guidance and personalized service."
+  }
+]
