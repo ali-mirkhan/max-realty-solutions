@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Property } from "@/lib/types";
 
 const TOKEN_ENDPOINT = "https://identity.crea.ca/connect/token";
