@@ -85,15 +85,12 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
   );
 
   try {
-    const basicAuth =
-      "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
     const res = await fetch(TOKEN_ENDPOINT, {
       method: "POST",
       headers: {
-        Authorization: basicAuth,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: "grant_type=client_credentials",
+      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`,
       cache: "no-store",
     });
 
