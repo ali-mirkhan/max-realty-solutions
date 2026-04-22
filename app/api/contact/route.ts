@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { subject, name, email, phone, message, type, reco, experience, currentBrokerage } = body;
+  const { subject, name, email, phone, message, type, reco, experience, currentBrokerage, desiredPlan } = body;
 
   const emailSubject = subject || 'New Website Inquiry - Max Realty Solutions';
 
@@ -21,6 +21,7 @@ export async function POST(request: Request) {
         ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
         ${type ? `<p><strong>Enquiry Type:</strong> ${type}</p>` : ''}
         ${reco ? `<p><strong>RECO Registration #:</strong> ${reco}</p>` : ''}
+        ${desiredPlan ? `<p><strong>Desired Plan:</strong> ${desiredPlan}</p>` : ''}
         ${experience ? `<p><strong>Years of Experience:</strong> ${experience}</p>` : ''}
         ${currentBrokerage ? `<p><strong>Current Brokerage:</strong> ${currentBrokerage}</p>` : ''}
         ${message ? `<p><strong>Message:</strong><br/>${message}</p>` : ''}

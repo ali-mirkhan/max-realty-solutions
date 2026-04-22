@@ -7,7 +7,16 @@ interface FAQ { q: string; a: string; }
 
 export default function JoinForm({ faqs }: { faqs: FAQ[] }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", reco: "", experience: "", currentBrokerage: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    reco: "",
+    desiredPlan: "",
+    experience: "",
+    currentBrokerage: "",
+    message: "",
+  });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,7 +24,7 @@ export default function JoinForm({ faqs }: { faqs: FAQ[] }) {
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, subject: 'New Agent Application - Max Realty Solutions' })
+      body: JSON.stringify({ ...form, subject: 'New Agent Application - Max Realty Solutions' }),
     });
     if (res.ok) setSubmitted(true);
   };
@@ -31,7 +40,9 @@ export default function JoinForm({ faqs }: { faqs: FAQ[] }) {
               className="w-full flex items-center justify-between px-6 py-4 text-left"
             >
               <span className="text-sm font-medium text-charcoal pr-4">{faq.q}</span>
-              {openFaq === i ? <ChevronUp size={16} className="text-burgundy shrink-0" /> : <ChevronDown size={16} className="text-charcoal/30 shrink-0" />}
+              {openFaq === i
+                ? <ChevronUp size={16} className="text-burgundy shrink-0" />
+                : <ChevronDown size={16} className="text-charcoal/30 shrink-0" />}
             </button>
             {openFaq === i && (
               <div className="px-6 pb-4">
@@ -85,6 +96,26 @@ export default function JoinForm({ faqs }: { faqs: FAQ[] }) {
                   <input type="text" required value={form.reco} onChange={(e) => setForm({ ...form, reco: e.target.value })} className="input-field" />
                 </div>
               </div>
+
+              {/* Desired Plan — required, prominent */}
+              <div>
+                <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">
+                  Which plan are you interested in? *
+                </label>
+                <select
+                  required
+                  value={form.desiredPlan}
+                  onChange={(e) => setForm({ ...form, desiredPlan: e.target.value })}
+                  className="input-field"
+                >
+                  <option value="">Select a plan...</option>
+                  <option value="Independent Plan — 100% Commission ($179/month)">Independent Plan — 100% Commission ($179/month)</option>
+                  <option value="Growth Plan — 80/20 Split (No monthly fee while active)">Growth Plan — 80/20 Split (No monthly fee while active)</option>
+                  <option value="Mentored Program — 50/50 Split (New agents)">Mentored Program — 50/50 Split (New agents)</option>
+                  <option value="Not sure yet — I'd like to discuss my options">Not sure yet — I&apos;d like to discuss my options</option>
+                </select>
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">Years of Experience *</label>
