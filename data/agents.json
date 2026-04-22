@@ -4,7 +4,7 @@
     "name": "Shahin Mirkhan",
     "title": "Founder & Broker of Record",
     "phone": "416-828-0059",
-    "email": "info@maxrealtysolutions.com",
+    "email": "shahin@maxrealtysolutions.com",
     "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1771458042.jpg",
     "languages": ["English", "Farsi"],
     "specialization": "Commercial Real Estate, Retail Plazas, Residential",
@@ -27,9 +27,9 @@
     "name": "Ali Mirkhan",
     "title": "VP Operations",
     "phone": "416-838-4545",
-    "email": "info@maxrealtysolutions.com",
+    "email": "ali@maxrealtysolutions.com",
     "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1622641502.png",
-    "languages": ["English"],
+    "languages": ["English", "Farsi"],
     "specialization": "Operations, Technology, Residential Real Estate",
     "bio": "Ali leads operations at Max Realty Solutions, overseeing the day-to-day functions of the brokerage and driving the technology and marketing initiatives that keep the team ahead of the curve in the competitive GTA market."
   },
@@ -40,7 +40,7 @@
     "phone": "416-226-6008",
     "email": "info@maxrealtysolutions.com",
     "photo": "https://www.maxrealtysolutions.com/files/agent_profile_pics/1651606198.jpg",
-    "languages": ["English"],
+    "languages": ["English", "Farsi"],
     "specialization": "Residential Real Estate, GTA",
     "bio": "Fred is a dedicated Sales Representative at Max Realty Solutions with a client-first approach to every transaction. He works with buyers and sellers across the Greater Toronto Area, providing expert guidance and personalized service."
   }
