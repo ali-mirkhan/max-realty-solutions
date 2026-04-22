@@ -46,7 +46,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "px-3 py-2 text-sm font-medium transition-colors rounded-md",
+                "px-2 py-2 text-sm font-medium transition-colors rounded-md whitespace-nowrap",
                 pathname === link.href
                   ? "text-burgundy bg-burgundy/5"
                   : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
@@ -57,8 +57,8 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Desktop CTAs */}
-        <div className="hidden lg:flex items-center gap-3">
+        {/* Desktop CTAs — visible at xl (1280px+) where full nav + buttons fit */}
+        <div className="hidden xl:flex items-center gap-3">
           <Link href="/properties" className="btn-outline py-2 px-4">
             Browse Properties
           </Link>
