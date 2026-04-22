@@ -1,3 +1,4 @@
+// CREA DDF OData API - ddfapi.realtor.ca/odata/v1
 import { NextRequest, NextResponse } from "next/server";
 import { fetchListings, type ListingsParams } from "@/lib/ddf";
 
