@@ -63,7 +63,10 @@ export default function HomePage() {
         </div>
         <div className="relative container py-20 lg:py-32">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-burgundy border-l-2 border-burgundy pl-3 mb-5">
+            <p
+              className="text-xs font-medium uppercase tracking-[0.2em] text-white border-l-2 border-burgundy pl-3 mb-5"
+              style={{ textShadow: "0 1px 6px rgba(0,0,0,0.9)" }}
+            >
               Greater Toronto Area
             </p>
             <h1
@@ -202,7 +205,7 @@ export default function HomePage() {
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <span className="absolute bottom-4 left-4 text-white font-bold text-lg leading-tight">{n.name}</span>
               </Link>
             ))}

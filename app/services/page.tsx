@@ -31,7 +31,7 @@ export default function ServicesPage() {
         </div>
         <div className="relative container">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium uppercase tracking-widest text-[#E8E4DE]/60 mb-3">Our Services</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-white/90 mb-3" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}>Our Services</p>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
               Full-Service Real Estate Expertise
             </h1>

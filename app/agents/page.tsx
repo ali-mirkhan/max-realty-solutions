@@ -44,7 +44,7 @@ export default function AgentsPage() {
       <section className="bg-charcoal py-20 lg:py-28">
         <div className="container">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium uppercase tracking-widest text-[#E8E4DE]/60 mb-3">Our Agents</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-white/90 mb-3">Our Agents</p>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
               Meet the Max Realty Team
             </h1>
