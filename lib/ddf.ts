@@ -2,7 +2,7 @@ import type { Property } from "@/lib/types";
 
 const TOKEN_ENDPOINT =
   process.env.CREA_TOKEN_URL ?? "https://identity.crea.ca/connect/token";
-const DDF_ENDPOINT = "https://ddfapi.realtor.ca/odata/v1/Property";
+const DDF_ENDPOINT = "https://ddf.realtor.ca/api/v2/Property";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop";
 
@@ -79,10 +79,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     return null;
   }
 
-  console.log(
-    `[DDF] Fetching CREA token (${cacheKey}) with client_id: ${clientId.slice(0, 6)}... ` +
-    `url: ${TOKEN_ENDPOINT}`
-  );
+  console.log('[DDF] Requesting token, client_id starts with:', clientId?.slice(0, 8));
 
   try {
     const res = await fetch(TOKEN_ENDPOINT, {
@@ -94,15 +91,12 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       cache: "no-store",
     });
 
-    console.log(`[DDF] CREA token fetch response status: ${res.status} (${cacheKey})`);
+    console.log('[DDF] Token response status:', res.status);
 
     if (!res.ok) {
-      let errBody = "";
-      try { errBody = await res.text(); } catch { /* ignore */ }
-      console.error(
-        `[DDF] OAuth token failed for ${cacheKey} — HTTP ${res.status}: ${errBody.slice(0, 300)}`
-      );
-      return null;
+      const body = await res.text();
+      console.error('[DDF] Token error body:', body.slice(0, 500));
+      throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${body.slice(0, 200)}`);
     }
     const data = (await res.json()) as TokenResponse;
     const token = data.access_token;
@@ -115,7 +109,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     console.log(`[DDF] CREA token cached (${cacheKey}), expires in ${ttl}s`);
     return token;
   } catch (err) {
-    console.error(`[DDF] token fetch error (${cacheKey}):`, err);
+    console.error(`[DDF] token fetch error (${cacheKey}):`, (err as Error).message ?? err);
     return null;
   }
 }
@@ -272,6 +266,7 @@ export async function fetchListings(
     const values: DDFRawListing[] = data.value ?? [];
     const total: number = data["@odata.count"] ?? values.length;
 
+    console.log('[DDF] Listings fetched:', data.value?.length);
     console.log(`[DDF] ${useNSP ? "NSP" : "Member"} feed returned ${values.length} listings (total: ${total})`);
 
     if (values.length === 0 && useNSP) {
