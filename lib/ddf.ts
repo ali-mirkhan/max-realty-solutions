@@ -241,10 +241,13 @@ export async function fetchListings(
 
   const url = new URL(DDF_ENDPOINT);
   url.searchParams.set("$filter", buildFilter(params));
+  url.searchParams.set("$expand", "Media");
   url.searchParams.set("$top", String(limit));
   url.searchParams.set("$skip", String(skip));
   url.searchParams.set("$orderby", "OriginalEntryTimestamp desc");
   url.searchParams.set("$count", "true");
+
+  console.log('[DDF] Fetching listings from:', url.toString());
 
   try {
     const res = await fetch(url.toString(), {
@@ -306,8 +309,8 @@ export async function fetchListing(id: string): Promise<Property | null> {
     const feed = useNSP ? "NSP" : "Member";
 
     try {
-      // Primary: entity key lookup (no $expand — Media comes back automatically)
-      const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')`;
+      // Primary: entity key lookup with $expand=Media
+      const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')?$expand=Media`;
       console.log(`[DDF] fetchListing entity lookup: GET ${entityUrl}`);
       const res = await fetch(entityUrl, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -326,9 +329,10 @@ export async function fetchListing(id: string): Promise<Property | null> {
         console.log(`[DDF] fetchListing entity ${feed} HTTP ${res.status}: ${eb.slice(0, 120)}`);
       }
 
-      // Fallback: OData filter — also no $expand needed
+      // Fallback: OData filter with $expand=Media
       const filterUrl = new URL(DDF_ENDPOINT);
       filterUrl.searchParams.set("$filter", `ListingKey eq '${escapeOData(id)}'`);
+      filterUrl.searchParams.set("$expand", "Media");
       filterUrl.searchParams.set("$top", "1");
 
       console.log(`[DDF] fetchListing filter: GET ${filterUrl.toString()}`);
