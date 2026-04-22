@@ -22,6 +22,13 @@ function checkRateLimit(ip: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  console.log('[DEBUG] ENV CHECK:', {
+    hasDDFUsername: !!process.env.DDF_NSP_USERNAME,
+    hasDDFPassword: !!process.env.DDF_NSP_PASSWORD,
+    usernamePeek: process.env.DDF_NSP_USERNAME?.slice(0, 6),
+    tokenUrl: process.env.CREA_TOKEN_URL || 'NOT SET'
+  })
+
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     request.headers.get("x-real-ip") ??
