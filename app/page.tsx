@@ -121,6 +121,32 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── FEATURED PROPERTIES ── */}
+      <section className="py-20 lg:py-28">
+        <div className="container">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="section-label">Our Listings</p>
+              <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal">Featured Properties</h2>
+              <p className="text-charcoal/60 mt-2">Live listings from Max Realty Solutions — updated in real time</p>
+            </div>
+            <Link href="/properties" className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
+              View All Properties <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+          <div className="sm:hidden text-center mt-8">
+            <Link href="/properties" className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
+              View All Properties <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── DUAL VALUE ── */}
       <section className="py-20 lg:py-28">
         <div className="container">
@@ -241,31 +267,6 @@ export default function HomePage() {
           <div className="text-center mt-10">
             <Link href="/services" className="btn-primary">
               Explore Our Services <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURED PROPERTIES ── */}
-      <section className="py-20 lg:py-28">
-        <div className="container">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="section-label">Featured Listings</p>
-              <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal">Properties</h2>
-            </div>
-            <Link href="/properties" className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
-              View All Properties <ArrowRight size={14} />
-            </Link>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-          <div className="sm:hidden text-center mt-8">
-            <Link href="/properties" className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline">
-              View All Properties <ArrowRight size={14} />
             </Link>
           </div>
         </div>
