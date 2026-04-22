@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ArrowRight, CheckCircle2, Users, TrendingUp, Building2, Briefcase, Shield, FileText, BarChart3, Info } from "lucide-react";
+import { ArrowRight, CheckCircle2, Users, TrendingUp, Building2, Briefcase, Shield, FileText, BarChart3, Info, Lock } from "lucide-react";
 import JoinForm from "./JoinForm";
 
 export const metadata: Metadata = {
@@ -42,7 +42,11 @@ const faqs = [
   },
   {
     q: "Can I switch plans?",
-    a: "Yes. You may request a plan change at any time. Changes take effect at the start of the following month, subject to approval by the Principal Broker.",
+    a: "Plan changes are permitted once per contract term, at the time of your annual renewal. Mid-term plan changes are not available. This policy ensures fairness and commitment to the plan you selected when joining. To request a plan change at your next renewal, contact the brokerage at least 30 days before your renewal date.",
+  },
+  {
+    q: "Who approves plan changes?",
+    a: "All plan change requests must be reviewed and approved by the Broker of Record. Approval is not automatic and is based on your production history, compliance standing, and the brokerage's current capacity for each plan. The Broker of Record's decision is final.",
   },
 ];
 
@@ -99,12 +103,13 @@ export default function JoinPage() {
                   <p className="text-sm text-charcoal/50 mt-1">Split — keep 80% of every commission</p>
                 </div>
 
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-8 flex-1">
                   {[
                     "Keep 80% of every commission",
                     "No monthly fee while actively closing deals",
                     "Annual production requirement applies",
                     "Performance reviewed every 3 months",
+                    "Plan commitment for full annual contract term — changes at renewal only",
                     "Full brokerage support and resources included",
                     "Access to all brokerage tools, systems, and training",
                   ].map((item) => (
@@ -114,20 +119,6 @@ export default function JoinPage() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-start gap-2 mb-2">
-                    <Info size={15} className="text-amber-600 mt-0.5 shrink-0" />
-                    <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Inactivity Policy</p>
-                  </div>
-                  <p className="text-sm text-amber-900/80 leading-relaxed">
-                    If no transactions close in a given month, a <strong>$99/month holding fee</strong> applies starting from month one of inactivity. This fee is credited in full against your next commission once a deal closes. Your 80/20 split remains unchanged at all times.
-                  </p>
-                </div>
-
-                <div className="bg-stone-light rounded-lg p-4 mb-6 mt-auto text-sm text-charcoal/60 leading-relaxed">
-                  Stay active and pay nothing monthly. Inactivity triggers a temporary holding fee that is fully credited back upon your next closing.
-                </div>
 
                 <a
                   href="#apply"
@@ -151,11 +142,12 @@ export default function JoinPage() {
                   <p className="text-sm font-semibold text-burgundy mt-2">$179/month flat fee</p>
                 </div>
 
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-8 flex-1">
                   {[
                     "Keep 100% of every commission earned",
                     "Flat $179/month brokerage fee — no surprises",
                     "No production requirements or minimum volume",
+                    "Annual contract commitment — plan changes subject to renewal and approval",
                     "No broker involvement required on transactions",
                     "Complete independence — manage your own schedule and clients",
                     "Ideal for experienced agents and license parking arrangements",
@@ -167,10 +159,6 @@ export default function JoinPage() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="bg-stone-light rounded-lg p-4 mb-6 mt-auto text-sm text-charcoal/60 leading-relaxed">
-                  Designed for experienced, self-sufficient agents who want full autonomy over their business. Also suitable for agents who wish to maintain an active license under a reputable brokerage.
-                </div>
 
                 <a
                   href="#apply"
@@ -193,7 +181,7 @@ export default function JoinPage() {
                   <p className="text-sm text-charcoal/50 mt-1">Split — for your first 5 transactions</p>
                 </div>
 
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-8 flex-1">
                   {[
                     "50/50 commission split for your first 5 completed transactions",
                     "Transactions may be residential or commercial, purchase or lease — all count equally",
@@ -202,7 +190,7 @@ export default function JoinPage() {
                     "Mandatory broker review and sign-off on all offers, agreements, and documents",
                     "Structured learning covering contracts, compliance, client management, and negotiation",
                     "One-on-one mentorship sessions throughout the program",
-                    "Upon completing 5 transactions, you graduate to the Growth Plan (80/20) or Independent Plan (100%)",
+                    "Upon completing 5 transactions, you automatically graduate to your choice of Growth Plan or Independent Plan — no renewal required for graduation",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-charcoal/70">
                       <CheckCircle2 size={15} className="text-burgundy mt-0.5 shrink-0" />
@@ -210,20 +198,6 @@ export default function JoinPage() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-start gap-2 mb-2">
-                    <Info size={15} className="text-amber-600 mt-0.5 shrink-0" />
-                    <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Activity Requirement</p>
-                  </div>
-                  <p className="text-sm text-amber-900/80 leading-relaxed">
-                    To remain in the Mentored Program, agents must complete at least <strong>1 transaction every 6 months</strong>. If no transaction closes within 6 months of joining or after the last closing, a <strong>$49/month program fee</strong> applies until the next transaction closes. This fee is credited back against your commission upon closing. Agents who remain inactive for 12 consecutive months may be transitioned out of the program.
-                  </p>
-                </div>
-
-                <div className="bg-stone-light rounded-lg p-4 mb-6 mt-auto text-sm text-charcoal/60 leading-relaxed">
-                  This is a temporary growth program — not a permanent arrangement. You will be paired with a senior broker who will guide you through every step of your early career. Upon graduating, you choose your next plan.
-                </div>
 
                 <a
                   href="#apply"
@@ -234,6 +208,28 @@ export default function JoinPage() {
               </div>
             </div>
 
+          </div>
+
+          {/* Important Plan Details */}
+          <div className="mt-10 bg-stone-warm rounded-xl p-8">
+            <h3 className="font-serif text-xl font-semibold text-charcoal mb-6">Important Plan Details</h3>
+            <div className="grid sm:grid-cols-2 gap-6 mb-6">
+              <div className="bg-white rounded-lg p-5 border-l-4 border-amber-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">Growth Plan — Inactivity Policy</p>
+                <p className="text-sm text-charcoal/70 leading-relaxed">
+                  Agents on the Growth Plan who close no transactions in a given month will be charged a $99/month holding fee starting from month one of inactivity. This fee is credited in full against your next commission once a deal closes. Your 80/20 split is never affected.
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-5 border-l-4 border-amber-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">Mentored Program — Activity Requirement</p>
+                <p className="text-sm text-charcoal/70 leading-relaxed">
+                  To remain in the Mentored Program, agents must complete at least 1 transaction every 6 months. If inactive beyond 6 months, a $49/month program fee applies and is credited back upon your next closing. Agents inactive for 12 consecutive months may be transitioned out of the program.
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-charcoal/50 text-center">
+              The Independent Plan has no production requirements or inactivity fees. It is designed for self-sufficient agents and license parking arrangements.
+            </p>
           </div>
         </div>
       </section>
@@ -264,6 +260,7 @@ export default function JoinPage() {
                   { feature: "Performance Reviews",    p1: "Every 3 months",               p2: "None",                          p3: "After each transaction" },
                   { feature: "Broker Involvement",     p1: "Optional",                     p2: "Not included",                  p3: "Mandatory on all deals" },
                   { feature: "Mentor Assignment",      p1: "No",                           p2: "No",                            p3: "Yes — 10+ year experienced broker" },
+                  { feature: "Plan Changes",           p1: "At annual renewal only — subject to Broker of Record approval", p2: "At annual renewal only — subject to Broker of Record approval", p3: "Graduates to Growth or Independent upon completing 5 transactions" },
                   { feature: "Best For",               p1: "Growing agents",               p2: "Experienced & license parking", p3: "New agents" },
                 ].map((row, i) => (
                   <tr key={row.feature} className={i % 2 === 0 ? "bg-stone-warm" : "bg-white"}>
@@ -293,7 +290,7 @@ export default function JoinPage() {
               standards regardless of their selected plan:
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto [&>*:last-child:nth-child(odd)]:sm:col-span-2 [&>*:last-child:nth-child(odd)]:sm:max-w-md [&>*:last-child:nth-child(odd)]:sm:mx-auto">
             {[
               {
                 icon: Shield,
@@ -314,6 +311,11 @@ export default function JoinPage() {
                 icon: Users,
                 title: "Professional Conduct",
                 desc: "All agents represent Max Realty Solutions in the marketplace. We expect the highest standards of integrity, professionalism, and respect for clients and colleagues.",
+              },
+              {
+                icon: Lock,
+                title: "Plan Commitment & Renewal Policy",
+                desc: "Agents are committed to their selected plan for the duration of their annual contract term. Plan changes are only permitted at renewal and require written approval from the Broker of Record. This policy protects the integrity of our commission structure and ensures fair terms for all agents.",
               },
             ].map((item) => (
               <div key={item.title} className="bg-stone-light rounded-lg p-6 border border-stone-border">
