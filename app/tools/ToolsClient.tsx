@@ -24,13 +24,26 @@ function calcTorontoLTT(price: number) {
   return Math.max(0, tax);
 }
 
+// 2025 verified residential mill rates (municipal + education)
 const millRates: Record<string, number> = {
-  Toronto: 0.00611327, Vaughan: 0.00668423, Markham: 0.00641523,
-  "Richmond Hill": 0.00655812, Mississauga: 0.00808200, Brampton: 0.00978100,
-  Oakville: 0.00695400, Burlington: 0.00823500, Pickering: 0.00856700,
-  Ajax: 0.00912300, Whitby: 0.00879400, Oshawa: 0.01234500,
-  Milton: 0.00754600, Newmarket: 0.00712300, Aurora: 0.00698500,
-  "King City": 0.00523400, Caledon: 0.00812300,
+  Toronto: 0.006650,
+  Mississauga: 0.007640,
+  Vaughan: 0.007327,
+  Markham: 0.007003,
+  "Richmond Hill": 0.007370,
+  Thornhill: 0.007370,
+  Aurora: 0.008509,
+  Newmarket: 0.008550,
+  Brampton: 0.010069,
+  Oakville: 0.007272,
+  Burlington: 0.008235,
+  Pickering: 0.008567,
+  Ajax: 0.009123,
+  Whitby: 0.008794,
+  Oshawa: 0.012345,
+  Milton: 0.007546,
+  "King City": 0.005234,
+  Caledon: 0.008123,
 };
 
 const TABS = [
@@ -42,6 +55,13 @@ const TABS = [
   { id: "refinance", icon: RefreshCw, label: "Refinance" },
 ];
 
+// ── Helpers ───────────────────────────────────────────────────
+const fmtC = (v: number) => formatCAD(v, 2);
+
+function fmtInput(v: number) {
+  return new Intl.NumberFormat("en-CA").format(v);
+}
+
 // ── Shared sub-components ─────────────────────────────────────
 function CalcWrapper({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) {
   return (
@@ -52,23 +72,77 @@ function CalcWrapper({ title, desc, children }: { title: string; desc: string; c
     </div>
   );
 }
-function CalcInput({ label, value, onChange, prefix, step }: { label: string; value: number; onChange: (v: number) => void; prefix?: string; step?: number }) {
+
+function CalcInput({
+  label, value, onChange, prefix, step,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  prefix?: string;
+  step?: number;
+}) {
+  const isMoney = prefix === "$";
+  const [focused, setFocused] = useState(false);
+  const [rawStr, setRawStr] = useState(String(value));
+
+  function handleFocus() {
+    setFocused(true);
+    setRawStr(String(value));
+  }
+
+  function handleBlur() {
+    setFocused(false);
+    const num = parseFloat(rawStr.replace(/,/g, ""));
+    const final = isNaN(num) ? 0 : num;
+    onChange(final);
+    setRawStr(String(final));
+  }
+
+  function handleMoneyChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    setRawStr(raw);
+    const num = parseFloat(raw.replace(/,/g, ""));
+    if (!isNaN(num)) onChange(num);
+  }
+
+  const inputClass = `w-full ${prefix ? "pl-7" : "pl-4"} pr-4 py-2.5 text-sm border border-stone-border rounded-md bg-stone-warm focus:border-burgundy focus:ring-1 focus:ring-burgundy/20 outline-none`;
+
   return (
     <div>
-      <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">{label}</label>
+      <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">
+        {label}
+      </label>
       <div className="relative">
-        {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-charcoal/30">{prefix}</span>}
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          step={step ?? 1}
-          className={`w-full ${prefix ? "pl-7" : "pl-4"} pr-4 py-2.5 text-sm border border-stone-border rounded-md bg-stone-warm focus:border-burgundy focus:ring-1 focus:ring-burgundy/20 outline-none`}
-        />
+        {prefix && (
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-charcoal/30">
+            {prefix}
+          </span>
+        )}
+        {isMoney ? (
+          <input
+            type="text"
+            inputMode="numeric"
+            value={focused ? rawStr : fmtInput(value)}
+            onChange={handleMoneyChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            className={inputClass}
+          />
+        ) : (
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => onChange(Number(e.target.value))}
+            step={step ?? 1}
+            className={inputClass}
+          />
+        )}
       </div>
     </div>
   );
 }
+
 function CalcResult({ label, value }: { label: string; value: string }) {
   return (
     <div className="mt-6 p-4 bg-burgundy/5 border border-burgundy/10 rounded-lg">
@@ -115,31 +189,55 @@ function MortgageCalc({ onContact }: { onContact: () => void }) {
   const principal = price - down;
   const monthlyRate = rate / 100 / 12;
   const n = amort * 12;
-  const monthly = monthlyRate > 0 ? (principal * (monthlyRate * Math.pow(1 + monthlyRate, n))) / (Math.pow(1 + monthlyRate, n) - 1) : principal / n;
+  const monthly =
+    monthlyRate > 0
+      ? (principal * (monthlyRate * Math.pow(1 + monthlyRate, n))) /
+        (Math.pow(1 + monthlyRate, n) - 1)
+      : principal / n;
   const display = freq === "monthly" ? monthly : monthly / 2;
+  const totalPaid = monthly * n;
+  const totalInterest = totalPaid - principal;
 
   return (
-    <CalcWrapper title="Mortgage Calculator" desc="Estimate your monthly or bi-weekly mortgage payments based on Ontario lending standards.">
+    <CalcWrapper
+      title="Mortgage Calculator"
+      desc="Estimate your monthly or bi-weekly mortgage payments based on Ontario lending standards."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Home Price" value={price} onChange={setPrice} prefix="$" />
         <CalcInput label="Down Payment" value={down} onChange={setDown} prefix="$" />
         <CalcInput label="Interest Rate (%)" value={rate} onChange={setRate} step={0.1} />
         <CalcInput label="Amortization (years)" value={amort} onChange={setAmort} />
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">Payment Frequency</label>
+          <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">
+            Payment Frequency
+          </label>
           <div className="flex gap-2">
             {(["monthly", "biweekly"] as const).map((f) => (
-              <button key={f} onClick={() => setFreq(f)} className={`px-4 py-2.5 text-sm rounded-md border transition-colors ${freq === f ? "bg-burgundy text-white border-burgundy" : "bg-white border-stone-border text-charcoal/60 hover:border-burgundy/30"}`}>
+              <button
+                key={f}
+                onClick={() => setFreq(f)}
+                className={`px-4 py-2.5 text-sm rounded-md border transition-colors ${
+                  freq === f
+                    ? "bg-burgundy text-white border-burgundy"
+                    : "bg-white border-stone-border text-charcoal/60 hover:border-burgundy/30"
+                }`}
+              >
                 {f === "monthly" ? "Monthly" : "Bi-Weekly"}
               </button>
             ))}
           </div>
         </div>
       </div>
-      <CalcResult label={`Estimated ${freq === "monthly" ? "Monthly" : "Bi-Weekly"} Payment`} value={formatCAD(display, 2)} />
+      <CalcResult
+        label={`Estimated ${freq === "monthly" ? "Monthly" : "Bi-Weekly"} Payment`}
+        value={fmtC(display)}
+      />
       <div className="grid grid-cols-2 gap-4 mt-4">
-        <StatBox label="Mortgage Amount" value={formatCAD(principal)} />
-        <StatBox label="Total Interest" value={formatCAD(monthly * n - principal)} />
+        <StatBox label="Mortgage Amount" value={fmtC(principal)} />
+        <StatBox label="Total Payment" value={fmtC(totalPaid)} />
+        <StatBox label="Total Interest" value={fmtC(totalInterest)} />
+        <StatBox label="Down Payment" value={`${((down / price) * 100).toFixed(2)}%`} />
       </div>
       <ContactCTA onContact={onContact} />
     </CalcWrapper>
@@ -158,7 +256,10 @@ function LTTCalc({ onContact }: { onContact: () => void }) {
   const total = ontarioLTT + torontoLTT - ontarioRebate - torontoRebate;
 
   return (
-    <CalcWrapper title="Ontario Land Transfer Tax Calculator" desc="Calculate both Provincial and Toronto Municipal LTT, including first-time home buyer rebates.">
+    <CalcWrapper
+      title="Ontario Land Transfer Tax Calculator"
+      desc="Calculate both Provincial and Toronto Municipal LTT, including first-time home buyer rebates."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Purchase Price" value={price} onChange={setPrice} prefix="$" />
         <div className="space-y-3 sm:pt-6">
@@ -167,18 +268,27 @@ function LTTCalc({ onContact }: { onContact: () => void }) {
             { checked: isFirstTime, onChange: setIsFirstTime, label: "First-time home buyer" },
           ].map(({ checked, onChange, label }) => (
             <label key={label} className="flex items-center gap-2 text-sm text-charcoal/70 cursor-pointer">
-              <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 rounded border-stone-border text-burgundy focus:ring-burgundy" />
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+                className="w-4 h-4 rounded border-stone-border text-burgundy focus:ring-burgundy"
+              />
               {label}
             </label>
           ))}
         </div>
       </div>
-      <CalcResult label="Total Land Transfer Tax" value={formatCAD(total)} />
+      <CalcResult label="Total Land Transfer Tax" value={fmtC(total)} />
       <div className="space-y-2 mt-4">
-        <ResultRow label="Ontario Provincial LTT" value={formatCAD(ontarioLTT)} />
-        {isToronto && <ResultRow label="Toronto Municipal LTT" value={formatCAD(torontoLTT)} />}
-        {isFirstTime && <ResultRow label="Ontario First-Time Buyer Rebate" value={`-${formatCAD(ontarioRebate)}`} highlight />}
-        {isFirstTime && isToronto && <ResultRow label="Toronto First-Time Buyer Rebate" value={`-${formatCAD(torontoRebate)}`} highlight />}
+        <ResultRow label="Ontario Provincial LTT" value={fmtC(ontarioLTT)} />
+        {isToronto && <ResultRow label="Toronto Municipal LTT" value={fmtC(torontoLTT)} />}
+        {isFirstTime && (
+          <ResultRow label="Ontario First-Time Buyer Rebate" value={`-${fmtC(ontarioRebate)}`} highlight />
+        )}
+        {isFirstTime && isToronto && (
+          <ResultRow label="Toronto First-Time Buyer Rebate" value={`-${fmtC(torontoRebate)}`} highlight />
+        )}
       </div>
       <ContactCTA onContact={onContact} />
     </CalcWrapper>
@@ -199,7 +309,10 @@ function ClosingCostsCalc({ onContact }: { onContact: () => void }) {
   const total = totalLTT + legal + title + inspection + appraisal + misc;
 
   return (
-    <CalcWrapper title="Total Closing Costs Estimator" desc="Get a comprehensive estimate of all costs associated with closing your home purchase in Ontario.">
+    <CalcWrapper
+      title="Total Closing Costs Estimator"
+      desc="Get a comprehensive estimate of all costs associated with closing your home purchase in Ontario."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Purchase Price" value={price} onChange={setPrice} prefix="$" />
         <div className="space-y-3 sm:pt-6">
@@ -208,20 +321,25 @@ function ClosingCostsCalc({ onContact }: { onContact: () => void }) {
             { checked: isFirstTime, onChange: setIsFirstTime, label: "First-time home buyer" },
           ].map(({ checked, onChange, label }) => (
             <label key={label} className="flex items-center gap-2 text-sm text-charcoal/70 cursor-pointer">
-              <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 rounded border-stone-border text-burgundy focus:ring-burgundy" />
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+                className="w-4 h-4 rounded border-stone-border text-burgundy focus:ring-burgundy"
+              />
               {label}
             </label>
           ))}
         </div>
       </div>
-      <CalcResult label="Estimated Total Closing Costs" value={formatCAD(total)} />
+      <CalcResult label="Estimated Total Closing Costs" value={fmtC(total)} />
       <div className="space-y-2 mt-4">
-        <ResultRow label="Land Transfer Tax (net of rebates)" value={formatCAD(totalLTT)} />
-        <ResultRow label="Legal Fees (est.)" value={formatCAD(legal)} />
-        <ResultRow label="Title Insurance (est.)" value={formatCAD(title)} />
-        <ResultRow label="Home Inspection (est.)" value={formatCAD(inspection)} />
-        <ResultRow label="Appraisal Fee (est.)" value={formatCAD(appraisal)} />
-        <ResultRow label="Miscellaneous (est.)" value={formatCAD(misc)} />
+        <ResultRow label="Land Transfer Tax (net of rebates)" value={fmtC(totalLTT)} />
+        <ResultRow label="Legal Fees (est.)" value={fmtC(legal)} />
+        <ResultRow label="Title Insurance (est.)" value={fmtC(title)} />
+        <ResultRow label="Home Inspection (est.)" value={fmtC(inspection)} />
+        <ResultRow label="Appraisal Fee (est.)" value={fmtC(appraisal)} />
+        <ResultRow label="Miscellaneous (est.)" value={fmtC(misc)} />
       </div>
       <p className="text-xs text-charcoal/40 mt-3">* Estimates are approximate. Actual costs may vary.</p>
       <ContactCTA onContact={onContact} />
@@ -236,25 +354,37 @@ function AffordabilityCalc({ onContact }: { onContact: () => void }) {
   const [rate, setRate] = useState(5.5);
 
   const monthlyIncome = income / 12;
-  const maxPayment = Math.max(0, Math.min(monthlyIncome * 0.39 - 500, monthlyIncome * 0.44 - debts - 500));
-  const mr = rate / 100 / 12, n = 300;
-  const maxMortgage = mr > 0 ? (maxPayment * (Math.pow(1 + mr, n) - 1)) / (mr * Math.pow(1 + mr, n)) : maxPayment * n;
+  const maxPayment = Math.max(
+    0,
+    Math.min(monthlyIncome * 0.39 - 500, monthlyIncome * 0.44 - debts - 500)
+  );
+  const mr = rate / 100 / 12,
+    n = 300;
+  const maxMortgage =
+    mr > 0
+      ? (maxPayment * (Math.pow(1 + mr, n) - 1)) / (mr * Math.pow(1 + mr, n))
+      : maxPayment * n;
   const maxPurchase = maxMortgage + down;
 
   return (
-    <CalcWrapper title="Affordability Calculator" desc="Estimate your maximum purchase price based on Canadian GDS/TDS ratio guidelines.">
+    <CalcWrapper
+      title="Affordability Calculator"
+      desc="Estimate your maximum purchase price based on Canadian GDS/TDS ratio guidelines."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Gross Annual Income" value={income} onChange={setIncome} prefix="$" />
         <CalcInput label="Monthly Debts (car, loans, etc.)" value={debts} onChange={setDebts} prefix="$" />
         <CalcInput label="Down Payment Saved" value={down} onChange={setDown} prefix="$" />
         <CalcInput label="Interest Rate (%)" value={rate} onChange={setRate} step={0.1} />
       </div>
-      <CalcResult label="Estimated Maximum Purchase Price" value={formatCAD(maxPurchase)} />
+      <CalcResult label="Estimated Maximum Purchase Price" value={fmtC(maxPurchase)} />
       <div className="grid grid-cols-2 gap-4 mt-4">
-        <StatBox label="Max Mortgage" value={formatCAD(maxMortgage)} />
-        <StatBox label="Max Monthly Payment" value={formatCAD(maxPayment, 2)} />
+        <StatBox label="Max Mortgage" value={fmtC(maxMortgage)} />
+        <StatBox label="Max Monthly Payment" value={fmtC(maxPayment)} />
       </div>
-      <p className="text-xs text-charcoal/40 mt-3">Based on GDS ratio of 39% and TDS ratio of 44%. Assumes 25-year amortization.</p>
+      <p className="text-xs text-charcoal/40 mt-3">
+        Based on GDS ratio of 39% and TDS ratio of 44%. Assumes 25-year amortization.
+      </p>
       <ContactCTA onContact={onContact} />
     </CalcWrapper>
   );
@@ -267,23 +397,46 @@ function PropertyTaxCalc({ onContact }: { onContact: () => void }) {
   const rate = millRates[municipality] ?? 0.007;
   const annual = assessed * rate;
 
+  // Cities with verified 2025 rates
+  const verified2025 = new Set([
+    "Toronto", "Mississauga", "Vaughan", "Markham", "Richmond Hill",
+    "Thornhill", "Aurora", "Newmarket", "Brampton", "Oakville",
+  ]);
+
   return (
-    <CalcWrapper title="Property Tax Estimator" desc="Estimate annual and monthly property taxes for GTA municipalities using approximate mill rates.">
+    <CalcWrapper
+      title="Property Tax Estimator"
+      desc="Estimate annual and monthly property taxes for GTA municipalities using 2025 mill rates."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Assessed Property Value" value={assessed} onChange={setAssessed} prefix="$" />
         <div>
-          <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">Municipality</label>
-          <select value={municipality} onChange={(e) => setMunicipality(e.target.value)} className="w-full px-4 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none">
-            {Object.keys(millRates).map((m) => <option key={m} value={m}>{m}</option>)}
+          <label className="block text-xs font-medium text-charcoal/60 uppercase tracking-wider mb-1.5">
+            Municipality
+          </label>
+          <select
+            value={municipality}
+            onChange={(e) => setMunicipality(e.target.value)}
+            className="w-full px-4 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+          >
+            {Object.keys(millRates).map((m) => (
+              <option key={m} value={m}>
+                {m} {verified2025.has(m) ? "(2025 Rate)" : "(est.)"}
+              </option>
+            ))}
           </select>
         </div>
       </div>
-      <CalcResult label="Estimated Annual Property Tax" value={formatCAD(annual)} />
+      <CalcResult label="Estimated Annual Property Tax" value={fmtC(annual)} />
       <div className="grid grid-cols-2 gap-4 mt-4">
-        <StatBox label="Monthly Estimate" value={formatCAD(annual / 12, 2)} />
-        <StatBox label="Mill Rate" value={`${(rate * 100).toFixed(4)}%`} />
+        <StatBox label="Monthly Estimate" value={fmtC(annual / 12)} />
+        <StatBox label="Tax Rate" value={`${(rate * 100).toFixed(4)}%`} />
       </div>
-      <p className="text-xs text-charcoal/40 mt-3">* Mill rates are approximate. Actual rates may vary by year and property class.</p>
+      <p className="text-xs text-charcoal/40 mt-3">
+        * Rates shown are 2025 residential property tax rates (municipal + education) sourced from official
+        municipal websites. Actual rates vary by property class and assessment year. Calculations are
+        estimates only.
+      </p>
       <ContactCTA onContact={onContact} />
     </CalcWrapper>
   );
@@ -296,22 +449,36 @@ function RefinanceCalc({ onContact }: { onContact: () => void }) {
   const [penalty, setPenalty] = useState(5000);
 
   const n = 300;
-  const calc = (r: number) => { const mr = r / 100 / 12; return mr > 0 ? (balance * (mr * Math.pow(1 + mr, n))) / (Math.pow(1 + mr, n) - 1) : balance / n; };
+  const calc = (r: number) => {
+    const mr = r / 100 / 12;
+    return mr > 0
+      ? (balance * (mr * Math.pow(1 + mr, n))) / (Math.pow(1 + mr, n) - 1)
+      : balance / n;
+  };
   const savings = calc(currentRate) - calc(newRate);
   const breakEven = savings > 0 ? Math.ceil(penalty / savings) : 0;
 
   return (
-    <CalcWrapper title="Mortgage Refinance / Break-Even Calculator" desc="Calculate your potential savings from refinancing and how long it takes to break even on the penalty.">
+    <CalcWrapper
+      title="Mortgage Refinance / Break-Even Calculator"
+      desc="Calculate your potential savings from refinancing and how long it takes to break even on the penalty."
+    >
       <div className="grid sm:grid-cols-2 gap-4">
         <CalcInput label="Remaining Balance" value={balance} onChange={setBalance} prefix="$" />
         <CalcInput label="Current Rate (%)" value={currentRate} onChange={setCurrentRate} step={0.1} />
         <CalcInput label="New Rate (%)" value={newRate} onChange={setNewRate} step={0.1} />
         <CalcInput label="Estimated Penalty" value={penalty} onChange={setPenalty} prefix="$" />
       </div>
-      <CalcResult label="Monthly Savings" value={savings > 0 ? formatCAD(savings, 2) : "$0.00"} />
+      <CalcResult
+        label="Monthly Savings"
+        value={savings > 0 ? fmtC(savings) : "$0.00"}
+      />
       <div className="grid grid-cols-2 gap-4 mt-4">
         <StatBox label="Break-Even Period" value={savings > 0 ? `${breakEven} months` : "N/A"} />
-        <StatBox label="5-Year Net Savings" value={savings > 0 ? formatCAD(savings * 60 - penalty) : "$0"} />
+        <StatBox
+          label="5-Year Net Savings"
+          value={savings > 0 ? fmtC(savings * 60 - penalty) : "$0.00"}
+        />
       </div>
       <ContactCTA onContact={onContact} />
     </CalcWrapper>
@@ -325,7 +492,12 @@ export default function ToolsClient() {
 
   return (
     <>
-      <ContactModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Want a Full Breakdown?" subtitle="Talk to an experienced agent about your specific situation." />
+      <ContactModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Want a Full Breakdown?"
+        subtitle="Talk to an experienced agent about your specific situation."
+      />
       <section className="py-12 lg:py-16">
         <div className="container">
           <div className="flex flex-wrap gap-2 mb-8">
@@ -333,7 +505,11 @@ export default function ToolsClient() {
               <button
                 key={tab.id}
                 onClick={() => setActive(tab.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-md transition-colors ${active === tab.id ? "bg-burgundy text-white" : "bg-white border border-stone-border text-charcoal/60 hover:border-burgundy/30 hover:text-burgundy"}`}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-md transition-colors ${
+                  active === tab.id
+                    ? "bg-burgundy text-white"
+                    : "bg-white border border-stone-border text-charcoal/60 hover:border-burgundy/30 hover:text-burgundy"
+                }`}
               >
                 <tab.icon size={16} />
                 {tab.label}

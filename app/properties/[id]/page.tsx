@@ -410,21 +410,20 @@ export default async function PropertyDetailPage({
                   Location
                 </h2>
                 <div className="border border-stone-border rounded-xl overflow-hidden">
-                  <div className="bg-stone-light h-44 flex flex-col items-center justify-center gap-3 px-6">
-                    <MapPin size={32} className="text-burgundy/40" />
-                    <p className="text-sm text-charcoal/50 text-center">
-                      {fullAddress}
-                    </p>
-                  </div>
-                  <div className="px-5 py-3 bg-white flex items-center justify-between gap-4">
-                    <p className="text-xs text-charcoal/40">
-                      Map view may not reflect exact listing address
-                    </p>
+                  <iframe
+                    width="100%"
+                    height={300}
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allowFullScreen
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress + ", Canada")}&output=embed`}
+                  />
+                  <div className="px-5 py-3 bg-white flex items-center justify-end border-t border-stone-border">
                     <a
                       href={mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-burgundy hover:underline shrink-0"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-burgundy hover:underline"
                     >
                       View on Google Maps
                       <ExternalLink size={13} />
