@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
-import staticProperties from "@/data/properties.json";
 import type { Property } from "@/lib/types";
 
 const TYPES = [
@@ -94,15 +93,15 @@ export default function PropertiesClient() {
       url.searchParams.set("page", String(pageNum));
 
       const res = await fetch(url.toString());
-      if (!res.ok) throw new Error("API error");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "API error");
       setListings(data.listings ?? []);
       setTotal(data.total ?? data.count ?? 0);
       setSource(data.source ?? "nsp");
     } catch {
-      setListings(staticProperties as Property[]);
-      setTotal(staticProperties.length);
-      setSource("static");
+      setListings([]);
+      setTotal(0);
+      setSource("error");
       setError(true);
     } finally {
       setLoading(false);

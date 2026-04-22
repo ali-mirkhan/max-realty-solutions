@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchListings, type ListingsParams } from "@/lib/ddf";
-import staticProperties from "@/data/properties.json";
 
 export const runtime = "nodejs";
 
@@ -35,7 +34,6 @@ export async function GET(request: NextRequest) {
   }
 
   const sp = request.nextUrl.searchParams;
-
   const top = sp.get("top") ? Number(sp.get("top")) : undefined;
 
   const params: ListingsParams = {
@@ -47,28 +45,29 @@ export async function GET(request: NextRequest) {
     type: sp.get("type") ?? undefined,
     search: sp.get("search") ?? undefined,
     page: sp.get("page") ? Number(sp.get("page")) : 1,
-    limit: top ?? (sp.get("limit") ? Number(sp.get("limit")) : 20),
+    limit: top ?? (sp.get("limit") ? Number(sp.get("limit")) : 24),
   };
 
   const useNSP = sp.get("feed") !== "member";
 
+  console.log(`[api/listings] GET — city=${params.city ?? "any"} type=${params.type ?? "any"} minPrice=${params.minPrice ?? "-"} maxPrice=${params.maxPrice ?? "-"} beds=${params.beds ?? "-"} limit=${params.limit} page=${params.page} feed=${useNSP ? "nsp" : "member"}`);
+
   try {
     const { listings, total, feed } = await fetchListings(params, useNSP);
 
-    if (listings.length === 0) {
-      return NextResponse.json({
-        listings: staticProperties,
-        total: staticProperties.length,
-        source: "static",
-      });
-    }
+    console.log(`[api/listings] CREA ${feed} feed returned ${listings.length} listings (total: ${total})`);
 
-    return NextResponse.json({ listings, total, count: listings.length, source: feed });
-  } catch {
     return NextResponse.json({
-      listings: staticProperties,
-      total: staticProperties.length,
-      source: "static",
+      listings,
+      total,
+      count: listings.length,
+      source: feed,
     });
+  } catch (err) {
+    console.error("[api/listings] fetchListings threw:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch listings from CREA API.", listings: [], total: 0, count: 0 },
+      { status: 500 }
+    );
   }
 }

@@ -1,5 +1,4 @@
 import { MetadataRoute } from "next";
-import properties from "@/data/properties.json";
 import blogPosts from "@/data/blogPosts.json";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -17,13 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/contact`, priority: 0.7 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "monthly" as const }));
 
-  const propertyPages = properties.map((p) => ({
-    url: `${base}/properties/${p.id}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
   const blogPages = blogPosts.map((p) => ({
     url: `${base}/blog/${p.id}`,
     lastModified: new Date(p.date),
@@ -31,5 +23,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...propertyPages, ...blogPages];
+  return [...staticPages, ...blogPages];
 }

@@ -12,13 +12,10 @@ import PropertyGallery from "./PropertyGallery";
 import DescriptionSection from "./DescriptionSection";
 import SimilarListings from "./SimilarListings";
 import SaveButton from "./SaveButton";
-import staticData from "@/data/properties.json";
 import type { Property } from "@/lib/types";
 import { fetchListing } from "@/lib/ddf";
 import { formatPrice, formatCAD } from "@/lib/utils";
 import ShareButtons from "@/components/ShareButtons";
-
-const staticProperties = staticData as Property[];
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,18 +36,10 @@ function cleanDescription(text: string): string {
 }
 
 async function getProperty(id: string): Promise<Property | null> {
-  console.log(`[property-detail] getProperty called with id="${id}"`);
-
-  const staticProp = staticProperties.find((p) => p.id === id);
-  if (staticProp) {
-    console.log(`[property-detail] found in static data: "${id}"`);
-    return staticProp;
-  }
-
-  console.log(`[property-detail] not in static data, calling fetchListing("${id}")`);
+  console.log(`[property-detail] fetchListing("${id}")`);
   try {
     const result = await fetchListing(id);
-    console.log(`[property-detail] fetchListing("${id}") returned: ${result ? `found (${result.address})` : "null"}`);
+    console.log(`[property-detail] fetchListing("${id}") → ${result ? `found (${result.address})` : "null"}`);
     return result;
   } catch (err) {
     console.error(`[property-detail] fetchListing("${id}") threw:`, err);
@@ -59,7 +48,7 @@ async function getProperty(id: string): Promise<Property | null> {
 }
 
 export async function generateStaticParams() {
-  return staticProperties.map((p) => ({ id: p.id }));
+  return [];
 }
 
 export async function generateMetadata({
@@ -91,7 +80,7 @@ export default async function PropertyDetailPage({
     ? [property.image]
     : [];
 
-  const isLive = !staticProperties.find((p) => p.id === property.id);
+  const isLive = true;
   const dom = daysOnMarket(property.listingDate);
   const description = cleanDescription(property.description || "");
 

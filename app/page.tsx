@@ -7,8 +7,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
-import properties from "@/data/properties.json";
 import type { Property } from "@/lib/types";
+import { fetchListings } from "@/lib/ddf";
 
 export const metadata: Metadata = {
   title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
@@ -20,8 +20,6 @@ const HERO_IMG = "https://www.maxrealtysolutions.com/files/flashbanner/411282/To
 const AGENT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/agent-meeting-CjY9jHheSwuevRu6dL7bU8.webp";
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";
-
-const featuredProperties = (properties as Property[]).slice(0, 4);
 
 const neighbourhoods = [
   { name: "Thornhill", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
@@ -51,7 +49,14 @@ const testimonials = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  let featuredProperties: Property[] = [];
+  try {
+    const { listings } = await fetchListings({ limit: 4 });
+    featuredProperties = listings;
+  } catch {
+    // show empty featured section if API unavailable
+  }
   return (
     <>
       {/* ── HERO ── */}
