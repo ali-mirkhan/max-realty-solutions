@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   ArrowRight, TrendingUp, Users, Building2, DollarSign,
   Briefcase, Home as HomeIcon, BarChart3, Star, CheckCircle2, Shield,
+  ChevronDown,
 } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import properties from "@/data/properties.json";
@@ -57,35 +58,49 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image src={HERO_IMG} alt="Luxury home in the Greater Toronto Area" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/55 via-charcoal/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
         <div className="relative container py-20 lg:py-32">
           <div className="max-w-2xl">
-            <p className="text-[#E8E4DE]/80 text-sm font-medium uppercase tracking-widest mb-4">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-burgundy border-l-2 border-burgundy pl-3 mb-5">
               Greater Toronto Area
             </p>
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            <h1
+              className="font-serif text-4xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight tracking-tight mb-6"
+              style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
+            >
               Find Your Home in the Greater Toronto Area
             </h1>
-            <p className="text-lg lg:text-xl text-[#E8E4DE]/90 leading-relaxed mb-8 max-w-xl">
+            <p
+              className="text-base lg:text-lg text-white/85 leading-relaxed mb-8 max-w-lg"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}
+            >
               Your gateway to premium real estate investment opportunities across the GTA. Delivering expert
               guidance in residential, commercial, and investment real estate — backed by decades of
               distinguished experience.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/properties" className="btn-primary">
+              <Link href="/properties" className="btn-primary shadow-lg">
                 Search Properties <ArrowRight size={16} />
               </Link>
-              <Link href="/contact" className="btn-ghost-white">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-white/15 backdrop-blur-sm border border-white/40 rounded-md hover:bg-white/25 transition-colors"
+              >
                 Get a Free Consultation
               </Link>
             </div>
           </div>
         </div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+          <ChevronDown size={24} className="text-white opacity-60 animate-bounce" />
+        </div>
       </section>
 
       {/* ── TRUST STATS ── */}
-      <section className="bg-white border-b border-stone-border">
+      <section className="bg-charcoal border-t-2 border-burgundy">
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
@@ -95,8 +110,8 @@ export default function HomePage() {
               { value: "RECO", label: "Licensed & Regulated" },
             ].map((stat) => (
               <div key={stat.label}>
-                <p className="font-serif text-2xl lg:text-3xl font-bold text-burgundy">{stat.value}</p>
-                <p className="text-xs lg:text-sm text-charcoal/50 mt-1">{stat.label}</p>
+                <p className="font-serif text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-xs text-white/60 uppercase tracking-wider mt-1">{stat.label}</p>
               </div>
             ))}
           </div>

@@ -145,9 +145,9 @@ function CalcInput({
 
 function CalcResult({ label, value }: { label: string; value: string }) {
   return (
-    <div className="mt-6 p-4 bg-burgundy/5 border border-burgundy/10 rounded-lg">
-      <p className="text-xs text-burgundy/60 uppercase tracking-wider mb-1">{label}</p>
-      <p className="font-serif text-2xl font-bold text-burgundy">{value}</p>
+    <div className="mt-6 bg-white rounded-xl border border-stone-border border-l-4 border-l-burgundy p-6">
+      <p className="text-xs uppercase tracking-wider text-charcoal/60 mb-2">{label}</p>
+      <p className="font-serif text-3xl lg:text-4xl font-bold text-burgundy">{value}</p>
     </div>
   );
 }

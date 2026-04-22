@@ -1,12 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --font-playfair: "Playfair Display", ui-serif, Georgia, serif;
-  --font-source-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
-}
 
 @layer base {
   * {
