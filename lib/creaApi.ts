@@ -59,16 +59,16 @@ export async function getAccessToken(useNSP = true): Promise<string> {
   if (cached && Date.now() < cached.expiresAt) return cached.token;
 
   const clientId = useNSP
-    ? process.env.CREA_NSP_USERNAME
-    : process.env.CREA_MEMBER_USERNAME;
+    ? (process.env.DDF_NSP_USERNAME ?? process.env.CREA_NSP_USERNAME)
+    : (process.env.DDF_USERNAME ?? process.env.CREA_MEMBER_USERNAME);
   const clientSecret = useNSP
-    ? process.env.CREA_NSP_PASSWORD
-    : process.env.CREA_MEMBER_PASSWORD;
+    ? (process.env.DDF_NSP_PASSWORD ?? process.env.CREA_NSP_PASSWORD)
+    : (process.env.DDF_PASSWORD ?? process.env.CREA_MEMBER_PASSWORD);
 
   if (!clientId || !clientSecret) {
     throw new Error(
       `[creaApi] Missing credentials for ${key} feed. ` +
-        `Set CREA_${useNSP ? "NSP" : "MEMBER"}_USERNAME and CREA_${useNSP ? "NSP" : "MEMBER"}_PASSWORD.`
+        `Set DDF_${useNSP ? "NSP_USERNAME" : "USERNAME"} and DDF_${useNSP ? "NSP_PASSWORD" : "PASSWORD"}.`
     );
   }
 

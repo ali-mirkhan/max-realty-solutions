@@ -1,34 +1,44 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import staticProperties from "@/data/properties.json";
 import type { Property } from "@/lib/types";
 
-const GTA_CITIES = [
-  "All", "Toronto", "Vaughan", "Markham", "Richmond Hill", "Thornhill",
-  "Mississauga", "Brampton", "Oakville", "Burlington", "Pickering",
-  "Ajax", "Whitby", "Oshawa", "Newmarket", "Aurora", "King City",
+const TYPES = [
+  { label: "All Types", value: "" },
+  { label: "Residential", value: "residential" },
+  { label: "Condo/Apartment", value: "residential" },
+  { label: "Commercial", value: "commercial" },
+  { label: "Land", value: "residential" },
 ];
 
-const TYPES = ["All", "Residential", "Commercial"];
+const MIN_PRICES = [
+  { label: "No Min", value: "" },
+  { label: "$500,000", value: "500000" },
+  { label: "$700,000", value: "700000" },
+  { label: "$1,000,000", value: "1000000" },
+  { label: "$1,500,000", value: "1500000" },
+  { label: "$2,000,000", value: "2000000" },
+];
 
-const PRICE_RANGES = [
-  { label: "Any Price", min: 0, max: 0 },
-  { label: "Under $800K", min: 0, max: 800000 },
-  { label: "$800K – $1.2M", min: 800000, max: 1200000 },
-  { label: "$1.2M – $2M", min: 1200000, max: 2000000 },
-  { label: "$2M+", min: 2000000, max: 0 },
+const MAX_PRICES = [
+  { label: "No Max", value: "" },
+  { label: "$700,000", value: "700000" },
+  { label: "$1,000,000", value: "1000000" },
+  { label: "$1,500,000", value: "1500000" },
+  { label: "$2,000,000", value: "2000000" },
+  { label: "$3,000,000", value: "3000000" },
+  { label: "$5,000,000", value: "5000000" },
 ];
 
 const BED_OPTIONS = [
-  { label: "Any Beds", value: "0" },
-  { label: "1+ Beds", value: "1" },
-  { label: "2+ Beds", value: "2" },
-  { label: "3+ Beds", value: "3" },
-  { label: "4+ Beds", value: "4" },
-  { label: "5+ Beds", value: "5" },
+  { label: "Any", value: "" },
+  { label: "1+", value: "1" },
+  { label: "2+", value: "2" },
+  { label: "3+", value: "3" },
+  { label: "4+", value: "4" },
 ];
 
 function ListingsSkeleton() {
@@ -53,118 +63,148 @@ function ListingsSkeleton() {
 }
 
 export default function PropertiesClient() {
-  const [typeFilter, setTypeFilter] = useState("All");
-  const [cityFilter, setCityFilter] = useState("All");
-  const [priceFilter, setPriceFilter] = useState(0);
-  const [bedFilter, setBedFilter] = useState("0");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [city, setCity] = useState("Toronto");
+  const [typeIndex, setTypeIndex] = useState(0);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [beds, setBeds] = useState("");
   const [page, setPage] = useState(1);
 
   const [listings, setListings] = useState<Property[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [source, setSource] = useState<string>("nsp");
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const LIMIT = 20;
-
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const url = new URL("/api/listings", window.location.origin);
-        if (cityFilter !== "All") url.searchParams.set("city", cityFilter);
-        const range = PRICE_RANGES[priceFilter];
-        if (range.min > 0) url.searchParams.set("minPrice", String(range.min));
-        if (range.max > 0) url.searchParams.set("maxPrice", String(range.max));
-        if (typeFilter !== "All") url.searchParams.set("type", typeFilter);
-        if (bedFilter !== "0") url.searchParams.set("beds", bedFilter);
-        if (searchQuery.trim()) url.searchParams.set("search", searchQuery.trim());
-        url.searchParams.set("page", String(page));
-        url.searchParams.set("limit", String(LIMIT));
-
-        const res = await fetch(url.toString());
-        if (!res.ok) throw new Error("API error");
-        const data = await res.json();
-        setListings(data.listings ?? []);
-        setTotal(data.total ?? 0);
-        setSource(data.source ?? "nsp");
-      } catch {
-        setListings(staticProperties as Property[]);
-        setTotal(staticProperties.length);
-        setSource("static");
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [typeFilter, cityFilter, priceFilter, bedFilter, searchQuery, page]);
-
-  // Reset to page 1 on filter change
-  const handleFilterChange = (setter: (v: string) => void, value: string) => {
-    setPage(1);
-    setter(value);
-  };
-
+  const LIMIT = 24;
   const totalPages = Math.ceil(total / LIMIT);
+
+  async function fetchData(pageNum = 1) {
+    setLoading(true);
+    setError(false);
+    try {
+      const url = new URL("/api/listings", window.location.origin);
+      if (city.trim()) url.searchParams.set("city", city.trim());
+      const typeVal = TYPES[typeIndex]?.value;
+      if (typeVal) url.searchParams.set("type", typeVal);
+      if (minPrice) url.searchParams.set("minPrice", minPrice);
+      if (maxPrice) url.searchParams.set("maxPrice", maxPrice);
+      if (beds) url.searchParams.set("beds", beds);
+      url.searchParams.set("top", String(LIMIT));
+      url.searchParams.set("page", String(pageNum));
+
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setListings(data.listings ?? []);
+      setTotal(data.total ?? data.count ?? 0);
+      setSource(data.source ?? "nsp");
+    } catch {
+      setListings(staticProperties as Property[]);
+      setTotal(staticProperties.length);
+      setSource("static");
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Initial fetch on mount
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      fetchData(1);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleSearch() {
+    setPage(1);
+    fetchData(1);
+  }
+
+  function handlePageChange(newPage: number) {
+    setPage(newPage);
+    fetchData(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <>
-      {/* Filters */}
+      {/* Filter bar */}
       <section className="bg-stone-warm border-b border-stone-border sticky top-16 lg:top-20 z-30">
         <div className="container py-4">
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/30" />
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex flex-col gap-1 flex-1 min-w-[160px]">
+              <label className="text-xs text-charcoal/50 font-medium">City</label>
               <input
                 type="text"
-                placeholder="Search by address or city..."
-                value={searchQuery}
-                onChange={(e) => { setPage(1); setSearchQuery(e.target.value); }}
-                className="w-full pl-9 pr-4 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy focus:ring-1 focus:ring-burgundy/20 outline-none"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="e.g. Toronto"
+                className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy focus:ring-1 focus:ring-burgundy/20 outline-none"
               />
             </div>
 
-            <select
-              value={typeFilter}
-              onChange={(e) => handleFilterChange(setTypeFilter, e.target.value)}
-              className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
-            >
-              {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-charcoal/50 font-medium">Property Type</label>
+              <select
+                value={typeIndex}
+                onChange={(e) => setTypeIndex(Number(e.target.value))}
+                className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+              >
+                {TYPES.map((t, i) => (
+                  <option key={i} value={i}>{t.label}</option>
+                ))}
+              </select>
+            </div>
 
-            <select
-              value={cityFilter}
-              onChange={(e) => handleFilterChange(setCityFilter, e.target.value)}
-              className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
-            >
-              {GTA_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-charcoal/50 font-medium">Min Price</label>
+              <select
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+              >
+                {MIN_PRICES.map((p) => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+            </div>
 
-            <select
-              value={String(priceFilter)}
-              onChange={(e) => { setPage(1); setPriceFilter(Number(e.target.value)); }}
-              className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
-            >
-              {PRICE_RANGES.map((r, i) => (
-                <option key={i} value={String(i)}>{r.label}</option>
-              ))}
-            </select>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-charcoal/50 font-medium">Max Price</label>
+              <select
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+              >
+                {MAX_PRICES.map((p) => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+            </div>
 
-            <select
-              value={bedFilter}
-              onChange={(e) => handleFilterChange(setBedFilter, e.target.value)}
-              className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-charcoal/50 font-medium">Beds</label>
+              <select
+                value={beds}
+                onChange={(e) => setBeds(e.target.value)}
+                className="px-3 py-2.5 text-sm border border-stone-border rounded-md bg-white focus:border-burgundy outline-none"
+              >
+                {BED_OPTIONS.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={handleSearch}
+              className="px-6 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md hover:opacity-90 transition-opacity"
             >
-              {BED_OPTIONS.map((b) => (
-                <option key={b.value} value={b.value}>{b.label}</option>
-              ))}
-            </select>
+              Search
+            </button>
           </div>
         </div>
       </section>
@@ -195,6 +235,18 @@ export default function PropertiesClient() {
 
           {loading ? (
             <ListingsSkeleton />
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="font-serif text-xl text-charcoal/50 mb-4">
+                Unable to load listings right now. Please try again.
+              </p>
+              <button
+                onClick={() => fetchData(page)}
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md hover:opacity-90 transition-opacity"
+              >
+                Retry
+              </button>
+            </div>
           ) : listings.length > 0 ? (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -203,11 +255,10 @@ export default function PropertiesClient() {
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-2 mt-12">
                   <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    onClick={() => handlePageChange(Math.max(1, page - 1))}
                     disabled={page === 1}
                     className="p-2 rounded border border-stone-border text-charcoal/60 hover:border-burgundy hover:text-burgundy disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
@@ -217,7 +268,7 @@ export default function PropertiesClient() {
                     Page {page} of {totalPages}
                   </span>
                   <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
                     className="p-2 rounded border border-stone-border text-charcoal/60 hover:border-burgundy hover:text-burgundy disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
@@ -228,8 +279,8 @@ export default function PropertiesClient() {
             </>
           ) : (
             <div className="text-center py-20">
-              <p className="font-serif text-xl text-charcoal/40 mb-2">No properties match your criteria</p>
-              <p className="text-sm text-charcoal/30">Try adjusting your filters or search terms.</p>
+              <p className="font-serif text-xl text-charcoal/40 mb-2">No listings found.</p>
+              <p className="text-sm text-charcoal/30">Try adjusting your search filters.</p>
             </div>
           )}
 

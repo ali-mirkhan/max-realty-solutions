@@ -36,6 +36,8 @@ export async function GET(request: NextRequest) {
 
   const sp = request.nextUrl.searchParams;
 
+  const top = sp.get("top") ? Number(sp.get("top")) : undefined;
+
   const params: ListingsParams = {
     city: sp.get("city") ?? undefined,
     minPrice: sp.get("minPrice") ? Number(sp.get("minPrice")) : undefined,
@@ -45,7 +47,7 @@ export async function GET(request: NextRequest) {
     type: sp.get("type") ?? undefined,
     search: sp.get("search") ?? undefined,
     page: sp.get("page") ? Number(sp.get("page")) : 1,
-    limit: sp.get("limit") ? Number(sp.get("limit")) : 20,
+    limit: top ?? (sp.get("limit") ? Number(sp.get("limit")) : 20),
   };
 
   const useNSP = sp.get("feed") !== "member";
@@ -61,7 +63,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ listings, total, source: feed });
+    return NextResponse.json({ listings, total, count: listings.length, source: feed });
   } catch {
     return NextResponse.json({
       listings: staticProperties,
