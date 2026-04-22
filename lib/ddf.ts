@@ -62,10 +62,14 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
   const cached = tokenCache.get(cacheKey);
   if (cached && Date.now() < cached.expiresAt) return cached.token;
 
-  const clientId = useNSP ? process.env.DDF_NSP_USERNAME : process.env.DDF_USERNAME;
-  const clientSecret = useNSP ? process.env.DDF_NSP_PASSWORD : process.env.DDF_PASSWORD;
+  const clientId = useNSP
+    ? (process.env.CREA_NSP_USERNAME ?? process.env.DDF_NSP_USERNAME)
+    : (process.env.CREA_MEMBER_USERNAME ?? process.env.DDF_USERNAME);
+  const clientSecret = useNSP
+    ? (process.env.CREA_NSP_PASSWORD ?? process.env.DDF_NSP_PASSWORD)
+    : (process.env.CREA_MEMBER_PASSWORD ?? process.env.DDF_PASSWORD);
   if (!clientId || !clientSecret) {
-    console.warn(`[DDF] getAccessToken(${cacheKey}): env vars not set — DDF_${useNSP ? "NSP_" : ""}USERNAME/PASSWORD missing`);
+    console.warn(`[DDF] getAccessToken(${cacheKey}): env vars not set — CREA_${useNSP ? "NSP" : "MEMBER"}_USERNAME/PASSWORD missing`);
     return null;
   }
 
