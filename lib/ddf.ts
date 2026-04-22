@@ -2,7 +2,7 @@ import type { Property } from "@/lib/types";
 
 const TOKEN_ENDPOINT =
   process.env.CREA_TOKEN_URL ?? "https://identity.crea.ca/connect/token";
-const DDF_ENDPOINT = "https://ddf.realtor.ca/api/v2/Property";
+const DDF_ENDPOINT = "https://ddfapi.realtor.ca/odata/v1/Property";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop";
 
@@ -238,7 +238,7 @@ export async function fetchListings(
 
   console.log('[DDF] Token acquired, first 10 chars:', token.slice(0, 10));
 
-  const fullUrl = "https://ddf.realtor.ca/api/v2/Property?$top=5&$select=ListingKey,ListPrice,City,BedroomsTotal,BathroomsTotal,UnparsedAddress,PropertyType";
+  const fullUrl = "https://ddfapi.realtor.ca/odata/v1/Property?$top=5&$select=ListingKey,ListPrice,City,BedroomsTotal,BathroomsTotal,UnparsedAddress,PropertyType";
   console.log('[DDF] EXACT URL:', fullUrl);
 
   try {
