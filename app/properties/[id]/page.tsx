@@ -29,7 +29,10 @@ async function getProperty(id: string): Promise<Property | null> {
   }
 }
 
-// Pre-render static property pages; DDF IDs are rendered on demand (dynamicParams=true default)
+// Allow DDF listing IDs (not in generateStaticParams) to render on demand
+export const dynamicParams = true;
+
+// Pre-render only the known static property pages at build time
 export async function generateStaticParams() {
   return staticProperties.map((p) => ({ id: p.id }));
 }

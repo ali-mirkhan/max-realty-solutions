@@ -272,13 +272,18 @@ export async function fetchListings(
 }
 
 export async function fetchListing(id: string): Promise<Property | null> {
+  // DDF: $expand=Media is NOT supported — Media is embedded in responses by default.
+  // Entity key URL Property('id') works; filter $filter=ListingKey eq 'id' works as fallback.
   for (const useNSP of [true, false]) {
     const token = await getAccessToken(useNSP);
     if (!token) continue;
 
+    const feed = useNSP ? "NSP" : "Member";
+
     try {
-      const url = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')?$expand=Media`;
-      const res = await fetch(url, {
+      // Primary: entity key lookup (no $expand — Media comes back automatically)
+      const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')`;
+      const res = await fetch(entityUrl, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         next: { revalidate: 300 },
       });
@@ -286,14 +291,19 @@ export async function fetchListing(id: string): Promise<Property | null> {
       if (res.ok) {
         const data = (await res.json()) as DDFRawListing;
         if (data?.ListingKey || data?.ListingId) {
+          console.log(`[DDF] fetchListing('${id}') found via ${feed} entity key, photos: ${data.Media?.length ?? 0}`);
           return transformListing(data);
         }
+      } else {
+        let eb = "";
+        try { eb = await res.text(); } catch { /* ignore */ }
+        console.log(`[DDF] fetchListing entity ${feed} HTTP ${res.status}: ${eb.slice(0, 120)}`);
       }
 
+      // Fallback: OData filter — also no $expand needed
       const filterUrl = new URL(DDF_ENDPOINT);
       filterUrl.searchParams.set("$filter", `ListingKey eq '${escapeOData(id)}'`);
       filterUrl.searchParams.set("$top", "1");
-      filterUrl.searchParams.set("$expand", "Media");
 
       const res2 = await fetch(filterUrl.toString(), {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -303,11 +313,22 @@ export async function fetchListing(id: string): Promise<Property | null> {
       if (res2.ok) {
         const data2 = (await res2.json()) as DDFListingsResponse;
         const item = data2?.value?.[0];
-        if (item) return transformListing(item);
+        if (item) {
+          console.log(`[DDF] fetchListing('${id}') found via ${feed} filter, photos: ${item.Media?.length ?? 0}`);
+          return transformListing(item);
+        }
+        console.log(`[DDF] fetchListing('${id}') ${feed} filter returned 0 results`);
+      } else {
+        let eb = "";
+        try { eb = await res2.text(); } catch { /* ignore */ }
+        console.error(`[DDF] fetchListing filter ${feed} HTTP ${res2.status}: ${eb.slice(0, 120)}`);
       }
-    } catch {
+    } catch (err) {
+      console.error(`[DDF] fetchListing('${id}') ${feed} error:`, err);
       continue;
     }
   }
+
+  console.log(`[DDF] fetchListing('${id}') not found in any feed`);
   return null;
 }
