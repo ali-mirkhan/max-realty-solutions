@@ -236,21 +236,13 @@ export async function fetchListings(
     return { listings: [], total: 0, feed: "none" };
   }
 
-  const limit = params.limit ?? 20;
-  const skip = ((params.page ?? 1) - 1) * limit;
+  console.log('[DDF] Token acquired, first 10 chars:', token.slice(0, 10));
 
-  const url = new URL(DDF_ENDPOINT);
-  url.searchParams.set("$filter", buildFilter(params));
-  url.searchParams.set("$expand", "Media");
-  url.searchParams.set("$top", String(limit));
-  url.searchParams.set("$skip", String(skip));
-  url.searchParams.set("$orderby", "OriginalEntryTimestamp desc");
-  url.searchParams.set("$count", "true");
-
-  console.log('[DDF] Fetching listings from:', url.toString());
+  const fullUrl = "https://ddf.realtor.ca/api/v2/Property?$top=5&$select=ListingKey,ListPrice,City,BedroomsTotal,BathroomsTotal,UnparsedAddress,PropertyType";
+  console.log('[DDF] EXACT URL:', fullUrl);
 
   try {
-    const res = await fetch(url.toString(), {
+    const res = await fetch(fullUrl, {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       next: { revalidate: 300 },
     });
