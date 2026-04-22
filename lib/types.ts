@@ -23,6 +23,8 @@ export interface Property {
   office?: string;
   parking?: number;
   agentName?: string;
+  listingDate?: string;
+  originalListPrice?: number;
 }
 
 export interface BlogPost {

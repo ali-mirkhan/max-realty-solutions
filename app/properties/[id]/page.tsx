@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
 import {
   ArrowLeft, Bed, Bath, Maximize, MapPin, Calendar,
-  Ruler, DollarSign, FileText, Car, Home,
+  Ruler, DollarSign, Car, Home, User, Building2,
+  ExternalLink, Clock,
 } from "lucide-react";
 import PropertyInquiry from "./PropertyInquiry";
 import PropertyGallery from "./PropertyGallery";
+import DescriptionSection from "./DescriptionSection";
+import SimilarListings from "./SimilarListings";
+import SaveButton from "./SaveButton";
 import staticData from "@/data/properties.json";
 import type { Property } from "@/lib/types";
 import { fetchListing } from "@/lib/ddf";
@@ -15,23 +20,33 @@ import ShareButtons from "@/components/ShareButtons";
 
 const staticProperties = staticData as Property[];
 
-// Force Node.js runtime — lib/ddf.ts uses Buffer which is not available on Edge
 export const runtime = "nodejs";
-// Always render dynamically — DDF listing IDs are not known at build time
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
+
+function daysOnMarket(dateStr: string | undefined): number | null {
+  if (!dateStr) return null;
+  const then = new Date(dateStr);
+  if (isNaN(then.getTime())) return null;
+  return Math.floor((Date.now() - then.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function cleanDescription(text: string): string {
+  return text
+    .replace(/\s*\(id:\s*\S+\)\s*$/i, "")
+    .replace(/\s*\bid:\s*\d+\s*$/i, "")
+    .trim();
+}
 
 async function getProperty(id: string): Promise<Property | null> {
   console.log(`[property-detail] getProperty called with id="${id}"`);
 
-  // Check static data first — no DDF call needed for pre-rendered static props
   const staticProp = staticProperties.find((p) => p.id === id);
   if (staticProp) {
     console.log(`[property-detail] found in static data: "${id}"`);
     return staticProp;
   }
 
-  // DDF live lookup for all other IDs
   console.log(`[property-detail] not in static data, calling fetchListing("${id}")`);
   try {
     const result = await fetchListing(id);
@@ -43,7 +58,6 @@ async function getProperty(id: string): Promise<Property | null> {
   }
 }
 
-// Pre-render only the known static property pages at build time
 export async function generateStaticParams() {
   return staticProperties.map((p) => ({ id: p.id }));
 }
@@ -57,7 +71,9 @@ export async function generateMetadata({
   if (!property) return { title: "Property Not Found" };
   return {
     title: `${property.address}, ${property.city}`,
-    description: property.description || `${property.type} listing in ${property.city}, Ontario`,
+    description:
+      property.description ||
+      `${property.type} listing in ${property.city}, Ontario`,
   };
 }
 
@@ -76,209 +92,368 @@ export default async function PropertyDetailPage({
     : [];
 
   const isLive = !staticProperties.find((p) => p.id === property.id);
+  const dom = daysOnMarket(property.listingDate);
+  const description = cleanDescription(property.description || "");
+
+  const fullAddress = [
+    property.address,
+    property.city,
+    property.province || "Ontario",
+    property.postalCode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`;
+
+  // Key stats — only render cards with data
+  type Stat = { Icon: LucideIcon; value: string | number; label: string };
+  const stats: Stat[] = [
+    ...(property.type === "residential" && property.beds > 0
+      ? [{ Icon: Bed, value: property.beds, label: "Bedrooms" }]
+      : []),
+    ...(property.type === "residential" && property.baths > 0
+      ? [{ Icon: Bath, value: property.baths, label: "Bathrooms" }]
+      : []),
+    ...(property.sqft > 0
+      ? [{ Icon: Maximize, value: property.sqft.toLocaleString(), label: "Sq Ft" }]
+      : []),
+    ...(property.lotSize
+      ? [{ Icon: Ruler, value: property.lotSize, label: "Lot Size" }]
+      : []),
+    ...((property.parking ?? 0) > 0
+      ? [{ Icon: Car, value: property.parking!, label: "Parking" }]
+      : []),
+    ...(property.yearBuilt && property.yearBuilt > 0
+      ? [{ Icon: Calendar, value: property.yearBuilt, label: "Year Built" }]
+      : []),
+    {
+      Icon: Home,
+      value:
+        property.type.charAt(0).toUpperCase() + property.type.slice(1),
+      label: "Type",
+    },
+  ];
+
+  // Property details table rows
+  const details: { label: string; value: string }[] = [];
+  details.push({
+    label: "Property Type",
+    value:
+      property.type.charAt(0).toUpperCase() + property.type.slice(1),
+  });
+  details.push({
+    label: "Transaction",
+    value: property.status.toLowerCase().includes("lease") ? "Lease" : "Sale",
+  });
+  if (property.mls) details.push({ label: "MLS®", value: property.mls });
+  if (dom !== null)
+    details.push({
+      label: "Days on Market",
+      value: dom === 0 ? "Listed today" : `${dom} day${dom === 1 ? "" : "s"}`,
+    });
+  if (property.yearBuilt && property.yearBuilt > 0)
+    details.push({ label: "Year Built", value: String(property.yearBuilt) });
+  if (property.lotSize)
+    details.push({ label: "Lot Size", value: property.lotSize });
+  if ((property.parking ?? 0) > 0)
+    details.push({
+      label: "Parking",
+      value: `${property.parking} space${property.parking === 1 ? "" : "s"}`,
+    });
+  if (property.propertyTax > 0)
+    details.push({
+      label: "Annual Tax",
+      value: formatCAD(property.propertyTax),
+    });
+  if (property.postalCode)
+    details.push({ label: "Postal Code", value: property.postalCode });
+  if (property.city)
+    details.push({ label: "City / Municipality", value: property.city });
+  if (
+    property.neighbourhood &&
+    property.neighbourhood !== property.city
+  )
+    details.push({ label: "Community", value: property.neighbourhood });
+  if (property.province)
+    details.push({ label: "Province", value: property.province });
+  if (property.office)
+    details.push({ label: "Listing Office", value: property.office });
+  if (property.agentName)
+    details.push({ label: "Listing Agent", value: property.agentName });
+  if (
+    property.originalListPrice &&
+    property.originalListPrice > 0 &&
+    property.originalListPrice !== property.price
+  )
+    details.push({
+      label: "Original List Price",
+      value: formatCAD(property.originalListPrice),
+    });
 
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="bg-white border-b border-stone-border">
-        <div className="container py-4">
-          <Link
-            href="/properties"
-            className="inline-flex items-center gap-2 text-sm text-charcoal/50 hover:text-burgundy transition-colors"
-          >
-            <ArrowLeft size={14} /> Back to Properties
-          </Link>
-        </div>
-      </div>
-
-      {/* Gallery */}
+      {/* ── Gallery ──────────────────────────────────────────── */}
       <section className="bg-white">
-        <div className="container py-6">
+        <div className="container pt-6 pb-2">
           {images.length > 0 ? (
             <PropertyGallery images={images} address={property.address} />
           ) : (
-            <div className="aspect-[21/9] rounded-lg bg-stone-light flex items-center justify-center">
-              <Home size={40} className="text-charcoal/20" />
+            <div
+              className="rounded-xl bg-stone-light flex items-center justify-center"
+              style={{ height: 320 }}
+            >
+              <Home size={48} className="text-charcoal/20" />
             </div>
           )}
         </div>
       </section>
 
-      {/* Content */}
-      <section className="py-8 lg:py-12">
+      {/* ── Header ───────────────────────────────────────────── */}
+      <section className="bg-white border-b border-stone-border">
+        <div className="container py-6">
+          {/* Back link + Save/Share */}
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
+            <Link
+              href="/properties"
+              className="inline-flex items-center gap-1.5 text-sm text-charcoal/50 hover:text-burgundy transition-colors"
+            >
+              <ArrowLeft size={14} /> Back to Properties
+            </Link>
+            <div className="flex items-center gap-2 flex-wrap">
+              <SaveButton />
+              <ShareButtons title={`${property.address}, ${property.city}`} />
+            </div>
+          </div>
+
+          {/* Badges row */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="px-3 py-1 text-sm font-semibold text-white bg-burgundy rounded-full">
+              {property.status}
+            </span>
+            <span className="px-3 py-1 text-sm font-medium text-charcoal bg-stone-border rounded-full capitalize">
+              {property.type}
+            </span>
+            {property.mls && (
+              <span className="px-3 py-1 text-sm font-medium text-charcoal/60 bg-stone-light border border-stone-border rounded-full">
+                MLS® {property.mls}
+              </span>
+            )}
+            {isLive && (
+              <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-full">
+                Live Listing
+              </span>
+            )}
+            {dom !== null && (
+              <span className="flex items-center gap-1 text-xs text-charcoal/40 ml-1">
+                <Clock size={12} />
+                {dom === 0
+                  ? "Listed today"
+                  : `Listed ${dom} day${dom === 1 ? "" : "s"} ago`}
+              </span>
+            )}
+          </div>
+
+          {/* Address */}
+          <h1 className="font-serif text-2xl lg:text-4xl font-semibold text-charcoal mb-1">
+            {property.address}
+          </h1>
+          <p className="text-sm text-charcoal/50 flex items-center gap-1 mb-5">
+            <MapPin size={14} className="shrink-0" />
+            {[
+              property.city,
+              property.neighbourhood &&
+              property.neighbourhood !== property.city
+                ? property.neighbourhood
+                : null,
+              property.province || "Ontario",
+              property.postalCode,
+            ]
+              .filter(Boolean)
+              .join(", ")}
+          </p>
+
+          {/* Price */}
+          <p className="font-serif text-3xl lg:text-4xl font-bold text-burgundy">
+            {formatPrice(property.price, property.type, property.status)}
+          </p>
+        </div>
+      </section>
+
+      {/* ── Main content ─────────────────────────────────────── */}
+      <section className="py-10 lg:py-14">
         <div className="container">
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-            {/* Main */}
-            <div className="lg:col-span-2">
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="px-2.5 py-1 text-xs font-semibold text-white bg-burgundy rounded">
-                  {property.status}
-                </span>
-                <span className="px-2.5 py-1 text-xs font-medium text-charcoal bg-stone-border rounded capitalize">
-                  {property.type}
-                </span>
-                {property.mls && (
-                  <span className="text-xs text-charcoal/40">MLS® {property.mls}</span>
-                )}
-                {isLive && (
-                  <span className="px-2 py-0.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded">
-                    Live Listing
-                  </span>
-                )}
-              </div>
 
-              <h1 className="font-serif text-2xl lg:text-3xl font-semibold text-charcoal mb-1">
-                {property.address}
-              </h1>
-              <p className="text-sm text-charcoal/50 flex items-center gap-1 mb-4">
-                <MapPin size={14} />
-                {property.city}
-                {property.neighbourhood && property.neighbourhood !== property.city
-                  ? `, ${property.neighbourhood}`
-                  : ""}
-                {property.province ? `, ${property.province}` : ", Ontario"}
-              </p>
+            {/* ── Left column ── */}
+            <div className="lg:col-span-2 space-y-10">
 
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-                <p className="font-serif text-3xl font-bold text-burgundy">
-                  {formatPrice(property.price, property.type, property.status)}
-                </p>
-                <ShareButtons title={`${property.address}, ${property.city}`} />
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                {property.type === "residential" && (
-                  <>
-                    <div className="bg-stone-light rounded-lg p-4 text-center">
-                      <Bed size={18} className="text-burgundy mx-auto mb-1" />
-                      <p className="text-lg font-semibold text-charcoal">{property.beds || "—"}</p>
-                      <p className="text-xs text-charcoal/50">Bedrooms</p>
+              {/* Key Stats Bar */}
+              {stats.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {stats.map(({ Icon, value, label }) => (
+                    <div
+                      key={label}
+                      className="bg-stone-light rounded-xl p-4 flex flex-col items-center text-center gap-1.5"
+                    >
+                      <Icon size={18} className="text-burgundy" />
+                      <p className="text-base font-semibold text-charcoal leading-tight">
+                        {value}
+                      </p>
+                      <p className="text-xs text-charcoal/40">{label}</p>
                     </div>
-                    <div className="bg-stone-light rounded-lg p-4 text-center">
-                      <Bath size={18} className="text-burgundy mx-auto mb-1" />
-                      <p className="text-lg font-semibold text-charcoal">{property.baths || "—"}</p>
-                      <p className="text-xs text-charcoal/50">Bathrooms</p>
-                    </div>
-                  </>
-                )}
-                {property.sqft > 0 && (
-                  <div className="bg-stone-light rounded-lg p-4 text-center">
-                    <Maximize size={18} className="text-burgundy mx-auto mb-1" />
-                    <p className="text-lg font-semibold text-charcoal">
-                      {property.sqft.toLocaleString()}
-                    </p>
-                    <p className="text-xs text-charcoal/50">Sq Ft</p>
-                  </div>
-                )}
-                {property.yearBuilt && property.yearBuilt > 0 ? (
-                  <div className="bg-stone-light rounded-lg p-4 text-center">
-                    <Calendar size={18} className="text-burgundy mx-auto mb-1" />
-                    <p className="text-lg font-semibold text-charcoal">{property.yearBuilt}</p>
-                    <p className="text-xs text-charcoal/50">Year Built</p>
-                  </div>
-                ) : null}
-                {(property.parking ?? 0) > 0 && (
-                  <div className="bg-stone-light rounded-lg p-4 text-center">
-                    <Car size={18} className="text-burgundy mx-auto mb-1" />
-                    <p className="text-lg font-semibold text-charcoal">{property.parking}</p>
-                    <p className="text-xs text-charcoal/50">Parking</p>
-                  </div>
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {property.description && (
-                <>
+              {/* Description */}
+              {description && (
+                <div>
                   <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
                     About This Property
                   </h2>
-                  <p className="text-sm text-charcoal/70 leading-relaxed mb-8">
-                    {property.description}
-                  </p>
-                </>
+                  <DescriptionSection description={description} />
+                </div>
               )}
 
+              {/* Features */}
               {property.features && property.features.length > 0 && (
-                <>
-                  <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">Features</h2>
-                  <div className="grid grid-cols-2 gap-2 mb-8">
+                <div>
+                  <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
+                    Features
+                  </h2>
+                  <div className="grid grid-cols-2 gap-2">
                     {property.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2 text-sm text-charcoal/70">
-                        <div className="w-1.5 h-1.5 rounded-full bg-burgundy" />
+                      <div
+                        key={f}
+                        className="flex items-center gap-2 text-sm text-charcoal/70"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-burgundy shrink-0" />
                         {f}
                       </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
 
-              {/* Property Details table */}
-              <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
-                Property Details
-              </h2>
-              <div className="border border-stone-border rounded-lg overflow-hidden mb-8">
-                <table className="w-full text-sm">
-                  <tbody>
-                    {[
-                      { label: "Property Type", value: property.type, Icon: FileText },
-                      property.lotSize
-                        ? { label: "Lot Size", value: property.lotSize, Icon: Ruler }
-                        : null,
-                      property.yearBuilt && property.yearBuilt > 0
-                        ? { label: "Year Built", value: String(property.yearBuilt), Icon: Calendar }
-                        : null,
-                      property.propertyTax && property.propertyTax > 0
-                        ? {
-                            label: "Annual Property Tax",
-                            value: formatCAD(property.propertyTax),
-                            Icon: DollarSign,
-                          }
-                        : null,
-                      property.office
-                        ? { label: "Listing Office", value: property.office, Icon: Home }
-                        : null,
-                      property.agentName
-                        ? { label: "Listing Agent", value: property.agentName, Icon: Home }
-                        : null,
-                      property.postalCode
-                        ? { label: "Postal Code", value: property.postalCode, Icon: MapPin }
-                        : null,
-                    ]
-                      .filter(Boolean)
-                      .map((row, i) => (
-                        <tr
-                          key={row!.label}
-                          className={i % 2 === 0 ? "bg-stone-warm" : "bg-white"}
-                        >
-                          <td className="px-4 py-3 text-charcoal/50">
-                            <span className="flex items-center gap-2">
-                              {row && <row.Icon size={14} />} {row!.label}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-charcoal font-medium text-right capitalize">
-                            {row!.value}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+              {/* Listing Agent / Brokerage */}
+              {(property.agentName || property.office) && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
+                    Listed By
+                  </h2>
+                  <div className="border border-stone-border rounded-xl p-5 flex items-start gap-4 bg-stone-warm">
+                    <div className="w-12 h-12 rounded-full bg-stone-border flex items-center justify-center shrink-0">
+                      <User size={20} className="text-charcoal/40" />
+                    </div>
+                    <div>
+                      {property.agentName && (
+                        <p className="font-semibold text-charcoal">
+                          {property.agentName}
+                        </p>
+                      )}
+                      {property.office && (
+                        <p className="text-sm text-charcoal/60 flex items-center gap-1.5 mt-1">
+                          <Building2 size={13} className="shrink-0" />
+                          {property.office}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Property Details — two-column grid */}
+              {details.length > 0 && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
+                    Property Details
+                  </h2>
+                  <div className="border border-stone-border rounded-xl overflow-hidden">
+                    <div className="grid grid-cols-1 sm:grid-cols-2">
+                      {details.map(({ label, value }, i) => {
+                        const row = Math.floor(i / 2);
+                        const isLeft = i % 2 === 0;
+                        const isLastOdd =
+                          i === details.length - 1 && details.length % 2 !== 0;
+                        return (
+                          <div
+                            key={label}
+                            className={[
+                              "px-4 py-3 border-b border-stone-border last:border-b-0",
+                              row % 2 === 0 ? "bg-stone-warm" : "bg-white",
+                              isLeft && !isLastOdd
+                                ? "sm:border-r border-stone-border"
+                                : "",
+                              isLastOdd ? "sm:col-span-2" : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                          >
+                            <p className="text-xs text-charcoal/40 mb-0.5">
+                              {label}
+                            </p>
+                            <p className="text-sm text-charcoal font-medium capitalize">
+                              {value}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Map / Location */}
+              <div>
+                <h2 className="font-serif text-xl font-semibold text-charcoal mb-3">
+                  Location
+                </h2>
+                <div className="border border-stone-border rounded-xl overflow-hidden">
+                  <div className="bg-stone-light h-44 flex flex-col items-center justify-center gap-3 px-6">
+                    <MapPin size={32} className="text-burgundy/40" />
+                    <p className="text-sm text-charcoal/50 text-center">
+                      {fullAddress}
+                    </p>
+                  </div>
+                  <div className="px-5 py-3 bg-white flex items-center justify-between gap-4">
+                    <p className="text-xs text-charcoal/40">
+                      Map view may not reflect exact listing address
+                    </p>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-burgundy hover:underline shrink-0"
+                    >
+                      View on Google Maps
+                      <ExternalLink size={13} />
+                    </a>
+                  </div>
+                </div>
               </div>
 
-              {/* CREA attribution for live listings */}
+              {/* CREA attribution */}
               {isLive && (
                 <p className="text-xs text-charcoal/40 border-t border-stone-border pt-4">
-                  Listing data provided by REALTOR.ca via the CREA Data Distribution Facility (DDF®).
-                  The trademarks MLS®, Multiple Listing Service® and the associated logos are owned by
-                  The Canadian Real Estate Association (CREA).
+                  Listing data provided by REALTOR.ca via the CREA Data
+                  Distribution Facility (DDF®). The trademarks MLS®, Multiple
+                  Listing Service® and the associated logos are owned by The
+                  Canadian Real Estate Association (CREA).
                 </p>
               )}
             </div>
 
-            {/* Sidebar */}
+            {/* ── Right sidebar ── */}
             <div className="lg:col-span-1">
-              <PropertyInquiry address={`${property.address}, ${property.city}`} />
+              <PropertyInquiry
+                address={`${property.address}, ${property.city}`}
+              />
             </div>
           </div>
+
+          {/* Similar listings — full width below the grid */}
+          <SimilarListings city={property.city} currentId={property.id} />
         </div>
       </section>
     </>

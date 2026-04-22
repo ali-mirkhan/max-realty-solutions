@@ -39,6 +39,7 @@ interface DDFRawListing {
   TaxAnnualAmount?: number | null;
   SubdivisionName?: string;
   OriginalEntryTimestamp?: string;
+  OriginalListPrice?: number | null;
 }
 
 interface DDFListingsResponse {
@@ -163,6 +164,8 @@ function transformListing(raw: DDFRawListing): Property {
     features: [],
     lotSize: raw.LotSizeDimensions ?? "",
     propertyTax: Number(raw.TaxAnnualAmount ?? 0),
+    listingDate: raw.OriginalEntryTimestamp ?? "",
+    originalListPrice: raw.OriginalListPrice ? Number(raw.OriginalListPrice) : undefined,
   };
 }
 
