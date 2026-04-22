@@ -1,88 +1,102 @@
-// Storyblok CMS integration: fetches blog posts from Storyblok at request time.
-// Falls back to static blogPosts.json if Storyblok returns no stories.
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import BlogFilter from "./BlogFilter";
-import staticBlogPosts from "@/data/blogPosts.json";
-import type { BlogPost } from "@/lib/types";
-import { fetchStories } from "@/lib/storyblok";
-import { posts as richPosts } from "@/lib/blogData";
+import { ArrowRight, Calendar, Tag } from "lucide-react";
+import { getAllPosts } from "@/lib/blogData";
 
 export const metadata: Metadata = {
   title: "Insights & Market Updates | Max Realty Solutions",
-  description: "Expert analysis and news from the Max Realty Solutions team. GTA real estate market updates, buying guides, agent tips, and investment insights.",
+  description: "Expert analysis and market news from the Max Realty Solutions team. GTA real estate updates, buying guides, and investment insights.",
   openGraph: {
     title: "Insights & Market Updates | Max Realty Solutions",
-    description: "Expert analysis and news from the Max Realty Solutions team. GTA real estate market updates, buying guides, and investment insights.",
+    description: "Expert analysis and market news from the Max Realty Solutions team.",
   },
 };
 
-function mapStoryToPost(story: Record<string, any>): BlogPost {
-  const c = story.content ?? {};
-  return {
-    id: story.slug,
-    title: c.title ?? story.name,
-    excerpt: c.excerpt ?? "",
-    category: c.category ?? "General",
-    author: c.author ?? "Max Realty Team",
-    date: story.first_published_at ?? story.created_at ?? new Date().toISOString(),
-    image: c.image?.filename ?? "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop",
-    readTime: c.read_time ?? "5 min read",
-  };
-}
-
-export default async function BlogPage() {
-  const stories: Record<string, any>[] = await fetchStories("blog/");
-  const cmsPosts: BlogPost[] =
-    stories.length > 0
-      ? stories.map(mapStoryToPost)
-      : (staticBlogPosts as BlogPost[]);
-
-  // Convert richPosts to BlogPost format so they can enter the shared grid
-  const richAsBlogPosts: BlogPost[] = richPosts.map((p) => ({
-    id: p.slug,
-    title: p.title,
-    excerpt: p.excerpt,
-    category: p.category,
-    author: p.author,
-    date: p.date,
-    image: p.image,
-    readTime: p.readTime,
-  }));
-
-  // Merge: new rich posts first, then CMS/static (deduplicate by id)
-  const richSlugs = new Set(richAsBlogPosts.map((p) => p.id));
-  const allPosts: BlogPost[] = [
-    ...richAsBlogPosts,
-    ...cmsPosts.filter((p) => !richSlugs.has(p.id)),
-  ];
-
-  const categories = ["All", ...Array.from(new Set(allPosts.map((p) => p.category)))];
+export default function BlogPage() {
+  const posts = getAllPosts();
 
   return (
     <>
+      {/* Header */}
       <section className="bg-white border-b border-stone-border">
         <div className="container py-12 lg:py-16">
           <p className="section-label">Insights &amp; Market Updates</p>
-          <h1 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-2">
+          <h1 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-3">
             Insights &amp; Market Updates
           </h1>
-          <p className="text-charcoal/60 max-w-xl">
-            Expert analysis and news from the Max Realty Solutions team.
+          <p className="text-charcoal/60 max-w-xl leading-relaxed">
+            Expert analysis and market news from the Max Realty Solutions team.
           </p>
         </div>
       </section>
-      <BlogFilter posts={allPosts} categories={categories} />
+
+      {/* Post grid */}
+      <section className="py-16 lg:py-20">
+        <div className="container">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {posts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group flex flex-col bg-white border border-stone-border rounded-lg overflow-hidden hover:border-burgundy/20 hover:shadow-lg transition-all duration-200"
+              >
+                {/* Image */}
+                <div className="overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    style={{ width: "100%", height: "220px", objectFit: "cover" }}
+                    className="group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-col flex-1 p-5">
+                  {/* Category */}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium text-burgundy bg-burgundy/10 rounded mb-3 self-start">
+                    <Tag size={11} />
+                    {post.category}
+                  </span>
+
+                  {/* Title */}
+                  <h2 className="font-serif text-lg font-semibold text-charcoal leading-snug mb-2 group-hover:text-burgundy transition-colors">
+                    {post.title}
+                  </h2>
+
+                  {/* Date */}
+                  <p className="flex items-center gap-1.5 text-xs text-charcoal/40 mb-3">
+                    <Calendar size={12} />
+                    {post.date}
+                  </p>
+
+                  {/* Excerpt */}
+                  <p className="text-sm text-charcoal/60 leading-relaxed line-clamp-3 flex-1">
+                    {post.excerpt}
+                  </p>
+
+                  {/* CTA */}
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-burgundy mt-4">
+                    Read More <ArrowRight size={14} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
       <section className="py-16 lg:py-20 bg-stone-light">
         <div className="container text-center">
-          <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-charcoal mb-4">Stay Informed</h2>
+          <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-charcoal mb-4">
+            Have a Real Estate Question?
+          </h2>
           <p className="text-charcoal/60 max-w-md mx-auto mb-6">
-            Get the latest GTA market insights and real estate tips delivered to your inbox.
+            Our team is available to answer your questions and walk you through the GTA market.
           </p>
           <Link href="/contact" className="btn-primary">
-            Get in Touch <ArrowRight size={16} />
+            Contact Us <ArrowRight size={16} />
           </Link>
         </div>
       </section>

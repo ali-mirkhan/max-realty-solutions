@@ -1,189 +1,184 @@
-export interface BlogPostWithContent {
+export interface BlogPost {
   slug: string;
   title: string;
   date: string;
   excerpt: string;
   image: string;
   category: string;
-  author: string;
-  readTime: string;
   content: string;
 }
 
-export const posts: BlogPostWithContent[] = [
+export const posts: BlogPost[] = [
   {
     slug: "interest-rates-gta-2026",
     title: "How Interest Rates Are Impacting Home Prices in the GTA (2026 Update)",
     date: "April 1, 2026",
-    excerpt: "Interest rates continue to shape affordability and pricing across the GTA. Here's what buyers and sellers need to know right now.",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&auto=format&fit=crop",
-    category: "Market Updates",
-    author: "Max Realty Team",
-    readTime: "5 min read",
+    category: "Market Update",
+    excerpt: "Interest rates continue to reshape affordability across the GTA. Here is what buyers and sellers need to know right now.",
+    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80&auto=format&fit=crop",
     content: `
-## The Greater Toronto Area real estate market continues to be heavily influenced by interest rates in 2026.
+The Greater Toronto Area real estate market continues to be heavily influenced by interest rates in 2026. For both buyers and sellers, understanding this relationship is critical to making the right move.
 
-For both buyers and sellers, understanding this relationship is critical to making the right decision.
+## Higher Rates = Lower Affordability
 
-### Higher Rates = Lower Affordability
+When interest rates rise, borrowing becomes more expensive — and that directly impacts how much buyers can qualify for.
 
-When interest rates rise, borrowing becomes more expensive. This directly impacts how much buyers can afford.
+For example, a buyer who could afford a $1,200,000 home at lower rates may now only qualify for $950,000 to $1,000,000. Monthly payments increase significantly, even if home prices stay flat.
 
-For example:
-- A buyer who could afford a $1,200,000 home at lower rates may now only qualify for ~$950,000–$1,000,000.
-- Monthly payments increase significantly, even if home prices stay flat.
+## What This Means for Prices
 
-### What This Means for Prices
+As affordability declines across the GTA:
 
-As affordability declines:
 - Buyer demand slows
-- Sellers face more competition
-- Price growth stabilizes or corrects
+- Sellers face more competition from other listings
+- Price growth stabilizes or corrects in some pockets
+- Conditional offers are becoming more common again
+- Days on market are increasing
+- Buyers have more negotiation room than in recent years
 
-In many GTA pockets, we're seeing:
-- More conditional offers
-- Longer days on market
-- Increased negotiation room
+## Smart Buyer Strategy for 2026
 
-### Smart Buyer Strategy
+In this environment, the strongest buyers are:
 
-In this environment, strong buyers are:
-- Negotiating harder
-- Targeting motivated sellers
-- Locking in properties with long-term upside
+- Negotiating harder and not overbidding
+- Targeting motivated sellers who have been sitting on the market
+- Locking in properties in areas with long-term upside
+- Getting pre-approved early to move quickly when the right property appears
 
-### What Sellers Need to Know
+## What Sellers Need to Know
 
-If you're selling:
-- Pricing correctly is more important than ever
-- Overpricing leads to stagnation
-- First impressions matter — listing launch is critical
+If you are selling in today's market, the rules have changed:
 
-### Bottom Line
+**Pricing correctly from day one is more important than ever.** Overpriced listings sit, accumulate days on market, and eventually sell for less than if they had been priced right initially.
 
-Interest rates are reshaping the market — but they're also creating opportunity for those who understand how to move.
+First impressions matter enormously — your listing launch is your best chance to generate early momentum. Professional photography, staging, and a sharp marketing strategy are no longer optional.
 
-**Thinking of buying or selling in today's market? [Contact us](/contact) — we'll walk you through the numbers and strategy.**
+## Bottom Line
+
+Interest rates are reshaping the GTA market — but they are also creating real opportunities for buyers who are prepared and sellers who are strategic.
+
+Thinking of buying or selling in today's market? Reach out to the Max Realty Solutions team. We will walk you through the numbers and build a strategy around your specific situation.
     `,
   },
   {
     slug: "gta-buyers-market-2026",
     title: "Is the GTA Becoming a Buyer's Market in 2026?",
     date: "April 2, 2026",
-    excerpt: "Inventory is rising and buyers are gaining leverage across the GTA. Here's what's shifting and how to take advantage.",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
-    category: "Market Updates",
-    author: "Max Realty Team",
-    readTime: "5 min read",
+    category: "Market Update",
+    excerpt: "Inventory is rising and buyers are gaining leverage across the GTA. Here is what is shifting — and how to take advantage of it.",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80&auto=format&fit=crop",
     content: `
-## The big question right now: Is the GTA finally shifting toward buyers?
+The big question across the GTA right now: is the market finally shifting toward buyers?
 
-The answer: in many areas — yes, but not uniformly.
+The answer — in many areas, yes. But not uniformly.
 
-### What We're Seeing
+## What We Are Seeing Across the GTA
 
-Across the GTA:
-- Inventory is increasing
-- Listings are staying on market longer
-- Fewer bidding wars compared to peak years
+The data tells a clear story heading into spring 2026:
 
-This gives buyers something they haven't had in years: **negotiation power**.
+- Active listings are up significantly year over year
+- Properties are staying on market longer before selling
+- Bidding wars are far less common than at the market peak
+- Sellers are accepting conditions (financing, home inspection) again
 
-### What Defines a Buyer's Market?
+This gives buyers something they have not had in years: **real negotiating power**.
 
-A true buyer's market typically includes:
-- More listings than buyers
-- Price flexibility
-- Conditions being accepted again (financing, inspection)
+## What Defines a Buyer's Market?
 
-We are seeing signs of this — especially in:
-- Condos
-- Entry-level detached homes
-- Properties that are overpriced
+A buyer's market typically means:
 
-### Buyer Advantage Right Now
+- More listings available than active buyers
+- Price flexibility — sellers are willing to negotiate
+- Conditions accepted without losing the deal
+- Multiple properties to compare before committing
 
-Buyers today can:
-- Negotiate price reductions
-- Request conditions
-- Compare multiple properties
+We are seeing all of these signs, especially in the condo segment, entry-level detached homes, and properties that launched overpriced.
 
-This is a major shift from previous years.
+## Where Buyers Have the Most Leverage Right Now
 
-### But Not Everywhere
+The best opportunities are currently in:
 
-Some segments remain competitive:
-- Turnkey homes in prime areas
-- Well-priced properties
-- Unique or upgraded listings
+- **Condos in the 416 and 905** — oversupply is creating strong negotiating positions for buyers
+- **Entry-level detached homes** — first-time buyers are finding more options and less competition
+- **Overpriced listings** — properties that sat through winter are often open to price adjustments
 
-These still move fast.
+## Where the Market Is Still Competitive
 
-### Final Take
+Not every segment is soft. These still move fast:
 
-We're in a transitional market — not fully buyer-dominated, but clearly moving away from seller dominance.
+- Turnkey, move-in-ready homes in top school districts
+- Well-priced properties that launched correctly
+- Unique or significantly upgraded listings
+- Anything in high-demand pockets like Leaside, Forest Hill, and parts of Mississauga
 
-**If you've been waiting for the right time to buy — this may be your window. [Get in touch](/contact) and let's talk strategy.**
+## Our Take
+
+We are in a transitional market — not fully buyer-dominated, but clearly moving away from the extreme seller conditions of recent years. For buyers who have been waiting, this may be the window they were looking for.
+
+The Max Realty Solutions team works with buyers and sellers across the GTA every day. If you want a clear read on what is happening in your specific neighbourhood, reach out — we will give you the honest numbers.
     `,
   },
   {
     slug: "gta-retail-plaza-investing",
     title: "Why GTA Investors Are Moving Back Into Retail Plaza Real Estate",
     date: "April 3, 2026",
-    excerpt: "Commercial investors are shifting back into retail plazas across the GTA. Here's why — and what smart investors are looking for.",
-    image: "https://images.unsplash.com/photo-1528543606781-2f6e8759f1f4?w=800&auto=format&fit=crop",
     category: "Commercial",
-    author: "Max Realty Team",
-    readTime: "6 min read",
+    excerpt: "While residential markets fluctuate, commercial investors are quietly repositioning into retail plazas across the GTA. Here is why — and what smart investors are looking for.",
+    image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1200&q=80&auto=format&fit=crop",
     content: `
-## While residential markets fluctuate, commercial investors are quietly repositioning — especially in retail plazas across the GTA.
+While residential real estate captures most of the headlines, a quieter shift is happening among experienced investors across the GTA — a return to retail plaza real estate.
 
-### Why Retail Plazas?
+## Why Retail Plazas Are Attracting Attention Again
 
-Retail plazas offer:
-- Stable long-term tenants
-- Predictable income streams
-- Lower turnover vs residential
+Retail plazas offer something that residential investments often cannot: **stability**.
 
-In many cases:
-- Tenants include essential services (pharmacy, grocery, clinics)
-- Vacancy risk is lower when properly managed
+The characteristics that make plazas attractive include:
 
-### Current Opportunity
+- Long-term commercial leases (typically 5 to 10 years)
+- Tenants that include essential services — pharmacies, medical clinics, grocery anchors, and food service
+- Predictable monthly income with contractual rent escalations built into leases
+- Lower tenant turnover compared to residential rental properties
 
-With market uncertainty:
-- Some owners are divesting
-- Cap rates are adjusting
-- Entry points are improving
+## The Current Opportunity
 
-This creates opportunities for strategic buyers.
+Market uncertainty in 2025 and 2026 has created a window for strategic buyers:
 
-### What Smart Investors Are Looking For
+- Some plaza owners who purchased at peak are now looking to exit
+- Cap rates have adjusted upward, improving returns for new buyers
+- Entry price points in secondary GTA markets have become more accessible
+- Lenders are more flexible on commercial deals with strong tenant profiles
 
-Key criteria:
-- Strong tenant mix
-- Long-term leases
-- High-traffic locations
-- Redevelopment potential
+For investors willing to do the work, the deals are there.
 
-### Why Experience Matters
+## What Smart Investors Are Looking For
 
-Commercial deals are not like residential:
-- Structuring matters
-- Lease analysis matters
-- Tenant quality matters
+Not all retail plazas are created equal. The criteria that matter most:
 
-This is where many investors go wrong.
+- **Tenant mix** — is there an anchor tenant driving foot traffic?
+- **Lease terms** — how much runway is left on existing leases?
+- **Location** — high-traffic arterial roads, proximity to residential density
+- **Redevelopment potential** — does the land have future upside beyond the current use?
+- **Deferred maintenance** — understanding the capital requirements before you buy
 
-### Final Thought
+## Why This Is Not a DIY Investment
 
-Retail plaza investments remain one of the most powerful long-term wealth strategies — when done correctly.
+Commercial real estate transactions are fundamentally different from residential deals. Lease analysis, zoning review, environmental considerations, and financing structures all require specialized knowledge.
 
-**Looking to explore commercial opportunities in the GTA? [Let's connect](/contact) — we specialize in exactly this.**
+This is where many first-time commercial investors make costly mistakes — buying based on the income number alone without fully understanding what they are taking on.
+
+## Our Role
+
+Max Realty Solutions specializes in both residential and commercial real estate across the GTA. We work with investors at every stage — from identifying the right asset, to due diligence, to structuring the deal correctly.
+
+If you are looking to explore retail plaza or commercial investment opportunities in the GTA, let us connect. We will show you what is actually available and walk you through the numbers honestly.
     `,
   },
 ];
 
-export function getPostBySlug(slug: string): BlogPostWithContent | undefined {
+export function getPostBySlug(slug: string): BlogPost | undefined {
   return posts.find((p) => p.slug === slug);
+}
+
+export function getAllPosts(): BlogPost[] {
+  return posts;
 }
