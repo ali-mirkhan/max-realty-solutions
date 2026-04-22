@@ -73,7 +73,7 @@ export default function HomePage() {
               className="font-serif text-4xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight tracking-tight mb-6"
               style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
             >
-              Find Your Home in the Greater Toronto Area
+              Find Your Perfect Home or Investment Property
             </h1>
             <p
               className="text-base lg:text-lg text-white/85 leading-relaxed mb-8 max-w-lg"
