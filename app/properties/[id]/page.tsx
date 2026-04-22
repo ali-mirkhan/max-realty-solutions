@@ -15,22 +15,33 @@ import ShareButtons from "@/components/ShareButtons";
 
 const staticProperties = staticData as Property[];
 
-async function getProperty(id: string): Promise<Property | null> {
-  // Try live DDF first
-  // Check static data first — avoids DDF network call during static generation
-  const staticProp = staticProperties.find((p) => p.id === id);
-  if (staticProp) return staticProp;
+// Force Node.js runtime — lib/ddf.ts uses Buffer which is not available on Edge
+export const runtime = "nodejs";
+// Always render dynamically — DDF listing IDs are not known at build time
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
-  // Only reach here for DDF listing keys (dynamic rendering, not pre-rendered)
+async function getProperty(id: string): Promise<Property | null> {
+  console.log(`[property-detail] getProperty called with id="${id}"`);
+
+  // Check static data first — no DDF call needed for pre-rendered static props
+  const staticProp = staticProperties.find((p) => p.id === id);
+  if (staticProp) {
+    console.log(`[property-detail] found in static data: "${id}"`);
+    return staticProp;
+  }
+
+  // DDF live lookup for all other IDs
+  console.log(`[property-detail] not in static data, calling fetchListing("${id}")`);
   try {
-    return await fetchListing(id);
-  } catch {
+    const result = await fetchListing(id);
+    console.log(`[property-detail] fetchListing("${id}") returned: ${result ? `found (${result.address})` : "null"}`);
+    return result;
+  } catch (err) {
+    console.error(`[property-detail] fetchListing("${id}") threw:`, err);
     return null;
   }
 }
-
-// Allow DDF listing IDs (not in generateStaticParams) to render on demand
-export const dynamicParams = true;
 
 // Pre-render only the known static property pages at build time
 export async function generateStaticParams() {

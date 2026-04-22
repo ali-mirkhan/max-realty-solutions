@@ -8,13 +8,23 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const listing = await fetchListing(params.id);
-  if (listing) return NextResponse.json(listing);
+  const { id } = params;
+  console.log(`[api/listings/${id}] GET request received`);
+
+  const listing = await fetchListing(id);
+  if (listing) {
+    console.log(`[api/listings/${id}] returning DDF listing: ${listing.address}`);
+    return NextResponse.json(listing);
+  }
 
   const staticProp = (staticProperties as unknown[]).find(
-    (p: unknown) => (p as { id: string }).id === params.id
+    (p: unknown) => (p as { id: string }).id === id
   );
-  if (staticProp) return NextResponse.json(staticProp);
+  if (staticProp) {
+    console.log(`[api/listings/${id}] returning static listing`);
+    return NextResponse.json(staticProp);
+  }
 
+  console.warn(`[api/listings/${id}] not found in DDF or static data`);
   return NextResponse.json({ error: "Not found" }, { status: 404 });
 }

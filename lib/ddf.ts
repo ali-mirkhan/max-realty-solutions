@@ -63,7 +63,10 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
 
   const clientId = useNSP ? process.env.DDF_NSP_USERNAME : process.env.DDF_USERNAME;
   const clientSecret = useNSP ? process.env.DDF_NSP_PASSWORD : process.env.DDF_PASSWORD;
-  if (!clientId || !clientSecret) return null;
+  if (!clientId || !clientSecret) {
+    console.warn(`[DDF] getAccessToken(${cacheKey}): env vars not set — DDF_${useNSP ? "NSP_" : ""}USERNAME/PASSWORD missing`);
+    return null;
+  }
 
   try {
     const basicAuth =
@@ -75,6 +78,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: "grant_type=client_credentials",
+      cache: "no-store",
     });
     if (!res.ok) {
       let errBody = "";
@@ -274,18 +278,23 @@ export async function fetchListings(
 export async function fetchListing(id: string): Promise<Property | null> {
   // DDF: $expand=Media is NOT supported — Media is embedded in responses by default.
   // Entity key URL Property('id') works; filter $filter=ListingKey eq 'id' works as fallback.
+  // Use cache:'no-store' to avoid ISR cache conflicts in dynamic server rendering.
   for (const useNSP of [true, false]) {
     const token = await getAccessToken(useNSP);
-    if (!token) continue;
+    if (!token) {
+      console.log(`[DDF] fetchListing('${id}') — no token for ${useNSP ? "NSP" : "Member"} feed`);
+      continue;
+    }
 
     const feed = useNSP ? "NSP" : "Member";
 
     try {
       // Primary: entity key lookup (no $expand — Media comes back automatically)
       const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')`;
+      console.log(`[DDF] fetchListing entity lookup: GET ${entityUrl}`);
       const res = await fetch(entityUrl, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        next: { revalidate: 300 },
+        cache: "no-store",
       });
 
       if (res.ok) {
@@ -305,9 +314,10 @@ export async function fetchListing(id: string): Promise<Property | null> {
       filterUrl.searchParams.set("$filter", `ListingKey eq '${escapeOData(id)}'`);
       filterUrl.searchParams.set("$top", "1");
 
+      console.log(`[DDF] fetchListing filter: GET ${filterUrl.toString()}`);
       const res2 = await fetch(filterUrl.toString(), {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        next: { revalidate: 300 },
+        cache: "no-store",
       });
 
       if (res2.ok) {
