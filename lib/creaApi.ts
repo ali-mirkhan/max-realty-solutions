@@ -1,15 +1,8 @@
-/**
- * creaApi.ts — CREA DDF OData v2 API client
- *
- * Uses CREA_NSP_USERNAME / CREA_NSP_PASSWORD for the National Shared Pool.
- * Returns raw Listing objects from the DDF API.
- * For the app-level Property interface (with normalised fields) see lib/ddf.ts.
- */
-
+// CREA DDF OData v2 API client — uses DDF_* env vars (primary)
 const TOKEN_URL =
-  process.env.CREA_TOKEN_URL ?? "https://identity.crea.ca/connect/token";
+  process.env.CREA_TOKEN_URL || "https://identity.crea.ca/connect/token";
 const ODATA_URL =
-  process.env.CREA_ODATA_URL ?? "https://ddf.realtor.ca/api/v2";
+  process.env.CREA_ODATA_URL || "https://ddf.realtor.ca/api/v2";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -58,12 +51,13 @@ export async function getAccessToken(useNSP = true): Promise<string> {
   const cached = _cache.get(key);
   if (cached && Date.now() < cached.expiresAt) return cached.token;
 
+  // DDF_* vars are primary; CREA_* kept as fallback
   const clientId = useNSP
-    ? (process.env.DDF_NSP_USERNAME ?? process.env.CREA_NSP_USERNAME)
-    : (process.env.DDF_USERNAME ?? process.env.CREA_MEMBER_USERNAME);
+    ? (process.env.DDF_NSP_USERNAME || process.env.CREA_NSP_USERNAME)
+    : (process.env.DDF_USERNAME || process.env.CREA_MEMBER_USERNAME);
   const clientSecret = useNSP
-    ? (process.env.DDF_NSP_PASSWORD ?? process.env.CREA_NSP_PASSWORD)
-    : (process.env.DDF_PASSWORD ?? process.env.CREA_MEMBER_PASSWORD);
+    ? (process.env.DDF_NSP_PASSWORD || process.env.CREA_NSP_PASSWORD)
+    : (process.env.DDF_PASSWORD || process.env.CREA_MEMBER_PASSWORD);
 
   if (!clientId || !clientSecret) {
     throw new Error(
@@ -71,6 +65,11 @@ export async function getAccessToken(useNSP = true): Promise<string> {
         `Set DDF_${useNSP ? "NSP_USERNAME" : "USERNAME"} and DDF_${useNSP ? "NSP_PASSWORD" : "PASSWORD"}.`
     );
   }
+
+  console.log(
+    `[creaApi] Fetching CREA token with client_id: ${clientId.slice(0, 6)}... ` +
+    `url: ${TOKEN_URL}`
+  );
 
   const res = await fetch(TOKEN_URL, {
     method: "POST",
@@ -82,8 +81,11 @@ export async function getAccessToken(useNSP = true): Promise<string> {
     cache: "no-store",
   });
 
+  console.log(`[creaApi] CREA token fetch response status: ${res.status}`);
+
   if (!res.ok) {
     const body = await res.text().catch(() => "");
+    console.error(`[creaApi] OAuth ${key} error body: ${body.slice(0, 300)}`);
     throw new Error(`[creaApi] OAuth ${key} failed HTTP ${res.status}: ${body.slice(0, 200)}`);
   }
 

@@ -1,6 +1,7 @@
 import type { Property } from "@/lib/types";
 
-const TOKEN_ENDPOINT = "https://identity.crea.ca/connect/token";
+const TOKEN_ENDPOINT =
+  process.env.CREA_TOKEN_URL ?? "https://identity.crea.ca/connect/token";
 const DDF_ENDPOINT = "https://ddfapi.realtor.ca/odata/v1/Property";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop";
@@ -62,16 +63,26 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
   const cached = tokenCache.get(cacheKey);
   if (cached && Date.now() < cached.expiresAt) return cached.token;
 
+  // DDF_* vars are primary; CREA_* kept as fallback for local dev
   const clientId = useNSP
-    ? (process.env.CREA_NSP_USERNAME ?? process.env.DDF_NSP_USERNAME)
-    : (process.env.CREA_MEMBER_USERNAME ?? process.env.DDF_USERNAME);
+    ? (process.env.DDF_NSP_USERNAME || process.env.CREA_NSP_USERNAME)
+    : (process.env.DDF_USERNAME || process.env.CREA_MEMBER_USERNAME);
   const clientSecret = useNSP
-    ? (process.env.CREA_NSP_PASSWORD ?? process.env.DDF_NSP_PASSWORD)
-    : (process.env.CREA_MEMBER_PASSWORD ?? process.env.DDF_PASSWORD);
+    ? (process.env.DDF_NSP_PASSWORD || process.env.CREA_NSP_PASSWORD)
+    : (process.env.DDF_PASSWORD || process.env.CREA_MEMBER_PASSWORD);
+
   if (!clientId || !clientSecret) {
-    console.warn(`[DDF] getAccessToken(${cacheKey}): env vars not set — CREA_${useNSP ? "NSP" : "MEMBER"}_USERNAME/PASSWORD missing`);
+    console.error(
+      `[DDF] getAccessToken(${cacheKey}): credentials missing — ` +
+      `DDF_${useNSP ? "NSP_USERNAME" : "USERNAME"} and DDF_${useNSP ? "NSP_PASSWORD" : "PASSWORD"} must be set`
+    );
     return null;
   }
+
+  console.log(
+    `[DDF] Fetching CREA token (${cacheKey}) with client_id: ${clientId.slice(0, 6)}... ` +
+    `url: ${TOKEN_ENDPOINT}`
+  );
 
   try {
     const basicAuth =
@@ -85,6 +96,9 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       body: "grant_type=client_credentials",
       cache: "no-store",
     });
+
+    console.log(`[DDF] CREA token fetch response status: ${res.status} (${cacheKey})`);
+
     if (!res.ok) {
       let errBody = "";
       try { errBody = await res.text(); } catch { /* ignore */ }
@@ -95,12 +109,16 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     }
     const data = (await res.json()) as TokenResponse;
     const token = data.access_token;
-    if (!token) return null;
+    if (!token) {
+      console.error(`[DDF] OAuth ${cacheKey} response missing access_token`);
+      return null;
+    }
     const ttl = (data.expires_in ?? 3600) - 60;
     tokenCache.set(cacheKey, { token, expiresAt: Date.now() + ttl * 1000 });
+    console.log(`[DDF] CREA token cached (${cacheKey}), expires in ${ttl}s`);
     return token;
   } catch (err) {
-    console.error(`DDF token fetch error (${cacheKey}):`, err);
+    console.error(`[DDF] token fetch error (${cacheKey}):`, err);
     return null;
   }
 }
