@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { fetchListings, type ListingsParams } from "@/lib/ddf";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
+export const dynamic = "force-dynamic";
 
 // Rate limiting: 30 requests per minute per IP
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();

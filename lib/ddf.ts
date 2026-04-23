@@ -82,6 +82,8 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
   console.log('[DDF] Requesting token, client_id starts with:', clientId?.slice(0, 8));
 
   try {
+    const tokenController = new AbortController();
+    const tokenTimeout = setTimeout(() => tokenController.abort(), 8000);
     const res = await fetch(TOKEN_ENDPOINT, {
       method: "POST",
       headers: {
@@ -89,7 +91,9 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       },
       body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`,
       cache: "no-store",
+      signal: tokenController.signal,
     });
+    clearTimeout(tokenTimeout);
 
     console.log('[DDF] Token response status:', res.status);
 
@@ -249,10 +253,14 @@ export async function fetchListings(
   console.log('[DDF] Fetching OData from:', url.toString());
 
   try {
+    const odataController = new AbortController();
+    const odataTimeout = setTimeout(() => odataController.abort(), 8000);
     const response = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       next: { revalidate: 300 },
+      signal: odataController.signal,
     });
+    clearTimeout(odataTimeout);
 
     console.log('[DDF] OData response status:', response.status, 'ok:', response.ok);
 
@@ -270,9 +278,10 @@ export async function fetchListings(
     const values: DDFRawListing[] = data.value ?? [];
     const total: number = values.length;
 
-    console.log('[DDF] Listings fetched:', values.length);
+    if (useNSP) {
+      console.log('[NSP] Success:', values.length, 'listings returned');
+    }
     console.log('[DDF] First record keys:', values[0] ? Object.keys(values[0]).join(', ') : 'none');
-    console.log(`[DDF] ${useNSP ? "NSP" : "Member"} feed returned ${values.length} listings`);
 
     if (values.length === 0 && useNSP) {
       console.log("[DDF] NSP returned 0 results — falling back to Member feed");
@@ -291,8 +300,11 @@ export async function fetchListings(
       feed: useNSP ? "nsp" : "member",
     };
   } catch (error) {
+    if (useNSP) {
+      console.error('[NSP] Failed:', error instanceof Error ? error.message : String(error));
+      return fetchListings(params, false);
+    }
     console.error('[DDF] FULL ERROR:', error instanceof Error ? error.message : String(error));
-    if (useNSP) return fetchListings(params, false);
     return { listings: [], total: 0, feed: "error" };
   }
 }
