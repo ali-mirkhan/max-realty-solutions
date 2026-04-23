@@ -211,10 +211,10 @@ function buildFilter(params: ListingsParams): string {
     clauses.push(`ListPrice le ${params.maxPrice}`);
   }
   if (params.beds && params.beds > 0) {
-    clauses.push(`BedroomTotal ge ${params.beds}`);
+    clauses.push(`BedroomsTotal ge ${params.beds}`);
   }
   if (params.baths && params.baths > 0) {
-    clauses.push(`BathroomTotal ge ${params.baths}`);
+    clauses.push(`BathroomsTotalInteger ge ${params.baths}`);
   }
 
   return clauses.join(" and ");
