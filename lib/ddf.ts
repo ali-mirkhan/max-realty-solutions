@@ -199,26 +199,22 @@ export interface ListingsParams {
 }
 
 function buildFilter(params: ListingsParams): string {
-  const clauses: string[] = ["StateOrProvince eq 'Ontario'"];
+  const clauses: string[] = [];
 
   if (params.city && params.city !== "All") {
     clauses.push(`City eq '${escapeOData(params.city)}'`);
   }
   if (params.minPrice && params.minPrice > 0) {
-    clauses.push(
-      `(ListPrice ge ${params.minPrice} or TotalActualRent ge ${params.minPrice})`
-    );
+    clauses.push(`ListPrice ge ${params.minPrice}`);
   }
   if (params.maxPrice && params.maxPrice > 0) {
-    clauses.push(
-      `(ListPrice le ${params.maxPrice} or TotalActualRent le ${params.maxPrice})`
-    );
+    clauses.push(`ListPrice le ${params.maxPrice}`);
   }
   if (params.beds && params.beds > 0) {
-    clauses.push(`BedroomsTotal ge ${params.beds}`);
+    clauses.push(`BedroomTotal ge ${params.beds}`);
   }
   if (params.baths && params.baths > 0) {
-    clauses.push(`BathroomsTotalInteger ge ${params.baths}`);
+    clauses.push(`BathroomTotal ge ${params.baths}`);
   }
 
   return clauses.join(" and ");
@@ -240,18 +236,11 @@ export async function fetchListings(
 
   console.log('[DDF] Token OK, length:', token?.length);
 
-  const limit = params.limit ?? 24;
-  const skip = ((params.page ?? 1) - 1) * limit;
-
   const url = new URL(DDF_ENDPOINT);
-  url.searchParams.set("$filter", buildFilter(params));
-  url.searchParams.set("$expand", "Media");
-  url.searchParams.set("$top", String(limit));
-  url.searchParams.set("$skip", String(skip));
-  url.searchParams.set("$orderby", "OriginalEntryTimestamp desc");
-  url.searchParams.set("$count", "true");
+  url.searchParams.set("$top", "24");
+  url.searchParams.set("$orderby", "ListPrice desc");
 
-  console.log('[DDF] Fetching OData from:', DDF_ENDPOINT);
+  console.log('[DDF] Fetching OData from:', url.toString());
 
   try {
     const response = await fetch(url.toString(), {
@@ -273,10 +262,11 @@ export async function fetchListings(
 
     const data = (await response.json()) as DDFListingsResponse;
     const values: DDFRawListing[] = data.value ?? [];
-    const total: number = data["@odata.count"] ?? values.length;
+    const total: number = values.length;
 
-    console.log('[DDF] Listings fetched:', data.value?.length);
-    console.log(`[DDF] ${useNSP ? "NSP" : "Member"} feed returned ${values.length} listings (total: ${total})`);
+    console.log('[DDF] Listings fetched:', values.length);
+    console.log('[DDF] First record keys:', values[0] ? Object.keys(values[0]).join(', ') : 'none');
+    console.log(`[DDF] ${useNSP ? "NSP" : "Member"} feed returned ${values.length} listings`);
 
     if (values.length === 0 && useNSP) {
       console.log("[DDF] NSP returned 0 results — falling back to Member feed");
