@@ -101,6 +101,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       bodyParams.append('grant_type', 'client_credentials');
       bodyParams.append('client_id', clientId);
       bodyParams.append('client_secret', clientSecret);
+      if (useNSP) console.log('[NSP] Attempting token, client_id:', clientId.slice(0, 8));
       console.log(`[DDF] Token attempt ${attempt}/${maxAttempts} body length:`, bodyParams.toString().length, 'client_id length:', clientId.length);
 
       const tokenController = new AbortController();
@@ -120,7 +121,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
 
       if (!res.ok) {
         const errorText = await res.text();
-        console.error(`[NSP AUTH 400 BODY] attempt ${attempt}:`, errorText);
+        console.error('[NSP 400 BODY]:', errorText);
         tokenCache.delete(cacheKey);
         if (attempt < maxAttempts) {
           console.log(`[DDF] Retrying token fetch (attempt ${attempt + 1})...`);
@@ -271,6 +272,7 @@ export async function fetchListings(
   }
 
   console.log(`[${feedLabel}] NSP token fetch status: OK — token length ${token.length}`);
+  if (useNSP) console.log('[NSP] Token OK, fetching listings');
 
   const pageSize = useNSP ? 200 : (params.limit ?? 24);
   const skip = useNSP ? 0 : ((params.page ?? 1) - 1) * pageSize;
@@ -322,7 +324,7 @@ export async function fetchListings(
       }
     }
 
-    console.log(`[${feedLabel}] NSP listings count: ${allValues.length}`);
+    console.log(`[${feedLabel}] Listings count: ${allValues.length}`);
     console.log(`[${feedLabel}] First record keys:`, allValues[0] ? Object.keys(allValues[0]).join(', ') : 'none');
 
     if (allValues.length === 0 && useNSP && !noFallback) {
