@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     q: "Is the Independent Plan suitable for license parking?",
-    a: "Yes. The Independent Plan at $179/month is designed for both active independent agents and agents who wish to maintain their license under a reputable, compliant brokerage without production requirements.",
+    a: "Yes. The Independent Plan at $179/month is designed for both active independent agents and agents who wish to maintain their license under a reputable, compliant brokerage without production requirements. A per-transaction administration fee applies on each completed transaction.",
   },
   {
     q: "Do I get broker support on the Independent Plan?",
@@ -146,6 +146,7 @@ export default function JoinPage() {
                   {[
                     "Keep 100% of every commission earned",
                     "Flat $179/month brokerage fee — no surprises",
+                    "A per-transaction administration fee applies on each completed transaction",
                     "No production requirements or minimum volume",
                     "Annual contract commitment — plan changes subject to renewal and approval",
                     "No broker involvement required on transactions",
@@ -228,7 +229,7 @@ export default function JoinPage() {
               </div>
             </div>
             <p className="text-xs text-charcoal/50 text-center">
-              The Independent Plan has no production requirements or inactivity fees. It is designed for self-sufficient agents and license parking arrangements.
+              The Independent Plan has no production requirements or inactivity fees. A per-transaction administration fee applies on each completed transaction. It is designed for self-sufficient agents and license parking arrangements.
             </p>
           </div>
         </div>
@@ -254,7 +255,7 @@ export default function JoinPage() {
               <tbody>
                 {[
                   { feature: "Commission Split",      p1: "80/20",                       p2: "100%",                          p3: "50/50" },
-                  { feature: "Monthly Fee",            p1: "None while active",            p2: "$179/month flat",               p3: "None" },
+                  { feature: "Monthly Fee",            p1: "None while active",            p2: "$179/month flat + per-transaction admin fee", p3: "None" },
                   { feature: "Inactivity Fee",         p1: "$99/mo (credited back)",       p2: "None",                          p3: "$49/mo after 6 months (credited back)" },
                   { feature: "Minimum Production",     p1: "Annual requirement",           p2: "None",                          p3: "5 transactions to graduate" },
                   { feature: "Performance Reviews",    p1: "Every 3 months",               p2: "None",                          p3: "After each transaction" },

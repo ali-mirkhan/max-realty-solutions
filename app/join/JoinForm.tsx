@@ -141,7 +141,7 @@ export default function JoinForm({ faqs }: { faqs: FAQ[] }) {
                 Submit Application
               </button>
               <p className="text-xs text-charcoal/40 text-center">
-                Your selected plan will be confirmed in your agent agreement. Plan changes after signing are subject to annual renewal terms and Broker of Record approval.
+                Your selected plan will be confirmed in your agent agreement. The Independent Plan includes a per-transaction administration fee on each completed transaction. Plan changes after signing are subject to annual renewal terms and Broker of Record approval.
               </p>
             </form>
           )}
