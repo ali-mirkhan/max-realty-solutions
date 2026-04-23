@@ -4,7 +4,32 @@ import { Bed, Bath, Maximize, MapPin } from "lucide-react";
 import type { Property } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 
+const GTA_CITIES = new Set([
+  "toronto", "mississauga", "brampton", "markham", "vaughan", "richmond hill",
+  "oakville", "burlington", "ajax", "whitby", "oshawa", "pickering", "milton",
+  "newmarket", "scarborough", "north york", "etobicoke", "aurora", "king city",
+  "stouffville",
+]);
+
+function getListingBadge(property: Property): { text: string; className: string } | null {
+  if (!property.source) return null;
+  if (property.source === "member") {
+    return { text: "Featured", className: "bg-[#7D1A2D] text-white" };
+  }
+  const city = (property.city ?? "").toLowerCase().trim();
+  const province = (property.province ?? "").trim();
+  if (GTA_CITIES.has(city)) {
+    return { text: "GTA", className: "bg-amber-500 text-white" };
+  }
+  if (province === "Ontario" || province === "ON") {
+    return { text: "Ontario", className: "bg-blue-600 text-white" };
+  }
+  return { text: "MLS Listing", className: "bg-gray-200 text-gray-700" };
+}
+
 export default function PropertyCard({ property }: { property: Property }) {
+  const badge = getListingBadge(property);
+
   return (
     <Link href={`/properties/${property.id}`} className="group block">
       <div className="bg-white rounded-lg overflow-hidden border border-stone-border hover:border-burgundy/20 transition-all duration-300 hover:shadow-lg">
@@ -25,17 +50,11 @@ export default function PropertyCard({ property }: { property: Property }) {
               {property.type}
             </span>
           </div>
-          {property.source && (
+          {badge && (
             <div className="absolute top-3 right-3">
-              {property.source === "member" ? (
-                <span className="bg-[#7D1A2D] text-white text-xs font-semibold px-2 py-1 rounded">
-                  Featured
-                </span>
-              ) : (
-                <span className="bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
-                  MLS Listings
-                </span>
-              )}
+              <span className={`text-xs font-semibold px-2 py-1 rounded ${badge.className}`}>
+                {badge.text}
+              </span>
             </div>
           )}
         </div>

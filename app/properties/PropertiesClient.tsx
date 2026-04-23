@@ -5,6 +5,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import type { Property } from "@/lib/types";
 
+const GTA_CITIES = new Set([
+  "toronto", "mississauga", "brampton", "markham", "vaughan", "richmond hill",
+  "oakville", "burlington", "ajax", "whitby", "oshawa", "pickering", "milton",
+  "newmarket", "scarborough", "north york", "etobicoke", "aurora", "king city",
+  "stouffville",
+]);
+
+const SORT_ORDER: Record<string, number> = { member: 0, gta: 1, ontario: 2, other: 3 };
+
+function getRegion(listing: Property): string {
+  if (listing.source === "member") return "member";
+  const city = (listing.city ?? "").toLowerCase().trim();
+  const province = (listing.province ?? "").trim();
+  if (GTA_CITIES.has(city)) return "gta";
+  if (province === "Ontario" || province === "ON") return "ontario";
+  return "other";
+}
+
 const TYPES = [
   { label: "All Types", value: "" },
   { label: "Residential", value: "residential" },
@@ -94,9 +112,15 @@ export default function PropertiesClient() {
       const res = await fetch(url.toString());
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "API error");
-      const merged = [...(data.memberListings ?? []), ...(data.nspListings ?? [])];
-      setListings(merged);
-      setTotal(data.total ?? merged.length);
+      const merged: Property[] = [
+        ...(data.memberListings ?? []),
+        ...(data.nspListings ?? []),
+      ];
+      const sorted = merged.sort(
+        (a, b) => SORT_ORDER[getRegion(a)] - SORT_ORDER[getRegion(b)]
+      );
+      setListings(sorted);
+      setTotal(sorted.length);
     } catch {
       setListings([]);
       setTotal(0);

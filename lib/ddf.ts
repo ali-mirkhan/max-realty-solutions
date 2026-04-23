@@ -270,56 +270,67 @@ export async function fetchListings(
 
   console.log('[DDF] Token OK, length:', token?.length);
 
-  const limit = params.limit ?? 24;
-  const skip = ((params.page ?? 1) - 1) * limit;
+  const pageSize = useNSP ? 200 : (params.limit ?? 24);
+  const skip = useNSP ? 0 : ((params.page ?? 1) - 1) * pageSize;
 
-  const url = new URL(DDF_ENDPOINT);
   const filter = buildFilter(params);
-  if (filter) url.searchParams.set("$filter", filter);
-  url.searchParams.set("$top", String(limit));
-  url.searchParams.set("$skip", String(skip));
-  url.searchParams.set("$orderby", "ListPrice desc");
 
-  console.log('[DDF] Fetching OData from:', url.toString());
-
-  try {
+  async function fetchPage(pageUrl: string): Promise<DDFListingsResponse> {
     const odataController = new AbortController();
     const odataTimeout = setTimeout(() => odataController.abort(), 8000);
-    const response = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    const response = await fetch(pageUrl, {
+      headers: { Authorization: `Bearer ${token!}`, Accept: "application/json" },
       cache: "no-store",
       signal: odataController.signal,
     });
     clearTimeout(odataTimeout);
-
     console.log('[DDF] OData response status:', response.status, 'ok:', response.ok);
-
     if (!response.ok) {
       let errBody = "";
       try { errBody = await response.text(); } catch { /* ignore */ }
-      console.error(
-        `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`
-      );
-      if (useNSP && !noFallback) return fetchListings({ ...params, city: undefined }, false);
-      return { listings: [], total: 0, feed: "error" };
+      console.error(`[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`);
+      throw new Error(`HTTP ${response.status}`);
     }
+    return response.json() as Promise<DDFListingsResponse>;
+  }
 
-    const data = (await response.json()) as DDFListingsResponse;
-    const values: DDFRawListing[] = data.value ?? [];
-    const total: number = values.length;
+  try {
+    // Build first-page URL
+    const firstUrl = new URL(DDF_ENDPOINT);
+    if (filter) firstUrl.searchParams.set("$filter", filter);
+    firstUrl.searchParams.set("$top", String(pageSize));
+    firstUrl.searchParams.set("$skip", String(skip));
+    firstUrl.searchParams.set("$orderby", "ListPrice desc");
+    console.log('[DDF] Fetching OData from:', firstUrl.toString());
 
-    console.log(`[DDF] data.value length: ${values.length}, has @odata.context: ${!!data["@odata.context"]}`);
+    let allValues: DDFRawListing[] = [];
+    let data = await fetchPage(firstUrl.toString());
+    allValues = allValues.concat(data.value ?? []);
+    console.log(`[DDF] Page 1: ${data.value?.length ?? 0} records. has @odata.context: ${!!data["@odata.context"]}`);
+
+    // Follow nextLink pages for NSP feed (max 4 more pages = 5 total, up to 1000 listings)
     if (useNSP) {
-      console.log('[NSP] Success:', values.length, 'listings returned');
+      let pageCount = 1;
+      while (data["@odata.nextLink"] && pageCount < 5) {
+        pageCount++;
+        console.log(`[DDF] Following nextLink page ${pageCount}:`, data["@odata.nextLink"]);
+        data = await fetchPage(data["@odata.nextLink"]!);
+        allValues = allValues.concat(data.value ?? []);
+        console.log(`[DDF] Page ${pageCount}: ${data.value?.length ?? 0} records, running total: ${allValues.length}`);
+      }
     }
-    console.log('[DDF] First record keys:', values[0] ? Object.keys(values[0]).join(', ') : 'none');
 
-    if (values.length === 0 && useNSP && !noFallback) {
+    if (useNSP) {
+      console.log('[NSP] Success:', allValues.length, 'total listings returned');
+    }
+    console.log('[DDF] First record keys:', allValues[0] ? Object.keys(allValues[0]).join(', ') : 'none');
+
+    if (allValues.length === 0 && useNSP && !noFallback) {
       console.log("[DDF] NSP returned 0 results — falling back to Member feed");
       return fetchListings({ ...params, city: undefined }, false);
     }
 
-    let filtered = values.map(transformListing);
+    let filtered = allValues.map(transformListing);
     if (params.type && params.type !== "All" && params.type !== "all") {
       const t = params.type.toLowerCase();
       filtered = filtered.filter((l) => l.type === t);
@@ -327,7 +338,7 @@ export async function fetchListings(
 
     return {
       listings: filtered,
-      total: filtered.length < values.length ? filtered.length : total,
+      total: filtered.length,
       feed: useNSP ? "nsp" : "member",
     };
   } catch (error) {
