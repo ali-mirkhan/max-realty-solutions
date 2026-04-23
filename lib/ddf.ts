@@ -45,6 +45,7 @@ interface DDFRawListing {
 
 interface DDFListingsResponse {
   value?: DDFRawListing[];
+  "@odata.context"?: string;
   "@odata.count"?: number;
   "@odata.nextLink"?: string;
 }
