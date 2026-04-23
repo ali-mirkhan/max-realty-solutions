@@ -150,8 +150,16 @@ async function fetchFromFeed(
   params: ListingsParams
 ): Promise<Property[]> {
   const filters: string[] = [];
-  if (params.city)
-    filters.push(`contains(tolower(City), tolower('${params.city.replace(/'/g, "''")}'))`);
+  if (params.city) {
+    const titleCased = params.city
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ")
+      .replace(/'/g, "''");
+    filters.push(`contains(City, '${titleCased}')`);
+  }
   if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
   if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
   if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
