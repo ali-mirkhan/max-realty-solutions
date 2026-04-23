@@ -4,8 +4,10 @@ import Link from "next/link";
 import { HomeIcon, TrendingUp, Building2, Key, BarChart3, Hammer, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Services",
-  description: "Full-service real estate in the GTA: buying, selling, leasing, commercial, investment advisory, and pre-construction.",
+  title: "Real Estate Services",
+  description:
+    "Full-service real estate in the GTA — buying, selling, investing, commercial leasing and property management. Max Realty Solutions serves all of the Greater Toronto Area.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/services" },
 };
 
 const NEIGHBORHOOD_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/residential-neighborhood-Sf4DH3Nkk2ZKfoUcCAecZt.webp";

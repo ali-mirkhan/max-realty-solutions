@@ -4,7 +4,8 @@ import PropertiesClient from "./PropertiesClient";
 export const metadata: Metadata = {
   title: "Properties",
   description:
-    "Browse residential and commercial listings across the Greater Toronto Area. IDX/DDF-ready property search for Thornhill, Vaughan, Markham, and the GTA.",
+    "Search residential, commercial and investment listings across Thornhill, Vaughan, Richmond Hill, Markham, Toronto and the Greater Toronto Area.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/properties" },
 };
 
 export default function PropertiesPage() {

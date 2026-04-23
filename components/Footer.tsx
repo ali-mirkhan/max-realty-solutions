@@ -37,14 +37,16 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               {[
-                { label: "Facebook", letter: "F" },
-                { label: "Instagram", letter: "I" },
-                { label: "LinkedIn", letter: "L" },
-                { label: "Twitter", letter: "X" },
+                { label: "Facebook", letter: "F", href: "https://www.facebook.com/MaxRealtySolutions/" },
+                { label: "Instagram", letter: "I", href: "https://www.instagram.com/maxrealtysolutions/" },
+                { label: "LinkedIn", letter: "L", href: "https://www.linkedin.com/company/maxrealtysolutions/" },
+                { label: "Twitter", letter: "X", href: "https://twitter.com/MaxRealtyTO" },
               ].map((s) => (
                 <a
                   key={s.label}
-                  href="#"
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={s.label}
                   className="w-9 h-9 rounded-full border border-[#E8E4DE]/20 flex items-center justify-center text-[#E8E4DE]/60 hover:text-white hover:border-burgundy hover:bg-burgundy/20 transition-all text-xs font-medium"
                 >

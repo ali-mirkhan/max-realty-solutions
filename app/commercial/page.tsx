@@ -4,8 +4,9 @@ import { Building2, TrendingUp, BarChart3, DollarSign, ArrowRight, CheckCircle2,
 import CommercialCTA from "./CommercialCTA";
 
 export const metadata: Metadata = {
-  title: "Commercial Real Estate",
-  description: "Investment-grade commercial real estate in the GTA. Retail plazas, leasing, and investment analysis with $35M+ in transaction experience.",
+  title: "Commercial Real Estate GTA",
+  description: "Commercial real estate services across the GTA — retail plazas, investment properties, leasing and development land. Max Realty Solutions has $750M+ in transaction experience.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/commercial" },
 };
 
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";

@@ -4,9 +4,9 @@ import { ArrowRight, CheckCircle2, Users, TrendingUp, Building2, Briefcase, Shie
 import JoinForm from "./JoinForm";
 
 export const metadata: Metadata = {
-  title: "Join Max Realty Solutions",
-  description:
-    "Join Max Realty Solutions. Flexible commission plans for new agents, growing professionals, and independent practitioners across the GTA.",
+  title: "Join Max Realty Solutions | Agent Careers",
+  description: "Join Max Realty Solutions Ltd., Brokerage. Keep more of your commission with flexible plans for new agents, growing professionals, and independent practitioners across the GTA.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/join" },
 };
 
 const AGENT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/agent-meeting-CjY9jHheSwuevRu6dL7bU8.webp";

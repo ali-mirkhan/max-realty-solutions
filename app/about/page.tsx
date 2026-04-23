@@ -5,8 +5,9 @@ import { ArrowRight, Shield, Users, Eye, Heart, Phone, Mail } from "lucide-react
 import agentsData from "@/data/agents.json";
 
 export const metadata: Metadata = {
-  title: "About Us",
-  description: "Learn about Max Realty Solutions — a modern RECO-registered brokerage in Thornhill built for agents and clients across the GTA.",
+  title: "About Max Realty Solutions",
+  description: "Max Realty Solutions Ltd., Brokerage — a RECO-licensed brokerage serving the GTA since 2004, with roots going back to 1987. Meet the team behind one of Thornhill's most trusted brokerages.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/about" },
 };
 
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";

@@ -22,12 +22,12 @@ const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";
 
 const neighbourhoods = [
-  { name: "Thornhill", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
-  { name: "Vaughan", img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&q=80" },
-  { name: "Markham", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80" },
-  { name: "Richmond Hill", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80" },
-  { name: "Toronto", img: "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=400&q=80" },
-  { name: "Mississauga", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80" },
+  { name: "Thornhill", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&q=80&auto=format&fit=crop" },
+  { name: "Vaughan", img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80&auto=format&fit=crop" },
+  { name: "Markham", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=400&q=80&auto=format&fit=crop" },
+  { name: "Richmond Hill", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80&auto=format&fit=crop" },
+  { name: "Toronto", img: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80&auto=format&fit=crop" },
+  { name: "Mississauga", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80&auto=format&fit=crop" },
 ];
 
 const testimonials = [
@@ -112,9 +112,9 @@ export default async function HomePage() {
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
-              { value: "$35M+", label: "In Commercial Transactions" },
-              { value: "500+", label: "Happy Clients Served" },
-              { value: "GTA-Wide", label: "Market Coverage" },
+              { value: "$750M+", label: "In Total Transactions Since 2004" },
+              { value: "3,000+", label: "Clients Served Since 2004" },
+              { value: "37+ Years", label: "Industry Experience" },
               { value: "RECO", label: "Licensed & Regulated" },
             ].map((stat) => (
               <div key={stat.label}>
@@ -255,7 +255,7 @@ export default async function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {[
-              { icon: TrendingUp, title: "Market Expertise", desc: "Deep knowledge of GTA neighbourhoods, pricing trends, and investment opportunities built over years of local transactions." },
+              { icon: TrendingUp, title: "Market Expertise", desc: "Deep knowledge of GTA neighbourhoods, pricing trends, and investment opportunities built over decades of GTA transactions — operating since 2004 with roots going back to 1987." },
               { icon: Shield, title: "Fully Licensed & Regulated", desc: "RECO-registered brokerage with full compliance under TRESA. Your transaction is protected every step of the way." },
               { icon: Users, title: "Dedicated Agent Support", desc: "You work with one dedicated agent from search to close — not a call centre or rotating team." },
               { icon: BarChart3, title: "Free Tools & Resources", desc: "Use our free mortgage calculator, land transfer tax estimator, and affordability tools to plan your purchase with confidence." },

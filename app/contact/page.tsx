@@ -4,8 +4,8 @@ import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description:
-    "Contact Max Realty Solutions Ltd., Brokerage. Located at 8220 Bayview Avenue, Unit 200, Thornhill, ON. Call 416-226-6008.",
+  description: "Contact Max Realty Solutions Ltd., Brokerage in Thornhill, ON. Call 416-226-6008 or email info@maxrealtysolutions.com. Serving buyers, sellers, and investors across the GTA.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/contact" },
 };
 
 export default function ContactPage() {

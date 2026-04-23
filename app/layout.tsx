@@ -24,20 +24,56 @@ export const metadata: Metadata = {
     template: "%s | Max Realty Solutions",
   },
   description:
-    "Max Realty Solutions is a modern real estate brokerage in Thornhill, Ontario. Flexible commission plans for agents, expert guidance for buyers, sellers & investors across the GTA.",
+    "Max Realty Solutions Ltd., Brokerage — serving buyers, sellers, investors and agents across the GTA since 2004. Residential, commercial, and investment real estate in Thornhill, Richmond Hill, Markham, Vaughan and Toronto.",
   keywords: [
-    "real estate brokerage Thornhill",
-    "real estate agents GTA",
-    "100% commission brokerage Ontario",
-    "join real estate brokerage",
-    "homes for sale Vaughan",
+    "real estate",
+    "GTA real estate",
+    "Thornhill real estate",
+    "Richmond Hill homes",
+    "Markham real estate",
+    "Vaughan homes for sale",
     "commercial real estate GTA",
+    "real estate brokerage Ontario",
+    "RECO licensed brokerage",
+    "join real estate brokerage",
   ],
+  authors: [{ name: "Max Realty Solutions Ltd., Brokerage" }],
+  creator: "Max Realty Solutions Ltd., Brokerage",
   openGraph: {
     type: "website",
     locale: "en_CA",
-    url: "https://www.maxrealtysolutions.ca",
+    url: "https://www.maxrealtysolutions.com",
     siteName: "Max Realty Solutions",
+    title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
+    description:
+      "Serving buyers, sellers, investors and agents across the GTA since 2004. Residential, commercial, and investment real estate.",
+    images: [
+      {
+        url: "https://www.maxrealtysolutions.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Max Realty Solutions - GTA Real Estate Brokerage",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@MaxRealtyTO",
+    creator: "@MaxRealtyTO",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://www.maxrealtysolutions.com",
   },
 };
 

@@ -4,11 +4,12 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 import { getAllPosts } from "@/lib/blogData";
 
 export const metadata: Metadata = {
-  title: "Insights & Market Updates | Max Realty Solutions",
-  description: "Expert analysis and market news from the Max Realty Solutions team. GTA real estate updates, buying guides, and investment insights.",
+  title: "Insights & Market Updates",
+  description: "Expert analysis and market news from the Max Realty Solutions team. GTA real estate updates, buying guides, and investment insights from Thornhill's leading brokerage.",
+  alternates: { canonical: "https://www.maxrealtysolutions.com/blog" },
   openGraph: {
     title: "Insights & Market Updates | Max Realty Solutions",
-    description: "Expert analysis and market news from the Max Realty Solutions team.",
+    description: "Expert analysis and market news from the Max Realty Solutions team. GTA real estate updates, buying guides, and investment insights.",
   },
 };
 
