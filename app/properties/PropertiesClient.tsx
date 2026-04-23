@@ -5,24 +5,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import type { Property } from "@/lib/types";
 
-const GTA_CITIES = new Set([
-  "toronto", "mississauga", "brampton", "markham", "vaughan", "richmond hill",
-  "oakville", "burlington", "ajax", "whitby", "oshawa", "pickering", "milton",
-  "newmarket", "scarborough", "north york", "etobicoke", "aurora", "king city",
-  "stouffville",
-]);
-
-const SORT_ORDER: Record<string, number> = { member: 0, gta: 1, ontario: 2, other: 3 };
-
-function getRegion(listing: Property): string {
-  if (listing.source === "member") return "member";
-  const city = (listing.city ?? "").toLowerCase().trim();
-  const province = (listing.province ?? "").trim();
-  if (GTA_CITIES.has(city)) return "gta";
-  if (province === "Ontario" || province === "ON") return "ontario";
-  return "other";
-}
-
 const TYPES = [
   { label: "All Types", value: "" },
   { label: "Residential", value: "residential" },
@@ -92,7 +74,7 @@ export default function PropertiesClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const LIMIT = 24;
+  const LIMIT = 48;
   const totalPages = Math.ceil(total / LIMIT);
 
   async function fetchData(pageNum = 1) {
@@ -113,11 +95,8 @@ export default function PropertiesClient() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "API error");
       const all: Property[] = data.listings ?? [];
-      const sorted = [...all].sort(
-        (a, b) => SORT_ORDER[getRegion(a)] - SORT_ORDER[getRegion(b)]
-      );
-      setListings(sorted);
-      setTotal(sorted.length);
+      setListings(all);
+      setTotal(all.length);
     } catch {
       setListings([]);
       setTotal(0);

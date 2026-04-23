@@ -151,7 +151,7 @@ async function fetchFromFeed(
 ): Promise<Property[]> {
   const filters: string[] = [];
   if (params.city)
-    filters.push(`City eq '${params.city.replace(/'/g, "''")}'`);
+    filters.push(`contains(tolower(City), tolower('${params.city.replace(/'/g, "''")}'))`);
   if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
   if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
   if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
@@ -163,7 +163,7 @@ async function fetchFromFeed(
   if (skip > 0) queryParts.push(`$skip=${skip}`);
   if (filters.length)
     queryParts.push(`$filter=${encodeURIComponent(filters.join(" and "))}`);
-  queryParts.push("$orderby=ListPrice%20desc");
+  queryParts.push("$orderby=ModificationTimestamp%20desc");
 
   const url = `${ODATA_URL}?${queryParts.join("&")}`;
   console.log(`[DDF] OData URL (${source}):`, url);
@@ -239,7 +239,14 @@ export async function fetchListings(
   const memberIds = new Set(memberListings.map((l) => l.id));
   const nspFiltered = nspListings.filter((l) => !memberIds.has(l.id));
 
-  const combined = [...memberListings, ...nspFiltered];
+  // Sort: member first (preserve order), then NSP by recency
+  const nspSorted = nspFiltered.sort((a, b) => {
+    const aTime = a.listingDate ? new Date(a.listingDate).getTime() : 0;
+    const bTime = b.listingDate ? new Date(b.listingDate).getTime() : 0;
+    return bTime - aTime;
+  });
+
+  const combined = [...memberListings, ...nspSorted];
 
   console.log(
     `[DDF] After dedup: ${combined.length} listings ( ${memberListings.length} member + ${nspFiltered.length} nsp )`
