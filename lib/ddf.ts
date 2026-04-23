@@ -228,6 +228,8 @@ export async function fetchListings(
   params: ListingsParams = {},
   useNSP = true
 ): Promise<{ listings: Property[]; total: number; feed: string }> {
+  console.log('[DDF] Starting token fetch, endpoint:', process.env.CREA_TOKEN_URL || 'https://identity.crea.ca/connect/token');
+
   const token = await getAccessToken(useNSP);
 
   if (!token) {
@@ -236,28 +238,40 @@ export async function fetchListings(
     return { listings: [], total: 0, feed: "none" };
   }
 
-  console.log('[DDF] Token acquired, first 10 chars:', token.slice(0, 10));
+  console.log('[DDF] Token OK, length:', token?.length);
 
-  const fullUrl = "https://ddfapi.realtor.ca/odata/v1/Property?$top=5&$select=ListingKey,ListPrice,City,BedroomsTotal,BathroomsTotal,UnparsedAddress,PropertyType";
-  console.log('[DDF] EXACT URL:', fullUrl);
+  const limit = params.limit ?? 24;
+  const skip = ((params.page ?? 1) - 1) * limit;
+
+  const url = new URL(DDF_ENDPOINT);
+  url.searchParams.set("$filter", buildFilter(params));
+  url.searchParams.set("$expand", "Media");
+  url.searchParams.set("$top", String(limit));
+  url.searchParams.set("$skip", String(skip));
+  url.searchParams.set("$orderby", "OriginalEntryTimestamp desc");
+  url.searchParams.set("$count", "true");
+
+  console.log('[DDF] Fetching OData from:', DDF_ENDPOINT);
 
   try {
-    const res = await fetch(fullUrl, {
+    const response = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       next: { revalidate: 300 },
     });
 
-    if (!res.ok) {
+    console.log('[DDF] OData response status:', response.status, 'ok:', response.ok);
+
+    if (!response.ok) {
       let errBody = "";
-      try { errBody = await res.text(); } catch { /* ignore */ }
+      try { errBody = await response.text(); } catch { /* ignore */ }
       console.error(
-        `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${res.status}: ${errBody.slice(0, 300)}`
+        `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`
       );
       if (useNSP) return fetchListings(params, false);
       return { listings: [], total: 0, feed: "error" };
     }
 
-    const data = (await res.json()) as DDFListingsResponse;
+    const data = (await response.json()) as DDFListingsResponse;
     const values: DDFRawListing[] = data.value ?? [];
     const total: number = data["@odata.count"] ?? values.length;
 
@@ -280,8 +294,8 @@ export async function fetchListings(
       total: filtered.length < values.length ? filtered.length : total,
       feed: useNSP ? "nsp" : "member",
     };
-  } catch (err) {
-    console.error(`DDF fetch error (${useNSP ? "NSP" : "Member"}):`, err);
+  } catch (error) {
+    console.error('[DDF] FULL ERROR:', error instanceof Error ? error.message : String(error));
     if (useNSP) return fetchListings(params, false);
     return { listings: [], total: 0, feed: "error" };
   }
