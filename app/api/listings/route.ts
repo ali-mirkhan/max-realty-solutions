@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
       ]);
       memberListings = tag(memberResult.listings, "member");
       nspListings = tag(nspResult.listings, "nsp");
-      console.log(`[api/listings] member=${memberListings.length} nsp=${nspListings.length}`);
+      console.log(`[api/listings] Member listings count: ${memberListings.length}`);
+      console.log(`[api/listings] NSP listings count: ${nspListings.length}`);
     } else if (sourceParam === "member") {
       const result = await fetchListings(params, false, true);
       memberListings = tag(result.listings, "member");

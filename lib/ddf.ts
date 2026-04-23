@@ -258,17 +258,19 @@ export async function fetchListings(
   useNSP = true,
   noFallback = false
 ): Promise<{ listings: Property[]; total: number; feed: string }> {
-  console.log('[DDF] Starting token fetch, endpoint:', process.env.CREA_TOKEN_URL || 'https://identity.crea.ca/connect/token');
+  const feedLabel = useNSP ? "NSP" : "MEMBER";
+  console.log(`[${feedLabel}] fetchListings called — noFallback=${noFallback} city=${params.city ?? "any"}`);
+  console.log(`[${feedLabel}] token endpoint: ${process.env.CREA_TOKEN_URL || "https://identity.crea.ca/connect/token"}`);
 
   const token = await getAccessToken(useNSP);
 
   if (!token) {
-    console.warn(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — trying fallback`);
+    console.error(`[${feedLabel}] NSP token fetch status: FAILED — no token returned`);
     if (useNSP && !noFallback) return fetchListings({ ...params, city: undefined }, false);
     return { listings: [], total: 0, feed: "none" };
   }
 
-  console.log('[DDF] Token OK, length:', token?.length);
+  console.log(`[${feedLabel}] NSP token fetch status: OK — token length ${token.length}`);
 
   const pageSize = useNSP ? 200 : (params.limit ?? 24);
   const skip = useNSP ? 0 : ((params.page ?? 1) - 1) * pageSize;
@@ -284,12 +286,12 @@ export async function fetchListings(
       signal: odataController.signal,
     });
     clearTimeout(odataTimeout);
-    console.log('[DDF] OData response status:', response.status, 'ok:', response.ok);
+    console.log(`[${feedLabel}] OData response status: ${response.status} ok: ${response.ok}`);
     if (!response.ok) {
       let errBody = "";
       try { errBody = await response.text(); } catch { /* ignore */ }
-      console.error(`[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`);
-      throw new Error(`HTTP ${response.status}`);
+      console.error(`[${feedLabel}] OData HTTP ${response.status} error body:`, errBody);
+      throw new Error(`HTTP ${response.status}: ${errBody.slice(0, 100)}`);
     }
     return response.json() as Promise<DDFListingsResponse>;
   }
@@ -301,32 +303,30 @@ export async function fetchListings(
     firstUrl.searchParams.set("$top", String(pageSize));
     firstUrl.searchParams.set("$skip", String(skip));
     firstUrl.searchParams.set("$orderby", "ListPrice desc");
-    console.log('[DDF] Fetching OData from:', firstUrl.toString());
+    console.log(`[${feedLabel}] NSP OData URL used: ${firstUrl.toString()}`);
 
     let allValues: DDFRawListing[] = [];
     let data = await fetchPage(firstUrl.toString());
     allValues = allValues.concat(data.value ?? []);
-    console.log(`[DDF] Page 1: ${data.value?.length ?? 0} records. has @odata.context: ${!!data["@odata.context"]}`);
+    console.log(`[${feedLabel}] Page 1: ${data.value?.length ?? 0} records. nextLink present: ${!!data["@odata.nextLink"]}`);
 
     // Follow nextLink pages for NSP feed (max 4 more pages = 5 total, up to 1000 listings)
     if (useNSP) {
       let pageCount = 1;
       while (data["@odata.nextLink"] && pageCount < 5) {
         pageCount++;
-        console.log(`[DDF] Following nextLink page ${pageCount}:`, data["@odata.nextLink"]);
+        console.log(`[${feedLabel}] Following nextLink page ${pageCount}:`, data["@odata.nextLink"]);
         data = await fetchPage(data["@odata.nextLink"]!);
         allValues = allValues.concat(data.value ?? []);
-        console.log(`[DDF] Page ${pageCount}: ${data.value?.length ?? 0} records, running total: ${allValues.length}`);
+        console.log(`[${feedLabel}] Page ${pageCount}: ${data.value?.length ?? 0} records, running total: ${allValues.length}`);
       }
     }
 
-    if (useNSP) {
-      console.log('[NSP] Success:', allValues.length, 'total listings returned');
-    }
-    console.log('[DDF] First record keys:', allValues[0] ? Object.keys(allValues[0]).join(', ') : 'none');
+    console.log(`[${feedLabel}] NSP listings count: ${allValues.length}`);
+    console.log(`[${feedLabel}] First record keys:`, allValues[0] ? Object.keys(allValues[0]).join(', ') : 'none');
 
     if (allValues.length === 0 && useNSP && !noFallback) {
-      console.log("[DDF] NSP returned 0 results — falling back to Member feed");
+      console.warn(`[${feedLabel}] NSP returned 0 results — falling back to Member feed`);
       return fetchListings({ ...params, city: undefined }, false);
     }
 
@@ -342,11 +342,11 @@ export async function fetchListings(
       feed: useNSP ? "nsp" : "member",
     };
   } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[${feedLabel}] fetch failed: ${msg}`);
     if (useNSP && !noFallback) {
-      console.error('[NSP] Failed:', error instanceof Error ? error.message : String(error));
       return fetchListings({ ...params, city: undefined }, false);
     }
-    console.error('[DDF] FULL ERROR:', error instanceof Error ? error.message : String(error));
     return { listings: [], total: 0, feed: "error" };
   }
 }
