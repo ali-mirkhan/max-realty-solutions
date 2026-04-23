@@ -93,48 +93,57 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     });
   }
 
-  try {
-    const bodyParams = new URLSearchParams();
-    bodyParams.append('grant_type', 'client_credentials');
-    bodyParams.append('client_id', clientId);
-    bodyParams.append('client_secret', clientSecret);
-    console.log('[DDF] Token request body length:', bodyParams.toString().length, 'client_id length:', clientId.length);
+  const maxAttempts = useNSP ? 2 : 1;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const bodyParams = new URLSearchParams();
+      bodyParams.append('grant_type', 'client_credentials');
+      bodyParams.append('client_id', clientId);
+      bodyParams.append('client_secret', clientSecret);
+      console.log(`[DDF] Token attempt ${attempt}/${maxAttempts} body length:`, bodyParams.toString().length, 'client_id length:', clientId.length);
 
-    const tokenController = new AbortController();
-    const tokenTimeout = setTimeout(() => tokenController.abort(), 8000);
-    const res = await fetch(TOKEN_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: bodyParams.toString(),
-      cache: "no-store",
-      signal: tokenController.signal,
-    });
-    clearTimeout(tokenTimeout);
+      const tokenController = new AbortController();
+      const tokenTimeout = setTimeout(() => tokenController.abort(), 8000);
+      const res = await fetch(TOKEN_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: bodyParams.toString(),
+        cache: "no-store",
+        signal: tokenController.signal,
+      });
+      clearTimeout(tokenTimeout);
 
-    console.log('[DDF] Token response status:', res.status);
+      console.log(`[DDF] Token attempt ${attempt} response status:`, res.status);
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('[NSP AUTH 400 BODY]:', errorText);
-      tokenCache.delete(cacheKey);
-      throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${errorText.slice(0, 200)}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error(`[NSP AUTH 400 BODY] attempt ${attempt}:`, errorText);
+        tokenCache.delete(cacheKey);
+        if (attempt < maxAttempts) {
+          console.log(`[DDF] Retrying token fetch (attempt ${attempt + 1})...`);
+          continue;
+        }
+        throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${errorText.slice(0, 200)}`);
+      }
+
+      const data = (await res.json()) as TokenResponse;
+      const token = data.access_token;
+      if (!token) {
+        console.error(`[DDF] OAuth ${cacheKey} response missing access_token`);
+        return null;
+      }
+      const ttl = (data.expires_in ?? 3600) - 60;
+      tokenCache.set(cacheKey, { token, expiresAt: Date.now() + ttl * 1000 });
+      console.log(`[DDF] CREA token cached (${cacheKey}), expires in ${ttl}s (attempt ${attempt})`);
+      return token;
+    } catch (err) {
+      console.error(`[DDF] token fetch error attempt ${attempt} (${cacheKey}):`, (err as Error).message ?? err);
+      if (attempt >= maxAttempts) return null;
     }
-    const data = (await res.json()) as TokenResponse;
-    const token = data.access_token;
-    if (!token) {
-      console.error(`[DDF] OAuth ${cacheKey} response missing access_token`);
-      return null;
-    }
-    const ttl = (data.expires_in ?? 3600) - 60;
-    tokenCache.set(cacheKey, { token, expiresAt: Date.now() + ttl * 1000 });
-    console.log(`[DDF] CREA token cached (${cacheKey}), expires in ${ttl}s`);
-    return token;
-  } catch (err) {
-    console.error(`[DDF] token fetch error (${cacheKey}):`, (err as Error).message ?? err);
-    return null;
   }
+  return null;
 }
 
 function parseCityNeighbourhood(raw: string): { city: string; neighbourhood: string } {
