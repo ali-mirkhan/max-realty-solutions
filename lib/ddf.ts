@@ -236,8 +236,14 @@ export async function fetchListings(
 
   console.log('[DDF] Token OK, length:', token?.length);
 
+  const limit = params.limit ?? 24;
+  const skip = ((params.page ?? 1) - 1) * limit;
+
   const url = new URL(DDF_ENDPOINT);
-  url.searchParams.set("$top", "24");
+  const filter = buildFilter(params);
+  if (filter) url.searchParams.set("$filter", filter);
+  url.searchParams.set("$top", String(limit));
+  url.searchParams.set("$skip", String(skip));
   url.searchParams.set("$orderby", "ListPrice desc");
 
   console.log('[DDF] Fetching OData from:', url.toString());

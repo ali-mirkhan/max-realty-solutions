@@ -62,7 +62,7 @@ function ListingsSkeleton() {
 }
 
 export default function PropertiesClient() {
-  const [city, setCity] = useState("Toronto");
+  const [city, setCity] = useState("");
   const [typeIndex, setTypeIndex] = useState(0);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -91,6 +91,8 @@ export default function PropertiesClient() {
       if (beds) url.searchParams.set("beds", beds);
       url.searchParams.set("top", String(LIMIT));
       url.searchParams.set("page", String(pageNum));
+      // Default (no city): show brokerage listings from Member feed only
+      if (!city.trim()) url.searchParams.set("feed", "member");
 
       const res = await fetch(url.toString());
       const data = await res.json();
