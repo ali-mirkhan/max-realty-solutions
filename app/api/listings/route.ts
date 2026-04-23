@@ -21,6 +21,13 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+export async function HEAD() {
+  const clientId = process.env.DDF_NSP_USERNAME || ''
+  return new Response(null, {
+    headers: { 'x-client-id-length': String(clientId.length) }
+  })
+}
+
 export async function GET(request: NextRequest) {
   console.log('[DEBUG] ENV CHECK:', {
     hasDDFUsername: !!process.env.DDF_NSP_USERNAME,
@@ -73,9 +80,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error("[api/listings] fetchListings threw:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch listings from CREA API.", listings: [], total: 0, count: 0 },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      listings: [], total: 0, count: 0, source: 'error',
+      debug: err instanceof Error ? err.message : String(err)
+    }, { status: 200 });
   }
 }
