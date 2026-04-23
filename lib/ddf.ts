@@ -106,6 +106,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     if (!res.ok) {
       const body = await res.text();
       console.error('[DDF] Token error body:', body.slice(0, 500));
+      tokenCache.delete(cacheKey);
       throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${body.slice(0, 200)}`);
     }
     const data = (await res.json()) as TokenResponse;
@@ -263,7 +264,7 @@ export async function fetchListings(
     const odataTimeout = setTimeout(() => odataController.abort(), 8000);
     const response = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      next: { revalidate: 300 },
+      cache: "no-store",
       signal: odataController.signal,
     });
     clearTimeout(odataTimeout);
@@ -284,6 +285,7 @@ export async function fetchListings(
     const values: DDFRawListing[] = data.value ?? [];
     const total: number = values.length;
 
+    console.log(`[DDF] data.value length: ${values.length}, has @odata.context: ${!!data["@odata.context"]}`);
     if (useNSP) {
       console.log('[NSP] Success:', values.length, 'listings returned');
     }
