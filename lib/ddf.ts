@@ -79,7 +79,19 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     return null;
   }
 
-  console.log('[DDF] Requesting token, client_id starts with:', clientId?.slice(0, 8));
+  if (useNSP) {
+    const nspClientId = process.env.DDF_NSP_USERNAME || '';
+    const nspClientSecret = process.env.DDF_NSP_PASSWORD || '';
+    const tokenUrl = process.env.CREA_TOKEN_URL || 'https://identity.crea.ca/connect/token';
+    console.log('[NSP AUTH DEBUG]', {
+      clientIdLength: nspClientId.length,
+      clientIdFirst8: nspClientId.slice(0, 8),
+      clientIdLast4: nspClientId.slice(-4),
+      secretLength: nspClientSecret.length,
+      secretFirst4: nspClientSecret.slice(0, 4),
+      tokenUrl,
+    });
+  }
 
   try {
     const bodyParams = new URLSearchParams();
@@ -104,10 +116,10 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
     console.log('[DDF] Token response status:', res.status);
 
     if (!res.ok) {
-      const body = await res.text();
-      console.error('[DDF] Token error body:', body.slice(0, 500));
+      const errorText = await res.text();
+      console.error('[NSP AUTH 400 BODY]:', errorText);
       tokenCache.delete(cacheKey);
-      throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${body.slice(0, 200)}`);
+      throw new Error(`[DDF] OAuth token failed HTTP ${res.status}: ${errorText.slice(0, 200)}`);
     }
     const data = (await res.json()) as TokenResponse;
     const token = data.access_token;
@@ -241,7 +253,7 @@ export async function fetchListings(
 
   if (!token) {
     console.warn(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — trying fallback`);
-    if (useNSP) return fetchListings(params, false);
+    if (useNSP) return fetchListings({ ...params, city: undefined }, false);
     return { listings: [], total: 0, feed: "none" };
   }
 
@@ -277,7 +289,7 @@ export async function fetchListings(
       console.error(
         `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`
       );
-      if (useNSP) return fetchListings(params, false);
+      if (useNSP) return fetchListings({ ...params, city: undefined }, false);
       return { listings: [], total: 0, feed: "error" };
     }
 
@@ -293,7 +305,7 @@ export async function fetchListings(
 
     if (values.length === 0 && useNSP) {
       console.log("[DDF] NSP returned 0 results — falling back to Member feed");
-      return fetchListings(params, false);
+      return fetchListings({ ...params, city: undefined }, false);
     }
 
     let filtered = values.map(transformListing);
@@ -310,7 +322,7 @@ export async function fetchListings(
   } catch (error) {
     if (useNSP) {
       console.error('[NSP] Failed:', error instanceof Error ? error.message : String(error));
-      return fetchListings(params, false);
+      return fetchListings({ ...params, city: undefined }, false);
     }
     console.error('[DDF] FULL ERROR:', error instanceof Error ? error.message : String(error));
     return { listings: [], total: 0, feed: "error" };
