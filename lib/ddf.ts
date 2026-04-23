@@ -255,7 +255,8 @@ function buildFilter(params: ListingsParams): string {
 
 export async function fetchListings(
   params: ListingsParams = {},
-  useNSP = true
+  useNSP = true,
+  noFallback = false
 ): Promise<{ listings: Property[]; total: number; feed: string }> {
   console.log('[DDF] Starting token fetch, endpoint:', process.env.CREA_TOKEN_URL || 'https://identity.crea.ca/connect/token');
 
@@ -263,7 +264,7 @@ export async function fetchListings(
 
   if (!token) {
     console.warn(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — trying fallback`);
-    if (useNSP) return fetchListings({ ...params, city: undefined }, false);
+    if (useNSP && !noFallback) return fetchListings({ ...params, city: undefined }, false);
     return { listings: [], total: 0, feed: "none" };
   }
 
@@ -299,7 +300,7 @@ export async function fetchListings(
       console.error(
         `[DDF] ${useNSP ? "NSP" : "Member"} API error HTTP ${response.status}: ${errBody.slice(0, 300)}`
       );
-      if (useNSP) return fetchListings({ ...params, city: undefined }, false);
+      if (useNSP && !noFallback) return fetchListings({ ...params, city: undefined }, false);
       return { listings: [], total: 0, feed: "error" };
     }
 
@@ -313,7 +314,7 @@ export async function fetchListings(
     }
     console.log('[DDF] First record keys:', values[0] ? Object.keys(values[0]).join(', ') : 'none');
 
-    if (values.length === 0 && useNSP) {
+    if (values.length === 0 && useNSP && !noFallback) {
       console.log("[DDF] NSP returned 0 results — falling back to Member feed");
       return fetchListings({ ...params, city: undefined }, false);
     }
@@ -330,7 +331,7 @@ export async function fetchListings(
       feed: useNSP ? "nsp" : "member",
     };
   } catch (error) {
-    if (useNSP) {
+    if (useNSP && !noFallback) {
       console.error('[NSP] Failed:', error instanceof Error ? error.message : String(error));
       return fetchListings({ ...params, city: undefined }, false);
     }

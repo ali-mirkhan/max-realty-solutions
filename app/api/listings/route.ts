@@ -1,6 +1,7 @@
 // CREA DDF OData API - ddfapi.realtor.ca/odata/v1
 import { NextRequest, NextResponse } from "next/server";
 import { fetchListings, type ListingsParams } from "@/lib/ddf";
+import type { Property } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -23,11 +24,15 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+function tag(listings: Property[], source: "member" | "nsp"): Property[] {
+  return listings.map((l) => ({ ...l, source }));
+}
+
 export async function HEAD() {
-  const clientId = process.env.DDF_NSP_USERNAME || ''
+  const clientId = process.env.DDF_NSP_USERNAME || '';
   return new Response(null, {
     headers: { 'x-client-id-length': String(clientId.length) }
-  })
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -35,8 +40,9 @@ export async function GET(request: NextRequest) {
     hasDDFUsername: !!process.env.DDF_NSP_USERNAME,
     hasDDFPassword: !!process.env.DDF_NSP_PASSWORD,
     usernamePeek: process.env.DDF_NSP_USERNAME?.slice(0, 6),
-    tokenUrl: process.env.CREA_TOKEN_URL || 'NOT SET'
-  })
+    tokenUrl: process.env.CREA_TOKEN_URL || 'NOT SET',
+    hasMemberUsername: !!process.env.DDF_USERNAME,
+  });
 
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
@@ -52,6 +58,7 @@ export async function GET(request: NextRequest) {
 
   const sp = request.nextUrl.searchParams;
   const top = sp.get("top") ? Number(sp.get("top")) : undefined;
+  const sourceParam = sp.get("source") ?? "all"; // "member" | "nsp" | "all"
 
   const params: ListingsParams = {
     city: sp.get("city") ?? undefined,
@@ -65,26 +72,45 @@ export async function GET(request: NextRequest) {
     limit: top ?? (sp.get("limit") ? Number(sp.get("limit")) : 24),
   };
 
-  const useNSP = sp.get("feed") !== "member";
-
-  console.log(`[api/listings] GET — city=${params.city ?? "any"} type=${params.type ?? "any"} minPrice=${params.minPrice ?? "-"} maxPrice=${params.maxPrice ?? "-"} beds=${params.beds ?? "-"} limit=${params.limit} page=${params.page} feed=${useNSP ? "nsp" : "member"}`);
+  console.log(`[api/listings] GET — city=${params.city ?? "any"} source=${sourceParam} type=${params.type ?? "any"} beds=${params.beds ?? "-"} limit=${params.limit} page=${params.page}`);
 
   try {
-    const { listings, total, feed } = await fetchListings(params, useNSP);
+    let memberListings: Property[] = [];
+    let nspListings: Property[] = [];
 
-    console.log(`[api/listings] CREA ${feed} feed returned ${listings.length} listings (total: ${total})`);
+    if (sourceParam === "all") {
+      // Fetch both feeds in parallel; noFallback=true prevents cross-contamination
+      const [memberResult, nspResult] = await Promise.all([
+        fetchListings(params, false, true),
+        fetchListings(params, true, true),
+      ]);
+      memberListings = tag(memberResult.listings, "member");
+      nspListings = tag(nspResult.listings, "nsp");
+      console.log(`[api/listings] member=${memberListings.length} nsp=${nspListings.length}`);
+    } else if (sourceParam === "member") {
+      const result = await fetchListings(params, false, true);
+      memberListings = tag(result.listings, "member");
+    } else {
+      const result = await fetchListings(params, true, true);
+      nspListings = tag(result.listings, "nsp");
+    }
+
+    const total = memberListings.length + nspListings.length;
 
     return NextResponse.json({
-      listings,
+      memberListings,
+      nspListings,
       total,
-      count: listings.length,
-      source: feed,
+      count: total,
     });
   } catch (err) {
     console.error("[api/listings] fetchListings threw:", err);
     return NextResponse.json({
-      listings: [], total: 0, count: 0, source: 'error',
-      debug: err instanceof Error ? err.message : String(err)
+      memberListings: [],
+      nspListings: [],
+      total: 0,
+      count: 0,
+      debug: err instanceof Error ? err.message : String(err),
     }, { status: 200 });
   }
 }

@@ -25,6 +25,19 @@ export default function PropertyCard({ property }: { property: Property }) {
               {property.type}
             </span>
           </div>
+          {property.source && (
+            <div className="absolute top-3 right-3">
+              {property.source === "member" ? (
+                <span className="bg-[#7D1A2D] text-white text-xs font-semibold px-2 py-1 rounded">
+                  Featured
+                </span>
+              ) : (
+                <span className="bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
+                  MLS Listings
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Content */}

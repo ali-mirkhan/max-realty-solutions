@@ -16,6 +16,7 @@ export interface Property {
   lotSize: string;
   propertyTax: number;
   mls?: string;
+  source?: "member" | "nsp";
   // DDF-supplied extras (optional — not present in static data)
   province?: string;
   postalCode?: string;

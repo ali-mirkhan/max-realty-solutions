@@ -73,7 +73,6 @@ export default function PropertiesClient() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [source, setSource] = useState<string>("nsp");
 
   const LIMIT = 24;
   const totalPages = Math.ceil(total / LIMIT);
@@ -95,13 +94,12 @@ export default function PropertiesClient() {
       const res = await fetch(url.toString());
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "API error");
-      setListings(data.listings ?? []);
-      setTotal(data.total ?? data.count ?? 0);
-      setSource(data.source ?? "nsp");
+      const merged = [...(data.memberListings ?? []), ...(data.nspListings ?? [])];
+      setListings(merged);
+      setTotal(data.total ?? merged.length);
     } catch {
       setListings([]);
       setTotal(0);
-      setSource("error");
       setError(true);
     } finally {
       setLoading(false);
@@ -216,19 +214,6 @@ export default function PropertiesClient() {
               {loading
                 ? "Loading listings..."
                 : `${total.toLocaleString()} ${total === 1 ? "property" : "properties"} found`}
-              {!loading && source === "nsp" && (
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded">
-                  National Pool
-                </span>
-              )}
-              {!loading && source === "member" && (
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 text-xs font-medium text-burgundy bg-burgundy/5 border border-burgundy/20 rounded">
-                  Brokerage Listings
-                </span>
-              )}
-              {!loading && source === "static" && (
-                <span className="ml-2 text-xs text-charcoal/30">· Featured Listings</span>
-              )}
             </p>
           </div>
 
@@ -284,7 +269,7 @@ export default function PropertiesClient() {
           )}
 
           {/* CREA Attribution — required by DDF terms */}
-          {source !== "static" && !loading && (
+          {!loading && (
             <div className="mt-12 pt-8 border-t border-stone-border text-center">
               <p className="text-xs text-charcoal/40">
                 Listing data provided by{" "}
