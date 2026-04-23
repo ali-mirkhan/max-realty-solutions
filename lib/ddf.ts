@@ -82,6 +82,12 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
   console.log('[DDF] Requesting token, client_id starts with:', clientId?.slice(0, 8));
 
   try {
+    const bodyParams = new URLSearchParams();
+    bodyParams.append('grant_type', 'client_credentials');
+    bodyParams.append('client_id', clientId);
+    bodyParams.append('client_secret', clientSecret);
+    console.log('[DDF] Token request body length:', bodyParams.toString().length, 'client_id length:', clientId.length);
+
     const tokenController = new AbortController();
     const tokenTimeout = setTimeout(() => tokenController.abort(), 8000);
     const res = await fetch(TOKEN_ENDPOINT, {
@@ -89,7 +95,7 @@ async function getAccessToken(useNSP: boolean): Promise<string | null> {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`,
+      body: bodyParams.toString(),
       cache: "no-store",
       signal: tokenController.signal,
     });
