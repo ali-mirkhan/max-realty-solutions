@@ -229,7 +229,7 @@ export async function fetchListings(
   const token = await getAccessToken(useNSP);
 
   if (!token) {
-    console.error(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — credentials missing or OAuth rejected`);
+    console.warn(`[DDF] No token for ${useNSP ? "NSP" : "Member"} feed — trying fallback`);
     if (useNSP) return fetchListings(params, false);
     return { listings: [], total: 0, feed: "none" };
   }
@@ -305,8 +305,8 @@ export async function fetchListing(id: string): Promise<Property | null> {
     const feed = useNSP ? "NSP" : "Member";
 
     try {
-      // Primary: entity key lookup with $expand=Media
-      const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')?$expand=Media`;
+      // Primary: entity key lookup — Media is embedded automatically
+      const entityUrl = `${DDF_ENDPOINT}('${encodeURIComponent(id)}')`;
       console.log(`[DDF] fetchListing entity lookup: GET ${entityUrl}`);
       const res = await fetch(entityUrl, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -325,10 +325,9 @@ export async function fetchListing(id: string): Promise<Property | null> {
         console.log(`[DDF] fetchListing entity ${feed} HTTP ${res.status}: ${eb.slice(0, 120)}`);
       }
 
-      // Fallback: OData filter with $expand=Media
+      // Fallback: OData filter — Media is embedded automatically
       const filterUrl = new URL(DDF_ENDPOINT);
       filterUrl.searchParams.set("$filter", `ListingKey eq '${escapeOData(id)}'`);
-      filterUrl.searchParams.set("$expand", "Media");
       filterUrl.searchParams.set("$top", "1");
 
       console.log(`[DDF] fetchListing filter: GET ${filterUrl.toString()}`);
