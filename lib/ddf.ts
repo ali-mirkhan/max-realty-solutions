@@ -144,83 +144,47 @@ function normalizeListing(
 
 // ─── fetchListings ─────────────────────────────────────────────────────────────
 
-export async function fetchListings(
-  params: ListingsParams = {}
-): Promise<{ listings: Property[]; source: "nsp" | "member" | "error" }> {
-  // Resolve credentials — NSP first, member as fallback
-  const nspId =
-    process.env.DDF_NSP_USERNAME || process.env.CREA_NSP_USERNAME || "";
-  const nspSecret =
-    process.env.DDF_NSP_PASSWORD || process.env.CREA_NSP_PASSWORD || "";
-  const memberId =
-    process.env.DDF_USERNAME || process.env.CREA_MEMBER_USERNAME || "";
-  const memberSecret =
-    process.env.DDF_PASSWORD || process.env.CREA_MEMBER_PASSWORD || "";
+async function fetchFromFeed(
+  token: string,
+  source: "nsp" | "member",
+  params: ListingsParams
+): Promise<Property[]> {
+  const filters: string[] = [];
+  if (params.city)
+    filters.push(`City eq '${params.city.replace(/'/g, "''")}'`);
+  if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
+  if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
+  if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
 
-  let token: string | null = null;
-  let feedSource: "nsp" | "member" | null = null;
+  const top = params.top ?? params.limit ?? 50;
+  const skip = params.page && params.page > 1 ? (params.page - 1) * top : 0;
 
-  if (nspId && nspSecret) {
-    token = await getToken(nspId, nspSecret);
-    if (token) feedSource = "nsp";
-  }
+  const queryParts: string[] = [`$top=${top}`];
+  if (skip > 0) queryParts.push(`$skip=${skip}`);
+  if (filters.length)
+    queryParts.push(`$filter=${encodeURIComponent(filters.join(" and "))}`);
+  queryParts.push("$orderby=ListPrice%20desc");
 
-  if (!token && memberId && memberSecret) {
-    console.log("[DDF] NSP failed or not configured — trying member feed");
-    token = await getToken(memberId, memberSecret);
-    if (token) feedSource = "member";
-  }
-
-  if (!token || !feedSource) {
-    console.error("[DDF] All token attempts failed — returning empty");
-    return { listings: [], source: "error" };
-  }
-
-  const source = feedSource;
+  const url = `${ODATA_URL}?${queryParts.join("&")}`;
+  console.log(`[DDF] OData URL (${source}):`, url);
 
   try {
-    // Build OData filter clauses
-    const filters: string[] = [];
-    if (params.city)
-      filters.push(`City eq '${params.city.replace(/'/g, "''")}'`);
-    if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
-    if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
-    if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
-
-    const top = params.top ?? params.limit ?? 50;
-    const skip =
-      params.page && params.page > 1 ? (params.page - 1) * top : 0;
-
-    // Build URL as a plain string — keeps $ readable in logs, avoids URLSearchParams encoding $
-    const queryParts: string[] = [`$top=${top}`];
-    if (skip > 0) queryParts.push(`$skip=${skip}`);
-    if (filters.length)
-      queryParts.push(`$filter=${encodeURIComponent(filters.join(" and "))}`);
-    queryParts.push("$orderby=ListPrice%20desc");
-
-    const url = `${ODATA_URL}?${queryParts.join("&")}`;
-    console.log("[DDF] OData URL:", url);
-
     const res = await fetch(url, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       cache: "no-store",
     });
 
-    console.log("[DDF] OData response status:", res.status);
+    console.log(`[DDF] OData response (${source}):`, res.status);
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("[DDF] OData error body:", errorText.slice(0, 500));
-      return { listings: [], source: "error" };
+      console.error(`[DDF] OData error (${source}):`, errorText.slice(0, 500));
+      return [];
     }
 
     const data = (await res.json()) as { value?: unknown[] };
     const values = Array.isArray(data.value) ? data.value : [];
-    console.log("[DDF] Listings returned:", values.length);
 
     const listings: Property[] = [];
     for (const raw of values) {
@@ -228,27 +192,78 @@ export async function fetchListings(
         listings.push(normalizeListing(raw as Record<string, unknown>, source));
       } catch (e) {
         console.error(
-          "[DDF] Failed to normalize listing:",
+          `[DDF] Failed to normalize listing (${source}):`,
           e instanceof Error ? e.message : String(e)
         );
       }
     }
-
-    // Client-side type filter (residential/commercial) — not an OData field
-    const typeFilter = (params.type ?? "").toLowerCase();
-    const filtered =
-      typeFilter && typeFilter !== "all"
-        ? listings.filter((l) => l.type === typeFilter)
-        : listings;
-
-    return { listings: filtered, source };
+    return listings;
   } catch (err) {
     console.error(
-      "[DDF] fetchListings error:",
+      `[DDF] fetchFromFeed (${source}) threw:`,
       err instanceof Error ? err.message : String(err)
     );
+    return [];
+  }
+}
+
+export async function fetchListings(
+  params: ListingsParams = {}
+): Promise<{ listings: Property[]; source: "nsp" | "member" | "member+nsp" | "error" }> {
+  const nspId = process.env.DDF_NSP_USERNAME || process.env.CREA_NSP_USERNAME || "";
+  const nspSecret = process.env.DDF_NSP_PASSWORD || process.env.CREA_NSP_PASSWORD || "";
+  const memberId = process.env.DDF_USERNAME || process.env.CREA_MEMBER_USERNAME || "";
+  const memberSecret = process.env.DDF_PASSWORD || process.env.CREA_MEMBER_PASSWORD || "";
+
+  // Fetch both tokens in parallel
+  const [nspToken, memberToken] = await Promise.all([
+    nspId && nspSecret ? getToken(nspId, nspSecret) : Promise.resolve(null),
+    memberId && memberSecret ? getToken(memberId, memberSecret) : Promise.resolve(null),
+  ]);
+
+  if (!nspToken && !memberToken) {
+    console.error("[DDF] All token attempts failed — returning empty");
     return { listings: [], source: "error" };
   }
+
+  // Fetch both feeds in parallel
+  const [nspListings, memberListings] = await Promise.all([
+    nspToken ? fetchFromFeed(nspToken, "nsp", params) : Promise.resolve([]),
+    memberToken ? fetchFromFeed(memberToken, "member", params) : Promise.resolve([]),
+  ]);
+
+  console.log("[DDF] Member feed returned:", memberListings.length);
+  console.log("[DDF] NSP feed returned:", nspListings.length);
+
+  // Deduplicate: member listings win — remove from NSP any id that member already has
+  const memberIds = new Set(memberListings.map((l) => l.id));
+  const nspFiltered = nspListings.filter((l) => !memberIds.has(l.id));
+
+  const combined = [...memberListings, ...nspFiltered];
+
+  console.log(
+    `[DDF] After dedup: ${combined.length} listings ( ${memberListings.length} member + ${nspFiltered.length} nsp )`
+  );
+
+  // Client-side type filter
+  const typeFilter = (params.type ?? "").toLowerCase();
+  const filtered =
+    typeFilter && typeFilter !== "all"
+      ? combined.filter((l) => l.type === typeFilter)
+      : combined;
+
+  // Apply top limit after dedup so member listings aren't lost
+  const top = params.top ?? params.limit ?? 50;
+  const result = filtered.slice(0, top);
+
+  const source =
+    memberListings.length > 0 && nspListings.length > 0
+      ? "member+nsp"
+      : memberListings.length > 0
+      ? "member"
+      : "nsp";
+
+  return { listings: result, source };
 }
 
 // ─── fetchListing (single property detail) ────────────────────────────────────

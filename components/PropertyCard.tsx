@@ -14,7 +14,7 @@ const GTA_CITIES = new Set([
 function getListingBadge(property: Property): { text: string; className: string } | null {
   if (!property.source) return null;
   if (property.source === "member") {
-    return { text: "Featured", className: "bg-[#7D1A2D] text-white" };
+    return { text: "Max Realty Exclusive", className: "bg-[#7D1A2D] text-white" };
   }
   const city = (property.city ?? "").toLowerCase().trim();
   const province = (property.province ?? "").trim();
