@@ -112,11 +112,8 @@ export default function PropertiesClient() {
       const res = await fetch(url.toString());
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "API error");
-      const merged: Property[] = [
-        ...(data.memberListings ?? []),
-        ...(data.nspListings ?? []),
-      ];
-      const sorted = merged.sort(
+      const all: Property[] = data.listings ?? [];
+      const sorted = [...all].sort(
         (a, b) => SORT_ORDER[getRegion(a)] - SORT_ORDER[getRegion(b)]
       );
       setListings(sorted);
