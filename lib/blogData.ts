@@ -11,53 +11,43 @@ export interface BlogPost {
 export const posts: BlogPost[] = [
   {
     slug: "interest-rates-gta-2026",
-    title: "How Interest Rates Are Impacting Home Prices in the GTA (2026 Update)",
+    title: "Interest Rates and GTA Home Prices: Where We Stand in Spring 2026",
     date: "April 1, 2026",
     category: "Market Update",
     excerpt: "Interest rates continue to reshape affordability across the GTA. Here is what buyers and sellers need to know right now.",
     image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80&auto=format&fit=crop",
     content: `
-The Greater Toronto Area real estate market continues to be heavily influenced by interest rates in 2026. For both buyers and sellers, understanding this relationship is critical to making the right move.
+The Greater Toronto Area real estate market is being shaped by one of the most important economic questions of 2026: which way are interest rates moving next?
 
-## Higher Rates = Lower Affordability
+## Where Rates Are Today
 
-When interest rates rise, borrowing becomes more expensive — and that directly impacts how much buyers can qualify for.
+The Bank of Canada's policy rate sits at 2.25%, held steady since October 2025. That's down sharply from the 5% peak in 2023-2024, and it's fueling a meaningful shift in buyer behaviour across the GTA.
 
-For example, a buyer who could afford a $1,200,000 home at lower rates may now only qualify for $950,000 to $1,000,000. Monthly payments increase significantly, even if home prices stay flat.
+Typical 5-year fixed mortgage rates are now in the low-to-mid 4% range, with variable rates tracking around prime minus a small discount. Compared to 24 months ago, the monthly carrying cost on a $1M mortgage has come down by several hundred dollars.
 
-## What This Means for Prices
+## What This Means for Buyers
 
-As affordability declines across the GTA:
+Lower rates have restored affordability for a segment of the market that was priced out during the rate-hiking cycle. A household that could barely qualify for $800,000 two years ago may now qualify for over $1M at today's rates — without earning a dollar more.
 
-- Buyer demand slows
-- Sellers face more competition from other listings
-- Price growth stabilizes or corrects in some pockets
-- Conditional offers are becoming more common again
-- Days on market are increasing
-- Buyers have more negotiation room than in recent years
+The qualified buyer pool has widened. That's one reason TRREB reported March 2026 sales up 1.7% year-over-year, the first YoY increase in six months.
 
-## Smart Buyer Strategy for 2026
+## What This Means for Sellers
 
-In this environment, the strongest buyers are:
+The market is tightening, but it's not tight. Buyers have been taking their time, negotiating hard, and refusing to overpay. TRREB's Chief Information Officer Jason Mercer recently noted that buyers "continued to benefit from substantial negotiating power on price across major market segments" — but also warned that "if conditions continue to tighten, selling prices could start levelling off as we move through 2026."
 
-- Negotiating harder and not overbidding
-- Targeting motivated sellers who have been sitting on the market
-- Locking in properties in areas with long-term upside
-- Getting pre-approved early to move quickly when the right property appears
+Translation: sellers who price aggressively now may catch the turn before it happens.
 
-## What Sellers Need to Know
+## The Risk on the Horizon
 
-If you are selling in today's market, the rules have changed:
+The rate path is not guaranteed. Global energy volatility driven by the Middle East conflict has pushed inflation expectations higher, and some economists are openly discussing whether the Bank of Canada may need to pause its easing cycle — or even reverse course — if oil-driven inflation sticks.
 
-**Pricing correctly from day one is more important than ever.** Overpriced listings sit, accumulate days on market, and eventually sell for less than if they had been priced right initially.
+For buyers on the fence, this is the real strategic question: do you lock in at today's rates while they're still historically low, or wait and risk paying more to borrow if the Bank has to tighten again?
 
-First impressions matter enormously — your listing launch is your best chance to generate early momentum. Professional photography, staging, and a sharp marketing strategy are no longer optional.
+## Our Take
 
-## Bottom Line
+Today's market rewards decisiveness on both sides. Buyers who are pre-approved, clear on their budget, and ready to move are in the strongest position they've been in for years. Sellers who launch with correct pricing and a sharp marketing strategy can take advantage of the improving buyer pool before inventory tightens further.
 
-Interest rates are reshaping the GTA market — but they are also creating real opportunities for buyers who are prepared and sellers who are strategic.
-
-Thinking of buying or selling in today's market? Reach out to the Max Realty Solutions team. We will walk you through the numbers and build a strategy around your specific situation.
+Thinking of buying or selling in today's market? Reach out to the Max Realty Solutions team. We'll walk you through the numbers and build a strategy around your specific situation.
     `,
   },
   {
