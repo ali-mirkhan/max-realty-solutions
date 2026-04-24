@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import type { Property } from "@/lib/types";
-import { isGTACity } from "@/lib/regions";
+import type { FeedRegion } from "@/lib/regions";
 
 const TYPES = [
   { label: "All Types", value: "" },
@@ -74,25 +74,12 @@ export default function PropertiesClient() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [defaultToGTA, setDefaultToGTA] = useState(true);
+  const [region, setRegion] = useState<FeedRegion>("gta");
 
   const LIMIT = 48;
+  const totalPages = Math.ceil(total / LIMIT);
 
-  const userHasFilters =
-    city.trim() !== "" ||
-    typeIndex !== 0 ||
-    minPrice !== "" ||
-    maxPrice !== "" ||
-    beds !== "";
-
-  const applyGTADefault = defaultToGTA && !userHasFilters;
-  const visibleListings = applyGTADefault
-    ? listings.filter((p) => isGTACity(p.city))
-    : listings;
-  const visibleCount = applyGTADefault ? visibleListings.length : total;
-  const totalPages = Math.ceil(visibleCount / LIMIT);
-
-  async function fetchData(pageNum = 1) {
+  async function fetchData(pageNum = 1, regionOverride?: FeedRegion) {
     setLoading(true);
     setError(false);
     try {
@@ -105,6 +92,7 @@ export default function PropertiesClient() {
       if (beds) url.searchParams.set("beds", beds);
       url.searchParams.set("top", String(LIMIT));
       url.searchParams.set("page", String(pageNum));
+      url.searchParams.set("region", regionOverride ?? region);
 
       const res = await fetch(url.toString());
       const data = await res.json();
@@ -139,6 +127,13 @@ export default function PropertiesClient() {
     setPage(newPage);
     fetchData(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleRegionToggle() {
+    const next: FeedRegion = region === "gta" ? "ontario" : "gta";
+    setRegion(next);
+    setPage(1);
+    fetchData(1, next);
   }
 
   return (
@@ -221,19 +216,21 @@ export default function PropertiesClient() {
 
           <div className="flex items-center gap-2 mt-3">
             <button
-              onClick={() => setDefaultToGTA((v) => !v)}
+              onClick={handleRegionToggle}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
-                defaultToGTA
+                region === "gta"
                   ? "border-burgundy text-burgundy bg-burgundy/5 hover:bg-burgundy/10"
                   : "border-stone-border text-charcoal/60 hover:border-burgundy hover:text-burgundy"
               }`}
             >
               <MapPin size={12} />
-              {defaultToGTA ? "GTA only · Show all regions" : "Showing all · GTA only"}
+              {region === "gta"
+                ? "GTA only · Show all Ontario"
+                : "Showing all Ontario · GTA only"}
             </button>
-            {userHasFilters && defaultToGTA && (
+            {city.trim() !== "" && (
               <span className="text-xs text-charcoal/40">
-                Filters active — showing matches from all regions
+                City filter active — region filter overridden
               </span>
             )}
           </div>
@@ -247,7 +244,13 @@ export default function PropertiesClient() {
             <p className="text-sm text-charcoal/50">
               {loading
                 ? "Loading listings..."
-                : `${visibleCount.toLocaleString()} ${visibleCount === 1 ? "property" : "properties"} found${applyGTADefault ? " in the GTA" : ""}`}
+                : `${total.toLocaleString()} ${total === 1 ? "property" : "properties"} found${
+                    city.trim() === "" && region === "gta"
+                      ? " in the GTA"
+                      : city.trim() === "" && region === "ontario"
+                      ? " across Ontario"
+                      : ""
+                  }`}
             </p>
           </div>
 
@@ -265,10 +268,10 @@ export default function PropertiesClient() {
                 Retry
               </button>
             </div>
-          ) : visibleListings.length > 0 ? (
+          ) : listings.length > 0 ? (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {visibleListings.map((property) => (
+                {listings.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>

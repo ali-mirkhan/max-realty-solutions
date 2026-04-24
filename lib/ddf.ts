@@ -1,4 +1,9 @@
 import type { Property } from "@/lib/types";
+import {
+  GTA_FEED_CITIES,
+  ONTARIO_EXPANDED_CITIES,
+  type FeedRegion,
+} from "@/lib/regions";
 
 const TOKEN_URL = "https://identity.crea.ca/connect/token";
 const ODATA_URL = "https://ddfapi.realtor.ca/odata/v1/Property";
@@ -17,6 +22,7 @@ export interface ListingsParams {
   limit?: number;      // alias for top, for backward compat
   page?: number;
   search?: string;
+  region?: FeedRegion; // NSP-only regional pre-filter; ignored for member feed
 }
 
 // ─── Token ────────────────────────────────────────────────────────────────────
@@ -159,6 +165,19 @@ async function fetchFromFeed(
       .join(" ")
       .replace(/'/g, "''");
     filters.push(`contains(City, '${titleCased}')`);
+  } else if (
+    source === "nsp" &&
+    params.region &&
+    params.region !== "all"
+  ) {
+    // NSP-only regional pre-filter so we don't pull random Alberta/BC listings.
+    // Member feed is always fetched in full — it's small and always local.
+    const cityList =
+      params.region === "gta" ? GTA_FEED_CITIES : ONTARIO_EXPANDED_CITIES;
+    const orClause = cityList
+      .map((c) => `contains(City,'${c.replace(/'/g, "''")}')`)
+      .join(" or ");
+    filters.push(`(${orClause})`);
   }
   if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
   if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);

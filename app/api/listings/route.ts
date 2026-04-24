@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchListings } from "@/lib/ddf";
+import type { FeedRegion } from "@/lib/regions";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -35,6 +36,10 @@ export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
   const topParam = sp.get("top") ?? sp.get("limit");
 
+  const regionParam = sp.get("region");
+  const region: FeedRegion =
+    regionParam === "ontario" || regionParam === "all" ? regionParam : "gta";
+
   const params = {
     city: sp.get("city") ?? undefined,
     minPrice: sp.get("minPrice") ? Number(sp.get("minPrice")) : undefined,
@@ -43,10 +48,11 @@ export async function GET(request: NextRequest) {
     type: sp.get("type") ?? undefined,
     top: topParam ? Number(topParam) : 50,
     page: sp.get("page") ? Number(sp.get("page")) : 1,
+    region,
   };
 
   console.log(
-    `[api/listings] GET — city=${params.city ?? "any"} type=${params.type ?? "any"} beds=${params.beds ?? "-"} top=${params.top} page=${params.page}`
+    `[api/listings] GET — city=${params.city ?? "any"} region=${region} type=${params.type ?? "any"} beds=${params.beds ?? "-"} top=${params.top} page=${params.page}`
   );
 
   const { listings, source } = await fetchListings(params);
