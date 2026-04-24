@@ -30,8 +30,8 @@ export default function ObscuredHero({
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: `url("${imagePath}")`,
-          filter: "blur(28px) saturate(0.5) brightness(0.65)",
-          transform: "scale(1.2)",
+          filter: "blur(14px) saturate(0.85) brightness(0.85)",
+          transform: "scale(1.05)",
         }}
         aria-hidden="true"
       />
@@ -40,13 +40,13 @@ export default function ObscuredHero({
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(135deg, rgba(125,26,45,0.55) 0%, rgba(44,44,44,0.65) 100%)",
+            "linear-gradient(180deg, rgba(44,44,44,0.15) 0%, rgba(44,44,44,0.35) 60%, rgba(44,44,44,0.55) 100%)",
         }}
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"
+        className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
@@ -56,7 +56,7 @@ export default function ObscuredHero({
       />
 
       <div
-        className="absolute inset-0 opacity-10 pointer-events-none"
+        className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
           background:
             "repeating-linear-gradient(45deg, transparent 0, transparent 80px, rgba(255,255,255,0.15) 80px, rgba(255,255,255,0.15) 81px)",
