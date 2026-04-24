@@ -17,13 +17,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const post = getPostBySlug(params.slug);
   if (!post) return { title: "Article Not Found" };
+
+  const url = `https://www.maxrealtysolutions.com/blog/${params.slug}`;
+  const imageUrl = post.image || "https://www.maxrealtysolutions.com/og-default.jpg";
+  const description = post.excerpt || post.title;
+
   return {
     title: `${post.title} | Max Realty Solutions`,
-    description: post.excerpt,
+    description,
+    alternates: { canonical: url },
     openGraph: {
       title: post.title,
-      description: post.excerpt,
-      images: [{ url: post.image }],
+      description,
+      url,
+      type: "article",
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: post.title }],
+      siteName: "Max Realty Solutions",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: [imageUrl],
     },
   };
 }

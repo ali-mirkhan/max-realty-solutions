@@ -58,11 +58,34 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const property = await getProperty(params.id);
   if (!property) return { title: "Property Not Found" };
+
+  const url = `https://www.maxrealtysolutions.com/properties/${params.id}`;
+  const priceFormatted = property.price ? `$${property.price.toLocaleString()}` : "";
+  const title = `${property.address}, ${property.city}${priceFormatted ? ` — ${priceFormatted}` : ""}`;
+  const description =
+    property.description?.slice(0, 200) ||
+    `${property.beds} bed ${property.baths} bath in ${property.city}. ${priceFormatted} via Max Realty Solutions.`;
+  const firstImage = property.images?.[0] || property.image;
+  const imageUrl = firstImage || "https://www.maxrealtysolutions.com/og-default.jpg";
+
   return {
-    title: `${property.address}, ${property.city}`,
-    description:
-      property.description ||
-      `${property.type} listing in ${property.city}, Ontario`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
+      siteName: "Max Realty Solutions",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
