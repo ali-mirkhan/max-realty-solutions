@@ -96,7 +96,6 @@ export default function OffMarketDetailPage({
               eyebrow="OFF-MARKET"
               title="Off-Market Retail Opportunity"
               subtitle="Grocery-anchored plaza · 9.775 acres · Ontario"
-              aspectRatio="16/9"
             />
           ) : usesImage ? (
             <Image

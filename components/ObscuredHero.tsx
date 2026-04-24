@@ -13,17 +13,23 @@ export default function ObscuredHero({
   eyebrow = "EXCLUSIVE",
   title,
   subtitle,
-  aspectRatio = "16/10",
+  aspectRatio,
 }: ObscuredHeroProps) {
+  // If aspectRatio is supplied the component owns its sizing; otherwise it
+  // fills whatever parent container it's dropped into (absolute inset-0).
+  const containerStyle: React.CSSProperties = aspectRatio
+    ? { aspectRatio }
+    : {};
+  const containerClass = aspectRatio
+    ? "relative w-full overflow-hidden rounded-lg"
+    : "absolute inset-0 overflow-hidden";
+
   return (
-    <div
-      className="relative w-full overflow-hidden rounded-lg"
-      style={{ aspectRatio }}
-    >
+    <div className={containerClass} style={containerStyle}>
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url(${imagePath})`,
+          backgroundImage: `url("${imagePath}")`,
           filter: "blur(28px) saturate(0.5) brightness(0.45)",
           transform: "scale(1.2)",
         }}
@@ -58,17 +64,17 @@ export default function ObscuredHero({
         aria-hidden="true"
       />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-8 py-12">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6 py-8 md:px-8 md:py-12">
         <p className="text-[11px] tracking-[0.3em] font-semibold text-white/75 mb-4">
           {eyebrow}
         </p>
-        <h2 className="font-serif text-2xl md:text-4xl font-semibold mb-3 max-w-2xl leading-tight">
+        <h2 className="font-serif text-xl md:text-4xl font-semibold mb-3 max-w-2xl leading-tight">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-sm md:text-base text-white/80 max-w-md">{subtitle}</p>
+          <p className="text-xs md:text-base text-white/80 max-w-md">{subtitle}</p>
         )}
-        <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/30 backdrop-blur-sm text-[11px] tracking-wider uppercase text-white/90">
+        <div className="mt-5 md:mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/30 backdrop-blur-sm text-[10px] md:text-[11px] tracking-wider uppercase text-white/90">
           <svg
             viewBox="0 0 24 24"
             fill="none"

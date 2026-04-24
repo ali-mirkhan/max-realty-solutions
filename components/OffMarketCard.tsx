@@ -14,34 +14,30 @@ export default function OffMarketCard({ listing }: { listing: OffMarketListing }
   }).format(listing.noi);
 
   return (
-    <Link href={`/off-market/${listing.slug}`} className="group block">
-      <div className="bg-white rounded-lg overflow-hidden border border-stone-border hover:border-burgundy/30 transition-all duration-300 hover:shadow-lg">
-        <div className="relative aspect-[4/3] overflow-hidden bg-charcoal">
+    <Link href={`/off-market/${listing.slug}`} className="group block h-full">
+      <article className="flex flex-col h-full bg-white rounded-lg overflow-hidden border border-stone-border hover:border-burgundy/30 hover:shadow-lg transition-all duration-300">
+        {/* Image area — fixed 4/3 aspect */}
+        <div className="relative w-full aspect-[4/3] overflow-hidden bg-charcoal">
           {listing.heroObscure && listing.hero.imagePath ? (
-            <div className="absolute inset-0">
-              <ObscuredHero
-                imagePath={listing.hero.imagePath}
-                eyebrow="OFF-MARKET"
-                title="Off-Market Retail Opportunity"
-                subtitle="Grocery-anchored plaza · Ontario"
-                aspectRatio="4/3"
-              />
-            </div>
+            <ObscuredHero
+              imagePath={listing.hero.imagePath}
+              eyebrow="OFF-MARKET"
+              title="Off-Market Retail Opportunity"
+              subtitle="Grocery-anchored plaza · Ontario"
+            />
           ) : usesImage ? (
             <Image
               src={listing.hero.imagePath!}
               alt={listing.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
-            <div className="absolute inset-0">
-              <OffMarketPlaceholder
-                variant={listing.hero.placeholderVariant}
-                className="w-full h-full"
-              />
-            </div>
+            <OffMarketPlaceholder
+              variant={listing.hero.placeholderVariant}
+              className="absolute inset-0 w-full h-full"
+            />
           )}
 
           <div className="absolute top-3 left-3 z-10">
@@ -57,26 +53,31 @@ export default function OffMarketCard({ listing }: { listing: OffMarketListing }
           </div>
         </div>
 
-        <div className="p-5">
-          <p className="font-serif text-lg font-semibold text-burgundy mb-1">
-            Price on Request
-          </p>
+        {/* Content area — flex-1 so height matches tallest card; footer pinned bottom */}
+        <div className="flex flex-col flex-1 p-5">
+          <div>
+            <p className="font-serif text-lg font-semibold text-burgundy mb-1">
+              Price on Request
+            </p>
+            <h3 className="font-serif text-base font-semibold text-charcoal leading-snug mb-2">
+              {listing.title}
+            </h3>
+            <p className="text-xs text-charcoal/50 flex items-center gap-1.5">
+              {listing.isConfidential ? <Lock size={12} /> : <MapPin size={12} />}
+              <span>{listing.locationDisplay}</span>
+            </p>
+          </div>
 
-          <h3 className="font-serif text-base font-semibold text-charcoal leading-snug mb-1">
-            {listing.title}
-          </h3>
+          <div className="flex-1" />
 
-          <p className="text-xs text-charcoal/50 flex items-center gap-1 mb-4">
-            {listing.isConfidential ? <Lock size={12} /> : <MapPin size={12} />}
-            {listing.locationDisplay}
-          </p>
-
-          <div className="pt-3 border-t border-stone-border">
-            <p className="text-xs text-charcoal/40 uppercase tracking-wider">NOI</p>
+          <div className="mt-4 pt-4 border-t border-stone-border/70">
+            <p className="text-[10px] text-charcoal/40 uppercase tracking-wider mb-0.5">
+              NOI
+            </p>
             <p className="text-sm font-semibold text-charcoal">{noiFormatted}</p>
           </div>
         </div>
-      </div>
+      </article>
     </Link>
   );
 }
