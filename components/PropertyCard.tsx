@@ -11,24 +11,20 @@ const GTA_CITIES = new Set([
   "stouffville",
 ]);
 
-function getListingBadge(property: Property): { text: string; className: string } | null {
-  if (!property.source) return null;
-  if (property.source === "member") {
-    return { text: "Max Realty Exclusive", className: "bg-[#7D1A2D] text-white" };
-  }
+function getRegion(property: Property): string | null {
   const city = (property.city ?? "").toLowerCase().trim();
   const province = (property.province ?? "").trim();
-  if (GTA_CITIES.has(city)) {
-    return { text: "GTA", className: "bg-amber-500 text-white" };
-  }
-  if (province === "Ontario" || province === "ON") {
-    return { text: "Ontario", className: "bg-blue-600 text-white" };
-  }
-  return { text: "MLS Listing", className: "bg-gray-200 text-gray-700" };
+  if (GTA_CITIES.has(city)) return "GTA";
+  if (province === "Ontario" || province === "ON") return "Ontario";
+  return "MLS Listing";
 }
 
 export default function PropertyCard({ property }: { property: Property }) {
-  const badge = getListingBadge(property);
+  const status = property.status;
+  const propertyType = property.type
+    ? property.type.charAt(0).toUpperCase() + property.type.slice(1)
+    : "";
+  const region = getRegion(property);
 
   return (
     <Link href={`/properties/${property.id}`} className="group block">
@@ -42,21 +38,34 @@ export default function PropertyCard({ property }: { property: Property }) {
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
-          <div className="absolute top-3 left-3 flex gap-2">
-            <span className="px-2.5 py-1 text-xs font-semibold text-white bg-burgundy rounded">
-              {property.status}
-            </span>
-            <span className="px-2.5 py-1 text-xs font-medium text-charcoal bg-white/90 backdrop-blur-sm rounded capitalize">
-              {property.type}
-            </span>
-          </div>
-          {badge && (
-            <div className="absolute top-3 right-3">
-              <span className={`text-xs font-semibold px-2 py-1 rounded ${badge.className}`}>
-                {badge.text}
+          {/* LEFT SIDE: Status + Type badges stacked vertically */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-10">
+            {status && (
+              <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-burgundy text-white rounded shadow-sm">
+                {status}
               </span>
-            </div>
-          )}
+            )}
+            {propertyType && (
+              <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-charcoal rounded shadow-sm">
+                {propertyType}
+              </span>
+            )}
+          </div>
+
+          {/* RIGHT SIDE: Either Max Realty Exclusive (member) OR Region badge (NSP), never both */}
+          <div className="absolute top-3 right-3 z-10">
+            {property.source === "member" ? (
+              <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-burgundy text-white rounded shadow-sm whitespace-nowrap">
+                Max Realty Exclusive
+              </span>
+            ) : region && (
+              <span className={`inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded shadow-sm whitespace-nowrap ${
+                region === "GTA" ? "bg-yellow-400 text-charcoal" : "bg-white/90 text-charcoal"
+              }`}>
+                {region}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Content */}
