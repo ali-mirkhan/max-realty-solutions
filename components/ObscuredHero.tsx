@@ -30,7 +30,7 @@ export default function ObscuredHero({
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: `url("${imagePath}")`,
-          filter: "blur(28px) saturate(0.5) brightness(0.55)",
+          filter: "blur(28px) saturate(0.5) brightness(0.65)",
           transform: "scale(1.2)",
         }}
         aria-hidden="true"
@@ -40,7 +40,7 @@ export default function ObscuredHero({
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(135deg, rgba(125,26,45,0.72) 0%, rgba(44,44,44,0.80) 100%)",
+            "linear-gradient(135deg, rgba(125,26,45,0.55) 0%, rgba(44,44,44,0.65) 100%)",
         }}
         aria-hidden="true"
       />
