@@ -3,18 +3,11 @@ import Image from "next/image";
 import { Bed, Bath, Maximize, MapPin } from "lucide-react";
 import type { Property } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
-
-const GTA_CITIES = new Set([
-  "toronto", "mississauga", "brampton", "markham", "vaughan", "richmond hill",
-  "oakville", "burlington", "ajax", "whitby", "oshawa", "pickering", "milton",
-  "newmarket", "scarborough", "north york", "etobicoke", "aurora", "king city",
-  "stouffville",
-]);
+import { isGTACity } from "@/lib/regions";
 
 function getRegion(property: Property): string | null {
-  const city = (property.city ?? "").toLowerCase().trim();
   const province = (property.province ?? "").trim();
-  if (GTA_CITIES.has(city)) return "GTA";
+  if (isGTACity(property.city)) return "GTA";
   if (province === "Ontario" || province === "ON") return "Ontario";
   return "MLS Listing";
 }

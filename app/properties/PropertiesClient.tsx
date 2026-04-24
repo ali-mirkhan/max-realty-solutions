@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import type { Property } from "@/lib/types";
+import { isGTACity } from "@/lib/regions";
 
 const TYPES = [
   { label: "All Types", value: "" },
@@ -73,9 +74,23 @@ export default function PropertiesClient() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [defaultToGTA, setDefaultToGTA] = useState(true);
 
   const LIMIT = 48;
-  const totalPages = Math.ceil(total / LIMIT);
+
+  const userHasFilters =
+    city.trim() !== "" ||
+    typeIndex !== 0 ||
+    minPrice !== "" ||
+    maxPrice !== "" ||
+    beds !== "";
+
+  const applyGTADefault = defaultToGTA && !userHasFilters;
+  const visibleListings = applyGTADefault
+    ? listings.filter((p) => isGTACity(p.city))
+    : listings;
+  const visibleCount = applyGTADefault ? visibleListings.length : total;
+  const totalPages = Math.ceil(visibleCount / LIMIT);
 
   async function fetchData(pageNum = 1) {
     setLoading(true);
@@ -203,6 +218,25 @@ export default function PropertiesClient() {
               Search
             </button>
           </div>
+
+          <div className="flex items-center gap-2 mt-3">
+            <button
+              onClick={() => setDefaultToGTA((v) => !v)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
+                defaultToGTA
+                  ? "border-burgundy text-burgundy bg-burgundy/5 hover:bg-burgundy/10"
+                  : "border-stone-border text-charcoal/60 hover:border-burgundy hover:text-burgundy"
+              }`}
+            >
+              <MapPin size={12} />
+              {defaultToGTA ? "GTA only · Show all regions" : "Showing all · GTA only"}
+            </button>
+            {userHasFilters && defaultToGTA && (
+              <span className="text-xs text-charcoal/40">
+                Filters active — showing matches from all regions
+              </span>
+            )}
+          </div>
         </div>
       </section>
 
@@ -213,7 +247,7 @@ export default function PropertiesClient() {
             <p className="text-sm text-charcoal/50">
               {loading
                 ? "Loading listings..."
-                : `${total.toLocaleString()} ${total === 1 ? "property" : "properties"} found`}
+                : `${visibleCount.toLocaleString()} ${visibleCount === 1 ? "property" : "properties"} found${applyGTADefault ? " in the GTA" : ""}`}
             </p>
           </div>
 
@@ -231,10 +265,10 @@ export default function PropertiesClient() {
                 Retry
               </button>
             </div>
-          ) : listings.length > 0 ? (
+          ) : visibleListings.length > 0 ? (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {listings.map((property) => (
+                {visibleListings.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
