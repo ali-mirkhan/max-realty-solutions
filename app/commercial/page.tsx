@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Building2, TrendingUp, BarChart3, DollarSign, ArrowRight, CheckCircle2, MapPin } from "lucide-react";
+import Link from "next/link";
+import { Building2, TrendingUp, BarChart3, DollarSign, ArrowRight, MapPin, Lock } from "lucide-react";
 import CommercialCTA from "./CommercialCTA";
 
 export const metadata: Metadata = {
@@ -66,6 +67,31 @@ export default function CommercialPage() {
               properties, and commercial leasing across the Greater Toronto Area.
             </p>
             <CommercialCTA />
+          </div>
+        </div>
+      </section>
+
+      {/* Off-Market Opportunities teaser */}
+      <section className="bg-stone-light border-b border-stone-border">
+        <div className="container py-12 lg:py-16">
+          <div className="flex items-center justify-between flex-wrap gap-6">
+            <div className="max-w-2xl">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-burgundy mb-3 inline-flex items-center gap-2">
+                <Lock size={12} /> Exclusive
+              </p>
+              <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-charcoal mb-3">
+                Off-Market Investment Opportunities
+              </h2>
+              <p className="text-sm lg:text-base text-charcoal/70 leading-relaxed">
+                Max Realty maintains relationships with owners of institutional-grade commercial
+                assets not listed on MLS. Qualified investors can request access to our current
+                portfolio of off-market opportunities — including development sites, retail
+                plazas, and grocery-anchored assets across Ontario.
+              </p>
+            </div>
+            <Link href="/off-market" className="btn-primary">
+              View Off-Market Opportunities <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>

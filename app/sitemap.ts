@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import blogPosts from "@/data/blogPosts.json";
+import { getPublishedOffMarketListings } from "@/data/offMarketListings";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://www.maxrealtysolutions.com";
@@ -9,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/properties`, priority: 0.9, changeFrequency: "daily" as const },
     { url: `${base}/services`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/commercial`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/off-market`, priority: 0.9, changeFrequency: "weekly" as const },
     { url: `${base}/property-management`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/tools`, priority: 0.7, changeFrequency: "monthly" as const },
     { url: `${base}/join`, priority: 0.9, changeFrequency: "monthly" as const },
@@ -25,5 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...blogPages];
+  const offMarketPages = getPublishedOffMarketListings().map((l) => ({
+    url: `${base}/off-market/${l.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...blogPages, ...offMarketPages];
 }

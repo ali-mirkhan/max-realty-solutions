@@ -7,8 +7,10 @@ import {
   ChevronDown,
 } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
+import OffMarketCard from "@/components/OffMarketCard";
 import type { Property } from "@/lib/types";
 import { fetchListings } from "@/lib/ddf";
+import { getPublishedOffMarketListings } from "@/data/offMarketListings";
 
 export const metadata: Metadata = {
   title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
@@ -57,6 +59,7 @@ export default async function HomePage() {
   } catch {
     // show empty featured section if API unavailable
   }
+  const offMarketListings = getPublishedOffMarketListings();
   return (
     <>
       {/* ── HERO ── */}
@@ -151,6 +154,44 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── OFF-MARKET OPPORTUNITIES ── */}
+      {offMarketListings.length > 0 && (
+        <section className="py-20 lg:py-28 bg-stone-light border-y border-stone-border">
+          <div className="container">
+            <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
+              <div>
+                <p className="section-label">Exclusive</p>
+                <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal">
+                  Off-Market Investment Opportunities
+                </h2>
+                <p className="text-charcoal/60 mt-2">
+                  Institutional-grade commercial assets available only to qualified investors
+                </p>
+              </div>
+              <Link
+                href="/off-market"
+                className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline"
+              >
+                View All Off-Market Opportunities <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {offMarketListings.map((listing) => (
+                <OffMarketCard key={listing.slug} listing={listing} />
+              ))}
+            </div>
+            <div className="sm:hidden text-center mt-8">
+              <Link
+                href="/off-market"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline"
+              >
+                View All Off-Market Opportunities <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── DUAL VALUE ── */}
       <section className="py-20 lg:py-28">
