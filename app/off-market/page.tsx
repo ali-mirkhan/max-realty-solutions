@@ -48,7 +48,7 @@ export default function OffMarketLandingPage() {
         />
         <div className="relative container py-20 lg:py-28">
           <div className="max-w-3xl">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-burgundy border-l-2 border-burgundy pl-3 mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E8E4DE]/80 border-l-2 border-burgundy pl-3 mb-5">
               Exclusive · By Qualification
             </p>
             <h1 className="font-serif text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight tracking-tight mb-6">

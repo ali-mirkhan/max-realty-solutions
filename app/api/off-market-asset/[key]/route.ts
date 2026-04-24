@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 export const runtime = "nodejs";
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 // Neutral URL keys → on-disk public asset paths. Keys are chosen so that the
 // filename on disk never appears in any client-visible HTML, CSS, or JSON.

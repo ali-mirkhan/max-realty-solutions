@@ -16,13 +16,13 @@ export default function ObscuredHero({
   aspectRatio,
 }: ObscuredHeroProps) {
   // If aspectRatio is supplied the component owns its sizing; otherwise it
-  // fills whatever parent container it's dropped into (absolute inset-0).
+  // fills whatever parent container it's dropped into.
   const containerStyle: React.CSSProperties = aspectRatio
     ? { aspectRatio }
     : {};
   const containerClass = aspectRatio
     ? "relative w-full overflow-hidden rounded-lg"
-    : "absolute inset-0 overflow-hidden";
+    : "relative w-full h-full overflow-hidden";
 
   return (
     <div className={containerClass} style={containerStyle}>
@@ -30,7 +30,7 @@ export default function ObscuredHero({
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: `url("${imagePath}")`,
-          filter: "blur(28px) saturate(0.5) brightness(0.45)",
+          filter: "blur(28px) saturate(0.5) brightness(0.55)",
           transform: "scale(1.2)",
         }}
         aria-hidden="true"
@@ -40,7 +40,7 @@ export default function ObscuredHero({
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(135deg, rgba(125,26,45,0.88) 0%, rgba(44,44,44,0.92) 100%)",
+            "linear-gradient(135deg, rgba(125,26,45,0.72) 0%, rgba(44,44,44,0.80) 100%)",
         }}
         aria-hidden="true"
       />
