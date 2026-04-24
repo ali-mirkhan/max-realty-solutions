@@ -12,6 +12,8 @@ export type OffMarketListing = {
     imagePath?: string;
     placeholderVariant: "markham" | "dufferin" | "grocery-anchor";
   };
+  heroObscure?: boolean;
+  galleryImages?: string[];
   noi: number;
   highlights: {
     label: string;
@@ -37,7 +39,8 @@ export const offMarketListings: OffMarketListing[] = [
     city: "Markham",
     category: "Development Site",
     hero: {
-      type: "svg-placeholder",
+      type: "image",
+      imagePath: "/off-market/markham-hero.jpg",
       placeholderVariant: "markham",
     },
     noi: 2000000,
@@ -76,9 +79,10 @@ export const offMarketListings: OffMarketListing[] = [
     category: "Retail Plaza",
     hero: {
       type: "image",
-      imagePath: "/dufferin-orfus-plaza.jpg",
+      imagePath: "/off-market/dufferin-hero.jpg",
       placeholderVariant: "dufferin",
     },
+    galleryImages: ["/off-market/dufferin-gallery-1.jpg"],
     noi: 500000,
     highlights: [
       { label: "Net Operating Income", value: "$500,000" },
@@ -125,9 +129,11 @@ export const offMarketListings: OffMarketListing[] = [
     isConfidential: true,
     category: "Grocery-Anchored Retail",
     hero: {
-      type: "svg-placeholder",
+      type: "image",
+      imagePath: "/api/off-market-asset/grocery-source",
       placeholderVariant: "grocery-anchor",
     },
+    heroObscure: true,
     noi: 1700000,
     highlights: [
       { label: "Net Operating Income", value: "$1,700,000" },

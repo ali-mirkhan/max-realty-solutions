@@ -23,6 +23,7 @@ export interface ListingsParams {
   page?: number;
   search?: string;
   region?: FeedRegion; // NSP-only regional pre-filter; ignored for member feed
+  mls?: string;        // partial-match on ListingId; exclusive — overrides other filters
 }
 
 // ─── Token ────────────────────────────────────────────────────────────────────
@@ -156,32 +157,40 @@ async function fetchFromFeed(
   params: ListingsParams
 ): Promise<Property[]> {
   const filters: string[] = [];
-  if (params.city) {
-    const titleCased = params.city
-      .trim()
-      .toLowerCase()
-      .split(/\s+/)
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ")
-      .replace(/'/g, "''");
-    filters.push(`contains(City, '${titleCased}')`);
-  } else if (
-    source === "nsp" &&
-    params.region &&
-    params.region !== "all"
-  ) {
-    // NSP-only regional pre-filter so we don't pull random Alberta/BC listings.
-    // Member feed is always fetched in full — it's small and always local.
-    const cityList =
-      params.region === "gta" ? GTA_FEED_CITIES : ONTARIO_EXPANDED_CITIES;
-    const orClause = cityList
-      .map((c) => `contains(City,'${c.replace(/'/g, "''")}')`)
-      .join(" or ");
-    filters.push(`(${orClause})`);
+  const mlsTerm = params.mls?.trim();
+
+  if (mlsTerm) {
+    // MLS search is exclusive — overrides city, region, price, beds.
+    const safe = mlsTerm.replace(/'/g, "''");
+    filters.push(`contains(ListingId, '${safe}')`);
+  } else {
+    if (params.city) {
+      const titleCased = params.city
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ")
+        .replace(/'/g, "''");
+      filters.push(`contains(City, '${titleCased}')`);
+    } else if (
+      source === "nsp" &&
+      params.region &&
+      params.region !== "all"
+    ) {
+      // NSP-only regional pre-filter so we don't pull random Alberta/BC listings.
+      // Member feed is always fetched in full — it's small and always local.
+      const cityList =
+        params.region === "gta" ? GTA_FEED_CITIES : ONTARIO_EXPANDED_CITIES;
+      const orClause = cityList
+        .map((c) => `contains(City,'${c.replace(/'/g, "''")}')`)
+        .join(" or ");
+      filters.push(`(${orClause})`);
+    }
+    if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
+    if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
+    if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
   }
-  if (params.minPrice) filters.push(`ListPrice ge ${params.minPrice}`);
-  if (params.maxPrice) filters.push(`ListPrice le ${params.maxPrice}`);
-  if (params.beds) filters.push(`BedroomsTotal ge ${params.beds}`);
 
   const top = params.top ?? params.limit ?? 50;
   const skip = params.page && params.page > 1 ? (params.page - 1) * top : 0;

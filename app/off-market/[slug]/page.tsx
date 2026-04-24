@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Lock, MapPin, ExternalLink } from "lucide-react";
 import OffMarketPlaceholder from "@/components/OffMarketPlaceholder";
+import ObscuredHero from "@/components/ObscuredHero";
 import OffMarketInquiryForm from "@/components/OffMarketInquiryForm";
 import CommissionProtectionNotice from "@/components/CommissionProtectionNotice";
 import ShareButtons from "@/components/ShareButtons";
@@ -31,7 +32,7 @@ export async function generateMetadata({
 
   const url = `${BASE_URL}/off-market/${listing.slug}`;
   const imageUrl =
-    listing.hero.type === "image" && listing.hero.imagePath
+    !listing.heroObscure && listing.hero.type === "image" && listing.hero.imagePath
       ? `${BASE_URL}${listing.hero.imagePath}`
       : OG_FALLBACK;
   const title = listing.title;
@@ -89,7 +90,15 @@ export default function OffMarketDetailPage({
       {/* Hero */}
       <section className="bg-charcoal">
         <div className="relative w-full aspect-[16/9] max-h-[520px] overflow-hidden">
-          {usesImage ? (
+          {listing.heroObscure && listing.hero.imagePath ? (
+            <ObscuredHero
+              imagePath={listing.hero.imagePath}
+              eyebrow="OFF-MARKET"
+              title="Off-Market Retail Opportunity"
+              subtitle="Grocery-anchored plaza · 9.775 acres · Ontario"
+              aspectRatio="16/9"
+            />
+          ) : usesImage ? (
             <Image
               src={listing.hero.imagePath!}
               alt={listing.title}
@@ -200,6 +209,33 @@ export default function OffMarketDetailPage({
                   ))}
                 </div>
               </div>
+
+              {/* Gallery (public listings only) */}
+              {!listing.isConfidential &&
+                listing.galleryImages &&
+                listing.galleryImages.length > 0 && (
+                  <div>
+                    <h2 className="font-serif text-xl font-semibold text-charcoal mb-4">
+                      Gallery
+                    </h2>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {listing.galleryImages.map((img, i) => (
+                        <div
+                          key={img}
+                          className="relative aspect-[4/3] rounded-lg overflow-hidden bg-stone-light"
+                        >
+                          <Image
+                            src={img}
+                            alt={`${listing.title} — photo ${i + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, 50vw"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               {/* Investment Thesis */}
               <div>

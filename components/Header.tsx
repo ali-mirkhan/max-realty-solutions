@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const STORAGE_KEY = "maxRealty_favorites";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,9 +22,83 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+function readFavoritesCount(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function FavoritesLink({
+  count,
+  onClick,
+  variant,
+}: {
+  count: number;
+  onClick?: () => void;
+  variant: "desktop" | "mobile";
+}) {
+  if (variant === "mobile") {
+    return (
+      <Link
+        href="/favorites"
+        onClick={onClick}
+        className="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md text-charcoal/70 hover:text-burgundy"
+      >
+        <span className="flex items-center gap-2">
+          <Heart size={16} />
+          My Favorites
+        </span>
+        {count > 0 && (
+          <span className="min-w-[20px] h-5 px-1.5 text-[10px] font-bold text-white bg-burgundy rounded-full flex items-center justify-center">
+            {count > 99 ? "99+" : count}
+          </span>
+        )}
+      </Link>
+    );
+  }
+  return (
+    <Link
+      href="/favorites"
+      className="relative p-2 rounded-md text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5 transition-colors"
+      aria-label={`My Favorites${count > 0 ? ` (${count})` : ""}`}
+    >
+      <Heart size={18} />
+      {count > 0 && (
+        <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-burgundy rounded-full flex items-center justify-center leading-none">
+          {count > 99 ? "99+" : count}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [favCount, setFavCount] = useState(0);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setFavCount(readFavoritesCount());
+    function refresh() {
+      setFavCount(readFavoritesCount());
+    }
+    window.addEventListener("favoritesChanged", refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener("favoritesChanged", refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
+
+  useEffect(() => {
+    setFavCount(readFavoritesCount());
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-border">
@@ -59,6 +135,7 @@ export default function Header() {
 
         {/* Desktop CTAs — visible at xl (1280px+) where full nav + buttons fit */}
         <div className="hidden xl:flex items-center gap-3">
+          <FavoritesLink count={favCount} variant="desktop" />
           <Link href="/properties" className="btn-outline py-2 px-4">
             Browse Properties
           </Link>
@@ -67,14 +144,22 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2 text-charcoal"
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Between lg and xl: show favorites icon alongside hamburger */}
+        <div className="hidden lg:flex xl:hidden items-center">
+          <FavoritesLink count={favCount} variant="desktop" />
+        </div>
+
+        {/* Mobile favorites + menu */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <FavoritesLink count={favCount} variant="desktop" />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 text-charcoal"
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -96,6 +181,11 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <FavoritesLink
+              count={favCount}
+              variant="mobile"
+              onClick={() => setMobileOpen(false)}
+            />
             <div className="flex flex-col gap-2 mt-3 px-3">
               <Link
                 href="/properties"

@@ -46,13 +46,14 @@ export async function GET(request: NextRequest) {
     maxPrice: sp.get("maxPrice") ? Number(sp.get("maxPrice")) : undefined,
     beds: sp.get("beds") ? Number(sp.get("beds")) : undefined,
     type: sp.get("type") ?? undefined,
+    mls: sp.get("mls") ?? undefined,
     top: topParam ? Number(topParam) : 50,
     page: sp.get("page") ? Number(sp.get("page")) : 1,
     region,
   };
 
   console.log(
-    `[api/listings] GET — city=${params.city ?? "any"} region=${region} type=${params.type ?? "any"} beds=${params.beds ?? "-"} top=${params.top} page=${params.page}`
+    `[api/listings] GET — city=${params.city ?? "any"} region=${region} type=${params.type ?? "any"} mls=${params.mls ?? "-"} beds=${params.beds ?? "-"} top=${params.top} page=${params.page}`
   );
 
   const { listings, source } = await fetchListings(params);

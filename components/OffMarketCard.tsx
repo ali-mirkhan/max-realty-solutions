@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Lock } from "lucide-react";
 import OffMarketPlaceholder from "@/components/OffMarketPlaceholder";
+import ObscuredHero from "@/components/ObscuredHero";
 import type { OffMarketListing } from "@/data/offMarketListings";
 
 export default function OffMarketCard({ listing }: { listing: OffMarketListing }) {
@@ -16,7 +17,17 @@ export default function OffMarketCard({ listing }: { listing: OffMarketListing }
     <Link href={`/off-market/${listing.slug}`} className="group block">
       <div className="bg-white rounded-lg overflow-hidden border border-stone-border hover:border-burgundy/30 transition-all duration-300 hover:shadow-lg">
         <div className="relative aspect-[4/3] overflow-hidden bg-charcoal">
-          {usesImage ? (
+          {listing.heroObscure && listing.hero.imagePath ? (
+            <div className="absolute inset-0">
+              <ObscuredHero
+                imagePath={listing.hero.imagePath}
+                eyebrow="OFF-MARKET"
+                title="Off-Market Retail Opportunity"
+                subtitle="Grocery-anchored plaza · Ontario"
+                aspectRatio="4/3"
+              />
+            </div>
+          ) : usesImage ? (
             <Image
               src={listing.hero.imagePath!}
               alt={listing.title}

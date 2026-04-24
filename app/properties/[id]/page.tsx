@@ -233,7 +233,7 @@ export default async function PropertyDetailPage({
               <ArrowLeft size={14} /> Back to Properties
             </Link>
             <div className="flex items-center gap-2 flex-wrap">
-              <SaveButton />
+              <SaveButton property={property} />
             </div>
           </div>
 
