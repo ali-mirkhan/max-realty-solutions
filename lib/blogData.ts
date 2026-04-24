@@ -58,54 +58,59 @@ Thinking of buying or selling in today's market? Reach out to the Max Realty Sol
     excerpt: "Inventory is rising and buyers are gaining leverage across the GTA. Here is what is shifting — and how to take advantage of it.",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80&auto=format&fit=crop",
     content: `
-The big question across the GTA right now: is the market finally shifting toward buyers?
+The big question across the GTA this spring: is the buyer's market window starting to close?
 
-The answer — in many areas, yes. But not uniformly.
+The short answer — yes, gradually. And buyers who have been waiting on the sidelines should pay attention.
 
-## What We Are Seeing Across the GTA
+## What the Spring 2026 Numbers Actually Show
 
-The data tells a clear story heading into spring 2026:
+The March 2026 TRREB report tells a clear story:
 
-- Active listings are up significantly year over year
-- Properties are staying on market longer before selling
-- Bidding wars are far less common than at the market peak
-- Sellers are accepting conditions (financing, home inspection) again
+- 5,039 home sales — up 1.7% year over year (the first YoY sales increase in six months)
+- 14,442 new listings — DOWN 16.7% year over year
+- 21,596 active listings — DOWN 8.0% year over year
+- Average selling price: $1,017,796, down 6.7% year over year
 
-This gives buyers something they have not had in years: **real negotiating power**.
+Supply is tightening. Demand is recovering. Prices are still below last year — but the gap is closing.
 
-## What Defines a Buyer's Market?
+## Why Buyers Still Have Leverage
 
-A buyer's market typically means:
+Despite the tightening, buyers currently benefit from conditions they have not seen since 2020:
 
-- More listings available than active buyers
-- Price flexibility — sellers are willing to negotiate
-- Conditions accepted without losing the deal
-- Multiple properties to compare before committing
+- Home prices are roughly 7% below March 2025 levels
+- Many sellers are accepting conditional offers (financing, inspection) again
+- Condos in particular remain soft — down 9% year over year, with inventory still elevated
+- Overpriced listings that sat through winter are often open to significant negotiation
 
-We are seeing all of these signs, especially in the condo segment, entry-level detached homes, and properties that launched overpriced.
+TRREB's Chief Information Officer Jason Mercer recently noted that buyers continued to benefit from "substantial negotiating power" on price across most major segments in March.
+
+## Why the Window Is Closing
+
+Mercer also warned that if current conditions persist, selling prices "could start levelling off as we move through the remainder of 2026." Several signals point the same direction:
+
+- New listings are shrinking faster than demand is weakening
+- Months of supply dropped from 5.0 in February to 4.3 in March
+- Sales were up sharply month over month — 30.3% from February to March
+- Strong segments (detached homes in York Region, premium school districts, Leaside, Forest Hill) are already competitive again
 
 ## Where Buyers Have the Most Leverage Right Now
 
-The best opportunities are currently in:
+- **Condos in the 416 and 905** — still the softest segment, biggest negotiating room
+- **Properties that launched overpriced in fall/winter** — these sellers are motivated
+- **Entry-level detached homes** in outer suburbs — supply hasn't fully reflected the recovery yet
 
-- **Condos in the 416 and 905** — oversupply is creating strong negotiating positions for buyers
-- **Entry-level detached homes** — first-time buyers are finding more options and less competition
-- **Overpriced listings** — properties that sat through winter are often open to price adjustments
-
-## Where the Market Is Still Competitive
-
-Not every segment is soft. These still move fast:
+## Where Competition Has Returned
 
 - Turnkey, move-in-ready homes in top school districts
-- Well-priced properties that launched correctly
-- Unique or significantly upgraded listings
-- Anything in high-demand pockets like Leaside, Forest Hill, and parts of Mississauga
+- Well-priced properties with clean launches
+- Premium pockets like Leaside, Forest Hill, central Mississauga, Richmond Hill's Crosby area
+- Anything unique or significantly upgraded
 
 ## Our Take
 
-We are in a transitional market — not fully buyer-dominated, but clearly moving away from the extreme seller conditions of recent years. For buyers who have been waiting, this may be the window they were looking for.
+We are in a transitional market. The extreme seller conditions of the pandemic era are gone. A true, extended buyer's market may also be ending. What's left is a narrow, balanced window where prepared buyers can still negotiate — but only for as long as inventory holds.
 
-The Max Realty Solutions team works with buyers and sellers across the GTA every day. If you want a clear read on what is happening in your specific neighbourhood, reach out — we will give you the honest numbers.
+If you have been waiting for the right moment, now is the time to have a serious conversation about where you stand. The Max Realty Solutions team works with buyers and sellers across the GTA every day. If you want a clear read on what is happening in your specific neighbourhood, reach out — we'll give you the honest numbers.
     `,
   },
   {
