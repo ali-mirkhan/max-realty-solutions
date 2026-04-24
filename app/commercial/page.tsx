@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Building2, TrendingUp, BarChart3, DollarSign, ArrowRight, MapPin, Lock } from "lucide-react";
 import CommercialCTA from "./CommercialCTA";
+import OffMarketCard from "@/components/OffMarketCard";
+import { getPublishedOffMarketListings } from "@/data/offMarketListings";
 
 export const metadata: Metadata = {
   title: "Commercial Real Estate GTA",
@@ -48,6 +50,7 @@ const deals = [
 ];
 
 export default function CommercialPage() {
+  const offMarketListings = getPublishedOffMarketListings();
   return (
     <>
       {/* Hero */}
@@ -173,6 +176,42 @@ export default function CommercialPage() {
           </div>
         </div>
       </section>
+
+      {/* Off-Market Listings */}
+      {offMarketListings.length > 0 && (
+        <section className="py-16 lg:py-20 bg-charcoal">
+          <div className="container">
+            <div className="max-w-3xl mb-12">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#E8E4DE]/80 border-l-2 border-burgundy pl-3 mb-4 inline-flex items-center gap-2">
+                <Lock size={11} />
+                Exclusive · By Qualification
+              </p>
+              <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-white mb-3">
+                Off-Market Commercial Opportunities
+              </h2>
+              <p className="text-[#E8E4DE]/80 leading-relaxed">
+                Confidential commercial listings available to qualified investors.
+                NDA and qualification required for full details.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {offMarketListings.map((listing) => (
+                <OffMarketCard key={listing.slug} listing={listing} />
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <Link
+                href="/off-market"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white border border-white/40 rounded-md hover:bg-white/10 transition-colors"
+              >
+                View All Off-Market Opportunities <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="py-20 lg:py-28 bg-charcoal">
