@@ -211,7 +211,6 @@ export default async function PropertyDetailPage({
             </Link>
             <div className="flex items-center gap-2 flex-wrap">
               <SaveButton />
-              <ShareButtons title={`${property.address}, ${property.city}`} />
             </div>
           </div>
 
@@ -276,6 +275,11 @@ export default async function PropertyDetailPage({
 
             {/* ── Left column ── */}
             <div className="lg:col-span-2 space-y-10">
+
+              {/* Share */}
+              <div className="py-6 border-b border-stone-border">
+                <ShareButtons title={`${property.address}, ${property.city}`} />
+              </div>
 
               {/* Key Stats Bar */}
               {stats.length > 0 && (

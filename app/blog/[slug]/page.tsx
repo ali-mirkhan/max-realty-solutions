@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Calendar, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { getAllPosts, getPostBySlug } from "@/lib/blogData";
+import ShareButtons from "@/components/ShareButtons";
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -113,6 +114,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               >
                 {post.content}
               </ReactMarkdown>
+            </div>
+
+            {/* Share */}
+            <div className="mt-12 pt-8 border-t border-stone-border">
+              <ShareButtons title={post.title} />
             </div>
 
             {/* CTA */}
