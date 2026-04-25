@@ -48,13 +48,14 @@ export const metadata: Metadata = {
     siteName: "Max Realty Solutions",
     title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
     description:
-      "Serving buyers, sellers, investors and agents across the GTA since 2004. Residential, commercial, and investment real estate.",
+      "Serving buyers, sellers, investors and agents across the GTA since 1988. Residential, commercial, and investment real estate.",
     images: [
       {
-        url: "https://www.maxrealtysolutions.com/og-image.jpg",
+        url: "/og-default.jpg",
         width: 1200,
         height: 630,
-        alt: "Max Realty Solutions - GTA Real Estate Brokerage",
+        alt: "Max Realty Solutions Ltd., Brokerage — GTA Real Estate Since 1988",
+        type: "image/jpeg",
       },
     ],
   },
@@ -62,6 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@MaxRealtyTO",
     creator: "@MaxRealtyTO",
+    images: ["/og-default.jpg"],
   },
   robots: {
     index: true,

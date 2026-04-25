@@ -6,7 +6,7 @@ import agentsData from "@/data/agents.json";
 
 export const metadata: Metadata = {
   title: "About Max Realty Solutions",
-  description: "Max Realty Solutions Ltd., Brokerage — a RECO-licensed brokerage serving the GTA since 2004, with roots going back to 1987. Meet the team behind one of Thornhill's most trusted brokerages.",
+  description: "Max Realty Solutions Ltd., Brokerage — RECO-licensed brokerage serving the GTA since 1988. Meet the team behind one of Thornhill's most trusted brokerages.",
   alternates: { canonical: "https://www.maxrealtysolutions.com/about" },
 };
 
@@ -45,9 +45,9 @@ export default function AboutPage() {
                 Founded on Experience, Driven by Results
               </h2>
               <div className="space-y-4 text-sm text-charcoal/70 leading-relaxed">
-                <p>Max Realty Solutions was born from a recognition that the traditional brokerage model wasn&apos;t working — not for agents, and not for clients. Too many talented agents were losing significant portions of their hard-earned commissions to excessive desk fees and corporate overhead, while clients were being passed between agents without genuine expertise.</p>
-                <p>With deep roots in both residential and commercial real estate — including large-scale retail plaza transactions in the $10M–$35M+ range — our founding team set out to build something better. A lean, modern brokerage that maximizes agent earnings while delivering exceptional service to every client.</p>
-                <p>Based in Thornhill and serving the entire Greater Toronto Area, Max Realty Solutions combines the flexibility and personal attention of an independent brokerage with the market knowledge and transaction experience of a much larger firm.</p>
+                <p>Max Realty Solutions traces its roots to 1988, when founder Shahin Mirkhan began his career as a licensed Ontario realtor at Re/Max Hallmark (then known as Re/Max Elite) — one of the GTA&apos;s premier residential brokerages. After more than a decade refining his expertise across residential and commercial transactions, Shahin established the brokerage in 2004 under the HomeLife Real Estate Solutions franchise.</p>
+                <p>In 2010, the brokerage separated from the HomeLife franchise system to operate independently as Max Realty Solutions Ltd., Brokerage — giving the firm and its agents the autonomy to deliver flexible, client-first service without corporate franchise constraints.</p>
+                <p>Today, under Shahin&apos;s leadership as Broker of Record, Max Realty Solutions continues to serve buyers, sellers, investors, and fellow agents across the Greater Toronto Area. Based in Thornhill, the firm combines the flexibility and personal attention of an independent brokerage with the market knowledge and transaction experience — including retail plaza transactions in the $10M–$35M+ range — of a much larger firm.</p>
               </div>
             </div>
             <div className="space-y-6">

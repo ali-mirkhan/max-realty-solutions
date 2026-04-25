@@ -6,10 +6,11 @@ export const BUSINESS_INFO = {
   telephone: "+1-416-226-6008",
   faxNumber: "+1-647-499-5895",
   email: "info@maxrealtysolutions.com",
-  foundingYear: "1987",
+  foundingYear: "2004",
+  brokerLicensedSince: "1988",
   legalName: "Max Realty Solutions Ltd., Brokerage",
   description:
-    "RECO-licensed real estate brokerage serving the Greater Toronto Area since 2004, with roots going back to 1987. Residential, commercial, and investment real estate across Thornhill, Richmond Hill, Markham, Vaughan, and Toronto.",
+    "RECO-licensed real estate brokerage serving the Greater Toronto Area since 1988. Residential, commercial, and investment real estate across Thornhill, Richmond Hill, Markham, Vaughan, and Toronto.",
   address: {
     streetAddress: "8220 Bayview Avenue, Unit 200",
     addressLocality: "Thornhill",
