@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Lock, MapPin, ExternalLink } from "lucide-react";
 import OffMarketPlaceholder from "@/components/OffMarketPlaceholder";
 import ObscuredHero from "@/components/ObscuredHero";
-import ExclusiveBanner from "@/components/ExclusiveBanner";
+import ExclusiveStamp from "@/components/ExclusiveStamp";
 import OffMarketInquiryForm from "@/components/OffMarketInquiryForm";
 import CommissionProtectionNotice from "@/components/CommissionProtectionNotice";
 import ShareButtons from "@/components/ShareButtons";
@@ -116,8 +116,8 @@ export default function OffMarketDetailPage({
       {/* Hero */}
       <section className="bg-charcoal">
         <div className="relative w-full aspect-[16/9] max-h-[520px] overflow-hidden">
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
-            <ExclusiveBanner width={220} className="drop-shadow-lg" />
+          <div className="absolute bottom-6 right-6 z-10">
+            <ExclusiveStamp width={260} />
           </div>
           {listing.heroObscure && listing.hero.imagePath ? (
             <ObscuredHero
