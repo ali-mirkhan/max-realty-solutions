@@ -4,22 +4,54 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X, Heart, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "maxRealty_favorites";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/properties", label: "Properties" },
-  { href: "/services", label: "Services" },
-  { href: "/commercial", label: "Commercial" },
-  { href: "/property-management", label: "Property Management" },
-  { href: "/tools", label: "Tools" },
-  { href: "/about", label: "About" },
-  { href: "/agents", label: "Our Team" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
+type SimpleLink = { href: string; label: string };
+type NavEntry =
+  | { type: "link"; href: string; label: string }
+  | { type: "dropdown"; label: string; items: SimpleLink[] };
+
+const NAV: NavEntry[] = [
+  { type: "link", href: "/", label: "Home" },
+  {
+    type: "dropdown",
+    label: "Properties",
+    items: [
+      { href: "/properties", label: "Browse Properties" },
+      { href: "/property-management", label: "Property Management" },
+      { href: "/favorites", label: "Favorites" },
+    ],
+  },
+  {
+    type: "dropdown",
+    label: "Commercial",
+    items: [
+      { href: "/commercial", label: "Commercial Listings" },
+      { href: "/off-market", label: "Off-Market Opportunities" },
+    ],
+  },
+  { type: "link", href: "/services", label: "Services" },
+  {
+    type: "dropdown",
+    label: "Resources",
+    items: [
+      { href: "/tools", label: "Tools" },
+      { href: "/blog", label: "Blog" },
+    ],
+  },
+  {
+    type: "dropdown",
+    label: "About",
+    items: [
+      { href: "/about", label: "About Max Realty" },
+      { href: "/agents", label: "Our Team" },
+      { href: "/join", label: "Join Max Realty" },
+    ],
+  },
+  { type: "link", href: "/contact", label: "Contact" },
 ];
 
 function readFavoritesCount(): number {
@@ -32,6 +64,11 @@ function readFavoritesCount(): number {
   } catch {
     return 0;
   }
+}
+
+function isActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
 }
 
 function FavoritesLink({
@@ -78,6 +115,148 @@ function FavoritesLink({
   );
 }
 
+function DesktopDropdown({
+  label,
+  items,
+  pathname,
+}: {
+  label: string;
+  items: SimpleLink[];
+  pathname: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = items.some((i) => isActive(pathname, i.href));
+
+  // Close on Escape and on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div
+      className="group relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        className={cn(
+          "inline-flex items-center px-2 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+          active
+            ? "text-burgundy bg-burgundy/5"
+            : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
+        )}
+      >
+        {label}
+        <ChevronDown
+          size={14}
+          className={cn(
+            "ml-1 transition-transform duration-150",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+
+      <div
+        role="menu"
+        className={cn(
+          "absolute left-0 top-full pt-1 min-w-[220px] z-50 transition-all duration-150",
+          open
+            ? "opacity-100 visible translate-y-0"
+            : "opacity-0 invisible -translate-y-1 pointer-events-none"
+        )}
+      >
+        <div className="bg-white rounded-lg shadow-lg border border-stone-200 py-2">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "block px-4 py-2.5 text-sm transition-colors",
+                isActive(pathname, item.href)
+                  ? "text-burgundy bg-burgundy/5"
+                  : "text-charcoal/80 hover:bg-stone-50 hover:text-burgundy"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileDropdown({
+  label,
+  items,
+  pathname,
+  onLinkClick,
+}: {
+  label: string;
+  items: SimpleLink[];
+  pathname: string;
+  onLinkClick: () => void;
+}) {
+  const active = items.some((i) => isActive(pathname, i.href));
+  const [open, setOpen] = useState(active);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className={cn(
+          "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md",
+          active ? "text-burgundy bg-burgundy/5" : "text-charcoal/70 hover:text-burgundy"
+        )}
+      >
+        <span>{label}</span>
+        <ChevronDown
+          size={14}
+          className={cn(
+            "transition-transform duration-150",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+      {open && (
+        <div className="ml-3 pl-3 border-l border-stone-border my-1">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onLinkClick}
+              className={cn(
+                "block px-3 py-2 text-sm rounded-md",
+                isActive(pathname, item.href)
+                  ? "text-burgundy bg-burgundy/5"
+                  : "text-charcoal/70 hover:text-burgundy"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [favCount, setFavCount] = useState(0);
@@ -98,13 +277,14 @@ export default function Header() {
 
   useEffect(() => {
     setFavCount(readFavoritesCount());
+    setMobileOpen(false);
   }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-border">
       <div className="container flex items-center justify-between gap-4 h-16 lg:h-20">
         {/* Logo + Nav group */}
-        <div className="flex items-center gap-8 xl:gap-12">
+        <div className="flex items-center gap-8 xl:gap-10">
           <Link href="/" className="flex items-center shrink-0">
             <Image
               src="/logo.png"
@@ -118,37 +298,38 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-0.5">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "px-2 py-2 text-sm font-medium transition-colors rounded-md whitespace-nowrap",
-                  pathname === link.href
-                    ? "text-burgundy bg-burgundy/5"
-                    : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV.map((entry) =>
+              entry.type === "link" ? (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className={cn(
+                    "px-2 py-2 text-sm font-medium transition-colors rounded-md whitespace-nowrap",
+                    isActive(pathname, entry.href)
+                      ? "text-burgundy bg-burgundy/5"
+                      : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
+                  )}
+                >
+                  {entry.label}
+                </Link>
+              ) : (
+                <DesktopDropdown
+                  key={entry.label}
+                  label={entry.label}
+                  items={entry.items}
+                  pathname={pathname}
+                />
+              )
+            )}
           </nav>
         </div>
 
-        {/* Desktop CTAs — visible at xl (1280px+) where full nav + buttons fit */}
-        <div className="hidden xl:flex items-center gap-3">
+        {/* Desktop right cluster — visible at lg+ */}
+        <div className="hidden lg:flex items-center gap-2">
           <FavoritesLink count={favCount} variant="desktop" />
-          <Link href="/properties" className="btn-outline py-2 px-4">
+          <Link href="/properties" className="btn-primary py-2 px-4">
             Browse Properties
           </Link>
-          <Link href="/join" className="btn-primary py-2 px-4">
-            Join Max Realty
-          </Link>
-        </div>
-
-        {/* Between lg and xl: show favorites icon alongside hamburger */}
-        <div className="hidden lg:flex xl:hidden items-center">
-          <FavoritesLink count={favCount} variant="desktop" />
         </div>
 
         {/* Mobile favorites + menu */}
@@ -158,6 +339,7 @@ export default function Header() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="p-2 text-charcoal"
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -168,40 +350,45 @@ export default function Header() {
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-stone-border pb-4">
           <nav className="container flex flex-col gap-1 pt-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "px-3 py-2.5 text-sm font-medium rounded-md",
-                  pathname === link.href
-                    ? "text-burgundy bg-burgundy/5"
-                    : "text-charcoal/70 hover:text-burgundy"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV.map((entry) =>
+              entry.type === "link" ? (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "px-3 py-2.5 text-sm font-medium rounded-md",
+                    isActive(pathname, entry.href)
+                      ? "text-burgundy bg-burgundy/5"
+                      : "text-charcoal/70 hover:text-burgundy"
+                  )}
+                >
+                  {entry.label}
+                </Link>
+              ) : (
+                <MobileDropdown
+                  key={entry.label}
+                  label={entry.label}
+                  items={entry.items}
+                  pathname={pathname}
+                  onLinkClick={() => setMobileOpen(false)}
+                />
+              )
+            )}
+
             <FavoritesLink
               count={favCount}
               variant="mobile"
               onClick={() => setMobileOpen(false)}
             />
-            <div className="flex flex-col gap-2 mt-3 px-3">
+
+            <div className="mt-3 px-3">
               <Link
                 href="/properties"
                 onClick={() => setMobileOpen(false)}
-                className="px-4 py-2.5 text-sm font-semibold text-burgundy border border-burgundy/30 rounded-md text-center"
+                className="block px-4 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md text-center"
               >
                 Browse Properties
-              </Link>
-              <Link
-                href="/join"
-                onClick={() => setMobileOpen(false)}
-                className="px-4 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md text-center"
-              >
-                Join Max Realty
               </Link>
             </div>
           </nav>
