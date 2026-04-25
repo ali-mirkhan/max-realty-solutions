@@ -8,6 +8,8 @@ import ObscuredHero from "@/components/ObscuredHero";
 import OffMarketInquiryForm from "@/components/OffMarketInquiryForm";
 import CommissionProtectionNotice from "@/components/CommissionProtectionNotice";
 import ShareButtons from "@/components/ShareButtons";
+import JsonLd from "@/components/seo/JsonLd";
+import { propertyListingSchema, breadcrumbSchema } from "@/lib/schemas";
 import {
   getOffMarketListingBySlug,
   getPublishedOffMarketListings,
@@ -74,6 +76,28 @@ export default function OffMarketDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "https://www.maxrealtysolutions.com" },
+          { name: "Off-Market", url: "https://www.maxrealtysolutions.com/off-market" },
+          {
+            name: listing.title,
+            url: `https://www.maxrealtysolutions.com/off-market/${listing.slug}`,
+          },
+        ])}
+      />
+      {!listing.isConfidential && listing.address && (
+        <JsonLd
+          data={propertyListingSchema({
+            id: listing.slug,
+            address: listing.address,
+            city: listing.city || "Toronto",
+            description: listing.description?.[0],
+            image: listing.hero.imagePath,
+          })}
+        />
+      )}
+
       {/* Breadcrumb */}
       <div className="bg-white border-b border-stone-border">
         <div className="container py-4">

@@ -17,6 +17,8 @@ import {
   Award,
 } from "lucide-react";
 import InquiryForm from "./InquiryForm";
+import JsonLd from "@/components/seo/JsonLd";
+import { serviceSchema } from "@/lib/schemas";
 
 const CANONICAL = "https://www.maxrealtysolutions.com/services/leasing";
 
@@ -62,6 +64,16 @@ const PROPERTY_TYPES = [
 export default function LeasingPage() {
   return (
     <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Commercial Leasing — Tenant & Landlord Representation",
+          description:
+            "Commercial leasing services across the GTA. Tenant representation for businesses seeking space and landlord representation for property owners.",
+          slug: "leasing",
+          serviceType: "Commercial Real Estate Leasing",
+        })}
+      />
+
       {/* Hero */}
       <section className="relative bg-charcoal py-20 lg:py-28 overflow-hidden">
         <div

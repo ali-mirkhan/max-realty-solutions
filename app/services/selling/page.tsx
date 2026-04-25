@@ -10,6 +10,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import ConsultationForm from "./ConsultationForm";
+import JsonLd from "@/components/seo/JsonLd";
+import { serviceSchema, faqSchema } from "@/lib/schemas";
 
 const CANONICAL = "https://www.maxrealtysolutions.com/services/selling";
 
@@ -124,6 +126,19 @@ const FAQS = [
 export default function SellingPage() {
   return (
     <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Sell Your Property",
+          description:
+            "Senior-agent representation through a 5-stage selling process: strategic pricing, pre-market preparation, maximum exposure marketing, expert negotiation, and closing coordination.",
+          slug: "selling",
+          serviceType: "Real Estate Listing Services",
+        })}
+      />
+      <JsonLd
+        data={faqSchema(FAQS.map((f) => ({ question: f.q, answer: f.a })))}
+      />
+
       {/* Hero */}
       <section className="relative bg-charcoal py-20 lg:py-28 overflow-hidden">
         <div

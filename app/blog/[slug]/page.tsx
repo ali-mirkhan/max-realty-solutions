@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowRight, Calendar, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { getAllPosts, getPostBySlug } from "@/lib/blogData";
 import ShareButtons from "@/components/ShareButtons";
+import JsonLd from "@/components/seo/JsonLd";
+import { articleSchema, breadcrumbSchema } from "@/lib/schemas";
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -49,6 +51,18 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   return (
     <>
+      <JsonLd data={articleSchema(post)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "https://www.maxrealtysolutions.com" },
+          { name: "Blog", url: "https://www.maxrealtysolutions.com/blog" },
+          {
+            name: post.title,
+            url: `https://www.maxrealtysolutions.com/blog/${post.slug}`,
+          },
+        ])}
+      />
+
       {/* Back nav */}
       <div className="bg-white border-b border-stone-border">
         <div className="container py-4">

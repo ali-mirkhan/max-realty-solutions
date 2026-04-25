@@ -7,7 +7,7 @@ import OffMarketCard from "@/components/OffMarketCard";
 import { getPublishedOffMarketListings } from "@/data/offMarketListings";
 
 export const metadata: Metadata = {
-  title: "Commercial Real Estate GTA",
+  title: "GTA Commercial Real Estate | Toronto Retail Plaza, Office, Industrial Properties",
   description: "Commercial real estate services across the GTA — retail plazas, investment properties, leasing and development land. Max Realty Solutions has $750M+ in transaction experience.",
   alternates: { canonical: "https://www.maxrealtysolutions.com/commercial" },
 };

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Building2, DollarSign, Wrench, FileText, Shield, BarChart3, CheckCircle2 } from "lucide-react";
 import PropertyManagementCTA from "./PropertyManagementCTA";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
   title: "Property Management",
@@ -75,6 +76,25 @@ const checklist = [
 export default function PropertyManagementPage() {
   return (
     <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "@id": "https://www.maxrealtysolutions.com/property-management/#service",
+          name: "Property Management",
+          description:
+            "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, LTB compliance, and financial reporting.",
+          serviceType: "Property Management",
+          url: "https://www.maxrealtysolutions.com/property-management",
+          provider: {
+            "@type": "RealEstateAgent",
+            name: "Max Realty Solutions",
+            url: "https://www.maxrealtysolutions.com",
+            "@id": "https://www.maxrealtysolutions.com/#organization",
+          },
+        }}
+      />
+
       {/* Hero */}
       <section className="relative py-20 lg:py-28 overflow-hidden">
         <div className="absolute inset-0">

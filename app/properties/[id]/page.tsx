@@ -16,6 +16,8 @@ import type { Property } from "@/lib/types";
 import { fetchListing } from "@/lib/ddf";
 import { formatPrice, formatCAD } from "@/lib/utils";
 import ShareButtons from "@/components/ShareButtons";
+import JsonLd from "@/components/seo/JsonLd";
+import { propertyListingSchema, breadcrumbSchema } from "@/lib/schemas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -205,6 +207,18 @@ export default async function PropertyDetailPage({
 
   return (
     <>
+      <JsonLd data={propertyListingSchema(property)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "https://www.maxrealtysolutions.com" },
+          { name: "Properties", url: "https://www.maxrealtysolutions.com/properties" },
+          {
+            name: property.address,
+            url: `https://www.maxrealtysolutions.com/properties/${property.id}`,
+          },
+        ])}
+      />
+
       {/* ── Gallery ──────────────────────────────────────────── */}
       <section className="bg-white">
         <div className="container pt-6 pb-2">

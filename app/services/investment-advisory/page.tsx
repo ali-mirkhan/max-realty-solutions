@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import StrategyForm from "./StrategyForm";
 import MarketReportForm from "./MarketReportForm";
+import JsonLd from "@/components/seo/JsonLd";
+import { serviceSchema } from "@/lib/schemas";
 
 const CANONICAL = "https://www.maxrealtysolutions.com/services/investment-advisory";
 
@@ -116,6 +118,16 @@ const PROVIDED = [
 export default function InvestmentAdvisoryPage() {
   return (
     <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Real Estate Investment Advisory",
+          description:
+            "Strategic real estate investment advisory across the GTA. Off-market deal access, cap rate analysis, multi-family, retail, industrial, and pre-construction opportunities.",
+          slug: "investment-advisory",
+          serviceType: "Real Estate Investment Consulting",
+        })}
+      />
+
       {/* Hero */}
       <section className="relative bg-charcoal py-20 lg:py-28 overflow-hidden">
         <div

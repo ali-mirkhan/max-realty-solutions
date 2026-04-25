@@ -17,6 +17,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import PlatinumForm from "./PlatinumForm";
+import JsonLd from "@/components/seo/JsonLd";
+import { serviceSchema } from "@/lib/schemas";
 
 const CANONICAL = "https://www.maxrealtysolutions.com/services/pre-construction";
 
@@ -127,6 +129,16 @@ const RISKS = [
 export default function PreConstructionPage() {
   return (
     <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Pre-Construction & Platinum Access",
+          description:
+            "VIP and Platinum pre-construction allocations from top GTA developers. First access to new condo, townhome, and detached projects before public launch.",
+          slug: "pre-construction",
+          serviceType: "Pre-Construction Real Estate",
+        })}
+      />
+
       {/* Hero */}
       <section className="relative bg-charcoal py-20 lg:py-28 overflow-hidden">
         <div

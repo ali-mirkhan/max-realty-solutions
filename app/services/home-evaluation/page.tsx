@@ -12,6 +12,8 @@ import {
   Mail,
 } from "lucide-react";
 import EvaluationForm from "./EvaluationForm";
+import JsonLd from "@/components/seo/JsonLd";
+import { serviceSchema } from "@/lib/schemas";
 
 const CANONICAL = "https://www.maxrealtysolutions.com/services/home-evaluation";
 
@@ -48,6 +50,16 @@ export const metadata: Metadata = {
 export default function HomeEvaluationPage() {
   return (
     <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Free Home Evaluation",
+          description:
+            "Free no-obligation home evaluation prepared by senior agents. Detailed comparable sales analysis, current GTA market conditions, and strategic pricing recommendation within 24-48 hours.",
+          slug: "home-evaluation",
+          serviceType: "Real Estate Valuation",
+        })}
+      />
+
       {/* Hero + Form */}
       <section className="bg-stone-warm border-b border-stone-border">
         <div className="container py-16 lg:py-24">

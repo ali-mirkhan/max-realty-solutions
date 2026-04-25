@@ -8,12 +8,17 @@ import {
 } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import OffMarketCard from "@/components/OffMarketCard";
+import JsonLd from "@/components/seo/JsonLd";
 import type { Property } from "@/lib/types";
 import { fetchListings } from "@/lib/ddf";
 import { getPublishedOffMarketListings } from "@/data/offMarketListings";
+import { localBusinessSchema } from "@/lib/schemas";
 
 export const metadata: Metadata = {
-  title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
+  title: {
+    absolute:
+      "GTA Real Estate Brokerage | Thornhill, Richmond Hill, Markham, Vaughan, Toronto",
+  },
   description:
     "Find your home in the Greater Toronto Area. Expert guidance for GTA buyers, sellers & investors. Residential, commercial, and investment properties.",
 };
@@ -62,6 +67,8 @@ export default async function HomePage() {
   const offMarketListings = getPublishedOffMarketListings();
   return (
     <>
+      <JsonLd data={localBusinessSchema()} />
+
       {/* ── HERO ── */}
       <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
