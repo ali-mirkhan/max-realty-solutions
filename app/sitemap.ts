@@ -9,6 +9,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base, priority: 1.0, changeFrequency: "weekly" as const },
     { url: `${base}/properties`, priority: 0.9, changeFrequency: "daily" as const },
     { url: `${base}/services`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/selling`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/home-evaluation`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/leasing`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/investment-advisory`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/pre-construction`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/commercial`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/off-market`, priority: 0.9, changeFrequency: "weekly" as const },
     { url: `${base}/property-management`, priority: 0.8, changeFrequency: "monthly" as const },
@@ -18,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/about`, priority: 0.7, changeFrequency: "monthly" as const },
     { url: `${base}/blog`, priority: 0.8, changeFrequency: "weekly" as const },
     { url: `${base}/contact`, priority: 0.7, changeFrequency: "monthly" as const },
+    { url: `${base}/favorites`, priority: 0.5, changeFrequency: "weekly" as const },
   ].map((p) => ({ ...p, lastModified: new Date() }));
 
   const blogPages = blogPosts.map((p) => ({
