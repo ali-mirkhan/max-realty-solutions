@@ -21,7 +21,6 @@ const NAV: NavEntry[] = [
     label: "Properties",
     items: [
       { href: "/properties", label: "Browse Properties" },
-      { href: "/property-management", label: "Property Management" },
       { href: "/favorites", label: "Favorites" },
     ],
   },
@@ -31,24 +30,18 @@ const NAV: NavEntry[] = [
     items: [
       { href: "/commercial", label: "Commercial Listings" },
       { href: "/off-market", label: "Off-Market Opportunities" },
+      { href: "/property-management", label: "Property Management" },
     ],
   },
   { type: "link", href: "/services", label: "Services" },
-  {
-    type: "dropdown",
-    label: "Resources",
-    items: [
-      { href: "/tools", label: "Tools" },
-      { href: "/blog", label: "Blog" },
-    ],
-  },
   {
     type: "dropdown",
     label: "About",
     items: [
       { href: "/about", label: "About Max Realty" },
       { href: "/agents", label: "Our Team" },
-      { href: "/join", label: "Join Max Realty" },
+      { href: "/tools", label: "Tools" },
+      { href: "/blog", label: "Blog" },
     ],
   },
   { type: "link", href: "/contact", label: "Contact" },
@@ -327,8 +320,11 @@ export default function Header() {
         {/* Desktop right cluster — visible at lg+ */}
         <div className="hidden lg:flex items-center gap-2">
           <FavoritesLink count={favCount} variant="desktop" />
-          <Link href="/properties" className="btn-primary py-2 px-4">
+          <Link href="/properties" className="btn-outline py-2 px-3 text-sm whitespace-nowrap">
             Browse Properties
+          </Link>
+          <Link href="/join" className="btn-primary py-2 px-3 text-sm whitespace-nowrap">
+            Join Max Realty
           </Link>
         </div>
 
@@ -382,13 +378,20 @@ export default function Header() {
               onClick={() => setMobileOpen(false)}
             />
 
-            <div className="mt-3 px-3">
+            <div className="mt-3 px-3 flex flex-col gap-2">
               <Link
                 href="/properties"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md text-center"
+                className="block px-4 py-2.5 text-sm font-semibold text-burgundy border border-burgundy/30 rounded-md text-center"
               >
                 Browse Properties
+              </Link>
+              <Link
+                href="/join"
+                onClick={() => setMobileOpen(false)}
+                className="block px-4 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md text-center"
+              >
+                Join Max Realty
               </Link>
             </div>
           </nav>
