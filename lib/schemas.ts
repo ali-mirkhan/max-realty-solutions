@@ -30,6 +30,17 @@ function logoImage() {
   };
 }
 
+function postalAddress() {
+  return {
+    "@type": "PostalAddress",
+    streetAddress: BUSINESS_INFO.address.streetAddress,
+    addressLocality: BUSINESS_INFO.address.addressLocality,
+    addressRegion: BUSINESS_INFO.address.addressRegion,
+    postalCode: BUSINESS_INFO.address.postalCode,
+    addressCountry: BUSINESS_INFO.address.addressCountry,
+  };
+}
+
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
@@ -43,7 +54,9 @@ export function organizationSchema() {
     image: BUSINESS_INFO.logo,
     description: BUSINESS_INFO.description,
     telephone: BUSINESS_INFO.telephone,
+    faxNumber: BUSINESS_INFO.faxNumber,
     email: BUSINESS_INFO.email,
+    address: postalAddress(),
     foundingDate: BUSINESS_INFO.foundingYear,
     priceRange: BUSINESS_INFO.priceRange,
     knowsLanguage: [...BUSINESS_INFO.knowsLanguage],
@@ -65,7 +78,28 @@ export function localBusinessSchema() {
     image: BUSINESS_INFO.logo,
     description: BUSINESS_INFO.description,
     telephone: BUSINESS_INFO.telephone,
+    faxNumber: BUSINESS_INFO.faxNumber,
     email: BUSINESS_INFO.email,
+    address: postalAddress(),
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: BUSINESS_INFO.geo.latitude,
+      longitude: BUSINESS_INFO.geo.longitude,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "10:00",
+        closes: "16:00",
+      },
+    ],
     foundingDate: BUSINESS_INFO.foundingYear,
     priceRange: BUSINESS_INFO.priceRange,
     knowsLanguage: [...BUSINESS_INFO.knowsLanguage],

@@ -40,7 +40,7 @@ export default function Footer() {
                 { label: "Facebook", letter: "F", href: "https://www.facebook.com/MaxRealtySolutions/" },
                 { label: "Instagram", letter: "I", href: "https://www.instagram.com/maxrealtysolutions/" },
                 { label: "LinkedIn", letter: "L", href: "https://www.linkedin.com/company/maxrealtysolutions/" },
-                { label: "Twitter", letter: "X", href: "https://twitter.com/MaxRealtyTO" },
+                { label: "X (Twitter)", letter: "X", href: "https://twitter.com/MaxRealtyTO" },
               ].map((s) => (
                 <a
                   key={s.label}

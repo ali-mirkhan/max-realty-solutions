@@ -29,12 +29,36 @@ const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448
 const SKYLINE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/toronto-skyline-bNv4TFBMJJt45Hb8RhfuqK.webp";
 
 const neighbourhoods = [
-  { name: "Thornhill", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&q=80&auto=format&fit=crop" },
-  { name: "Vaughan", img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80&auto=format&fit=crop" },
-  { name: "Markham", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=400&q=80&auto=format&fit=crop" },
-  { name: "Richmond Hill", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80&auto=format&fit=crop" },
-  { name: "Toronto", img: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80&auto=format&fit=crop" },
-  { name: "Mississauga", img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80&auto=format&fit=crop" },
+  {
+    name: "Thornhill",
+    alt: "Thornhill homes and real estate market",
+    img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&q=80&auto=format&fit=crop",
+  },
+  {
+    name: "Vaughan",
+    alt: "Vaughan residential neighbourhood",
+    img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&q=80&auto=format&fit=crop",
+  },
+  {
+    name: "Markham",
+    alt: "Markham real estate and homes for sale",
+    img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=400&q=80&auto=format&fit=crop",
+  },
+  {
+    name: "Richmond Hill",
+    alt: "Richmond Hill homes and properties",
+    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=80&auto=format&fit=crop",
+  },
+  {
+    name: "Toronto",
+    alt: "Toronto real estate market and skyline",
+    img: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80&auto=format&fit=crop",
+  },
+  {
+    name: "Mississauga",
+    alt: "Mississauga homes and real estate",
+    img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80&auto=format&fit=crop",
+  },
 ];
 
 const testimonials = [
@@ -72,7 +96,7 @@ export default async function HomePage() {
       {/* ── HERO ── */}
       <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={HERO_IMG} alt="Luxury home in the Greater Toronto Area" fill className="object-cover" priority />
+          <Image src={HERO_IMG} alt="Luxury home for sale in the Greater Toronto Area" fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
@@ -280,7 +304,7 @@ export default async function HomePage() {
               <Link key={n.name} href="/properties" className="group relative rounded-lg overflow-hidden h-40 block">
                 <Image
                   src={n.img}
-                  alt={n.name}
+                  alt={n.alt}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -328,7 +352,7 @@ export default async function HomePage() {
       {/* ── COMMERCIAL HIGHLIGHT ── */}
       <section className="relative py-20 lg:py-28 overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={COMMERCIAL_IMG} alt="Commercial retail plaza" fill className="object-cover" />
+          <Image src={COMMERCIAL_IMG} alt="GTA commercial retail plaza investment property" fill className="object-cover" />
           <div className="absolute inset-0 bg-charcoal/75" />
         </div>
         <div className="relative container">
@@ -437,7 +461,7 @@ export default async function HomePage() {
               </div>
             </div>
             <div>
-              <Image src={AGENT_IMG} alt="Real estate agents collaborating" width={600} height={450} className="w-full rounded-lg object-cover" />
+              <Image src={AGENT_IMG} alt="Max Realty Solutions GTA real estate agents collaborating in office" width={600} height={450} className="w-full rounded-lg object-cover" />
             </div>
           </div>
         </div>
@@ -446,7 +470,7 @@ export default async function HomePage() {
       {/* ── CTA BANNER ── */}
       <section className="relative py-20 lg:py-24 overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={SKYLINE_IMG} alt="Toronto GTA skyline" fill className="object-cover" />
+          <Image src={SKYLINE_IMG} alt="Toronto GTA skyline at dusk" fill className="object-cover" />
           <div className="absolute inset-0 bg-charcoal/70" />
         </div>
         <div className="relative container text-center">
