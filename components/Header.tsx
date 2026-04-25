@@ -12,13 +12,30 @@ const STORAGE_KEY = "maxRealty_favorites";
 type SimpleLink = { href: string; label: string };
 type NavEntry =
   | { type: "link"; href: string; label: string }
-  | { type: "dropdown"; label: string; items: SimpleLink[] };
+  | {
+      type: "dropdown";
+      label: string;
+      items: SimpleLink[];
+      /** Optional: makes the parent label itself a clickable link */
+      parentHref?: string;
+    };
 
 const NAV: NavEntry[] = [
   { type: "link", href: "/", label: "Home" },
-  { type: "link", href: "/services", label: "Services" },
+  {
+    type: "dropdown",
+    label: "Services",
+    parentHref: "/services",
+    items: [
+      { href: "/services/selling", label: "Selling" },
+      { href: "/services/home-evaluation", label: "Home Evaluation" },
+      { href: "/services/leasing", label: "Leasing" },
+      { href: "/services/investment-advisory", label: "Investment Advisory" },
+      { href: "/services/pre-construction", label: "Pre-Construction" },
+      { href: "/property-management", label: "Property Management" },
+    ],
+  },
   { type: "link", href: "/commercial", label: "Commercial" },
-  { type: "link", href: "/property-management", label: "Property Management" },
   { type: "link", href: "/tools", label: "Tools" },
   { type: "link", href: "/blog", label: "Blog" },
   {
@@ -97,15 +114,17 @@ function DesktopDropdown({
   label,
   items,
   pathname,
+  parentHref,
 }: {
   label: string;
   items: SimpleLink[];
   pathname: string;
+  parentHref?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const active = items.some((i) => isActive(pathname, i.href));
+  const parentActive = parentHref ? isActive(pathname, parentHref) : false;
+  const active = parentActive || items.some((i) => isActive(pathname, i.href));
 
-  // Close on Escape and on route change
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -118,33 +137,68 @@ function DesktopDropdown({
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  const triggerClass = cn(
+    "inline-flex items-center text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+    active
+      ? "text-burgundy bg-burgundy/5"
+      : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
+  );
+
   return (
     <div
       className="group relative"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="true"
-        aria-expanded={open}
-        className={cn(
-          "inline-flex items-center px-2 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
-          active
-            ? "text-burgundy bg-burgundy/5"
-            : "text-charcoal/70 hover:text-burgundy hover:bg-burgundy/5"
-        )}
-      >
-        {label}
-        <ChevronDown
-          size={14}
-          className={cn(
-            "ml-1 transition-transform duration-150",
-            open && "rotate-180"
-          )}
-        />
-      </button>
+      {parentHref ? (
+        // Clickable parent label + separate chevron toggle
+        <div className={cn(triggerClass, "pr-1")}>
+          <Link
+            href={parentHref}
+            className="px-2 py-2"
+            aria-haspopup="true"
+            aria-expanded={open}
+          >
+            {label}
+          </Link>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen((v) => !v);
+            }}
+            aria-haspopup="true"
+            aria-expanded={open}
+            aria-label={`${label} menu`}
+            className="px-1 py-2 -ml-1 cursor-pointer"
+          >
+            <ChevronDown
+              size={14}
+              className={cn(
+                "transition-transform duration-150",
+                open && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-haspopup="true"
+          aria-expanded={open}
+          className={cn(triggerClass, "px-2 py-2")}
+        >
+          {label}
+          <ChevronDown
+            size={14}
+            className={cn(
+              "ml-1 transition-transform duration-150",
+              open && "rotate-180"
+            )}
+          />
+        </button>
+      )}
 
       <div
         role="menu"
@@ -183,13 +237,16 @@ function MobileDropdown({
   items,
   pathname,
   onLinkClick,
+  parentHref,
 }: {
   label: string;
   items: SimpleLink[];
   pathname: string;
   onLinkClick: () => void;
+  parentHref?: string;
 }) {
-  const active = items.some((i) => isActive(pathname, i.href));
+  const parentActive = parentHref ? isActive(pathname, parentHref) : false;
+  const active = parentActive || items.some((i) => isActive(pathname, i.href));
   const [open, setOpen] = useState(active);
 
   return (
@@ -214,6 +271,20 @@ function MobileDropdown({
       </button>
       {open && (
         <div className="ml-3 pl-3 border-l border-stone-border my-1">
+          {parentHref && (
+            <Link
+              href={parentHref}
+              onClick={onLinkClick}
+              className={cn(
+                "block px-3 py-2 text-sm font-medium rounded-md",
+                isActive(pathname, parentHref)
+                  ? "text-burgundy bg-burgundy/5"
+                  : "text-charcoal/70 hover:text-burgundy"
+              )}
+            >
+              View All {label}
+            </Link>
+          )}
           {items.map((item) => (
             <Link
               key={item.href}
@@ -296,6 +367,7 @@ export default function Header() {
                   label={entry.label}
                   items={entry.items}
                   pathname={pathname}
+                  parentHref={entry.parentHref}
                 />
               )
             )}
@@ -352,6 +424,7 @@ export default function Header() {
                   label={entry.label}
                   items={entry.items}
                   pathname={pathname}
+                  parentHref={entry.parentHref}
                   onLinkClick={() => setMobileOpen(false)}
                 />
               )
