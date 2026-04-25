@@ -30,7 +30,7 @@ export default function ObscuredHero({
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: `url("${imagePath}")`,
-          filter: "blur(14px) saturate(0.85) brightness(0.85)",
+          filter: "blur(1px) saturate(1) brightness(1)",
           transform: "scale(1.05)",
         }}
         aria-hidden="true"
