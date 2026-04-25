@@ -16,32 +16,17 @@ type NavEntry =
 
 const NAV: NavEntry[] = [
   { type: "link", href: "/", label: "Home" },
-  {
-    type: "dropdown",
-    label: "Properties",
-    items: [
-      { href: "/properties", label: "Browse Properties" },
-      { href: "/favorites", label: "Favorites" },
-    ],
-  },
-  {
-    type: "dropdown",
-    label: "Commercial",
-    items: [
-      { href: "/commercial", label: "Commercial Listings" },
-      { href: "/off-market", label: "Off-Market Opportunities" },
-      { href: "/property-management", label: "Property Management" },
-    ],
-  },
   { type: "link", href: "/services", label: "Services" },
+  { type: "link", href: "/commercial", label: "Commercial" },
+  { type: "link", href: "/property-management", label: "Property Management" },
+  { type: "link", href: "/tools", label: "Tools" },
+  { type: "link", href: "/blog", label: "Blog" },
   {
     type: "dropdown",
     label: "About",
     items: [
       { href: "/about", label: "About Max Realty" },
       { href: "/agents", label: "Our Team" },
-      { href: "/tools", label: "Tools" },
-      { href: "/blog", label: "Blog" },
     ],
   },
   { type: "link", href: "/contact", label: "Contact" },
