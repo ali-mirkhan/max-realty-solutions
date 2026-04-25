@@ -193,7 +193,6 @@ export function propertyListingSchema(listing: PropertyLike) {
     brand: {
       "@type": "Organization",
       "@id": ORG_ID,
-      name: BUSINESS_INFO.brandName,
     },
   };
 
@@ -212,12 +211,45 @@ export function propertyListingSchema(listing: PropertyLike) {
       seller: {
         "@type": "RealEstateAgent",
         "@id": ORG_ID,
-        name: BUSINESS_INFO.brandName,
       },
     };
   }
 
   return schema;
+}
+
+interface RealEstateListingLike {
+  slug: string;
+  title: string;
+  address: string;
+  city?: string;
+  description?: string;
+  image?: string;
+}
+
+export function realEstateListingSchema(listing: RealEstateListingLike) {
+  const url = `${BUSINESS_INFO.url}/off-market/${listing.slug}`;
+  const description = listing.description?.slice(0, 500) || listing.title;
+  return {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "@id": `${url}/#listing`,
+    name: listing.title,
+    url,
+    description,
+    image: listing.image ? [listing.image] : undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: listing.address,
+      addressLocality: listing.city || "Toronto",
+      addressRegion: "ON",
+      addressCountry: "CA",
+    },
+    provider: {
+      "@type": "RealEstateAgent",
+      "@id": ORG_ID,
+    },
+  };
 }
 
 interface PostLike {
@@ -259,12 +291,14 @@ export function articleSchema(post: PostLike) {
       : {
           "@type": "Organization",
           "@id": ORG_ID,
-          name: BUSINESS_INFO.brandName,
         },
+    // Publisher must have inline name+logo for Article rich results.
+    // Use BUSINESS_INFO.name to match the canonical Organization node so
+    // the @id-merged graph has a single consistent `name`.
     publisher: {
       "@type": "Organization",
       "@id": ORG_ID,
-      name: BUSINESS_INFO.brandName,
+      name: BUSINESS_INFO.name,
       logo: logoImage(),
     },
     mainEntityOfPage: {
@@ -295,8 +329,6 @@ export function serviceSchema(service: ServiceLike) {
     provider: {
       "@type": "RealEstateAgent",
       "@id": ORG_ID,
-      name: BUSINESS_INFO.brandName,
-      url: BUSINESS_INFO.url,
     },
     areaServed: areaServedAsCities(),
   };

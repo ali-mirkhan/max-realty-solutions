@@ -9,7 +9,7 @@ import OffMarketInquiryForm from "@/components/OffMarketInquiryForm";
 import CommissionProtectionNotice from "@/components/CommissionProtectionNotice";
 import ShareButtons from "@/components/ShareButtons";
 import JsonLd from "@/components/seo/JsonLd";
-import { propertyListingSchema, breadcrumbSchema } from "@/lib/schemas";
+import { realEstateListingSchema, breadcrumbSchema } from "@/lib/schemas";
 import {
   getOffMarketListingBySlug,
   getPublishedOffMarketListings,
@@ -88,10 +88,11 @@ export default function OffMarketDetailPage({
       />
       {!listing.isConfidential && listing.address && (
         <JsonLd
-          data={propertyListingSchema({
-            id: listing.slug,
+          data={realEstateListingSchema({
+            slug: listing.slug,
+            title: listing.title,
             address: listing.address,
-            city: listing.city || "Toronto",
+            city: listing.city,
             description: listing.description?.[0],
             image: listing.hero.imagePath,
           })}

@@ -88,10 +88,14 @@ export default function PropertyManagementPage() {
           url: "https://www.maxrealtysolutions.com/property-management",
           provider: {
             "@type": "RealEstateAgent",
-            name: "Max Realty Solutions",
-            url: "https://www.maxrealtysolutions.com",
             "@id": "https://www.maxrealtysolutions.com/#organization",
           },
+          areaServed: [
+            "Toronto", "North York", "Scarborough", "Etobicoke", "Mississauga",
+            "Brampton", "Markham", "Richmond Hill", "Vaughan", "Thornhill",
+            "Aurora", "Newmarket", "Oakville", "Burlington", "Whitby",
+            "Pickering", "Ajax", "King City", "Stouffville", "Caledon",
+          ].map((name) => ({ "@type": "City", name })),
         }}
       />
 
