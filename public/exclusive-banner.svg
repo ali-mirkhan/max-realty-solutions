@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <linearGradient id="burgundyBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8E1F36"/>
+      <stop offset="100%" stop-color="#5A0F1F"/>
+    </linearGradient>
+    <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A87410"/>
+      <stop offset="50%" stop-color="#E5B649"/>
+      <stop offset="100%" stop-color="#A87410"/>
+    </linearGradient>
+  </defs>
+  <path d="M 30,0 L 290,0 L 320,40 L 290,80 L 30,80 L 0,40 Z" fill="url(#burgundyBg)"/>
+  <path d="M 30,6 L 285,6" stroke="url(#goldAccent)" stroke-width="1.5" fill="none"/>
+  <path d="M 30,74 L 285,74" stroke="url(#goldAccent)" stroke-width="1.5" fill="none"/>
+  <text x="160" y="24" font-family="Georgia, 'Times New Roman', serif" font-size="10" font-weight="600" letter-spacing="4" fill="#E5B649" text-anchor="middle">EST. 1988</text>
+  <text x="160" y="52" font-family="Impact, 'Arial Black', sans-serif" font-size="28" font-weight="900" letter-spacing="6" fill="#FDF8EE" text-anchor="middle">EXCLUSIVE</text>
+  <text x="160" y="68" font-family="Georgia, 'Times New Roman', serif" font-size="8" font-weight="500" letter-spacing="3" fill="#E5B649" text-anchor="middle">MAX REALTY SOLUTIONS</text>
+</svg>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { MapPin, Lock } from "lucide-react";
 import OffMarketPlaceholder from "@/components/OffMarketPlaceholder";
 import ObscuredHero from "@/components/ObscuredHero";
-import ExclusiveStamp from "@/components/ExclusiveStamp";
+import ExclusiveBanner from "@/components/ExclusiveBanner";
 import type { OffMarketListing } from "@/data/offMarketListings";
 
 export default function OffMarketCard({ listing }: { listing: OffMarketListing }) {
@@ -47,11 +47,14 @@ export default function OffMarketCard({ listing }: { listing: OffMarketListing }
             </span>
           </div>
 
-          <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1.5">
+          <div className="absolute top-3 right-3 z-10">
             <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-charcoal rounded shadow-sm">
               {listing.category}
             </span>
-            <ExclusiveStamp size={110} className="drop-shadow-md" />
+          </div>
+
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+            <ExclusiveBanner width={160} />
           </div>
         </div>
 
