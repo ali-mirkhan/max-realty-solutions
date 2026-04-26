@@ -26,12 +26,12 @@ const CANONICAL = "https://www.maxrealtysolutions.com/services/investment-adviso
 export const metadata: Metadata = {
   title: "Real Estate Investment Advisory",
   description:
-    "Strategic real estate investment advisory across the GTA. Off-market deal access, cap rate analysis, multi-family, retail, industrial, and pre-construction opportunities. $2B+ in transactions negotiated.",
+    "Strategic real estate investment advisory across the GTA. Off-market deal access, cap rate analysis, multi-family, retail, industrial, and pre-construction opportunities. $750M+ in transactions negotiated.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: "Real Estate Investment Advisory | Max Realty Solutions",
     description:
-      "Strategic real estate investment advisory across the GTA. Off-market deal access, cap rate analysis, $2B+ in transactions negotiated.",
+      "Strategic real estate investment advisory across the GTA. Off-market deal access, cap rate analysis, $750M+ in transactions negotiated.",
     url: CANONICAL,
     type: "website",
     siteName: "Max Realty Solutions",
