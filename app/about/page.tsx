@@ -93,11 +93,11 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-serif text-2xl font-semibold text-charcoal mb-1">Shahin Mirkhan</h3>
-                <p className="text-sm text-burgundy font-medium mb-4">Founder &amp; Broker of Record, Max Realty Solutions</p>
+                <p className="text-sm text-burgundy font-medium mb-4">Founder &amp; Broker of Record  |  Max Realty Solutions Ltd., Brokerage</p>
                 <div className="space-y-3 text-sm text-charcoal/70 leading-relaxed">
-                  <p>With over a decade of experience in both residential and commercial real estate, our Broker of Record brings a unique combination of market knowledge, transaction expertise, and a genuine commitment to agent success.</p>
-                  <p>Having personally facilitated commercial transactions exceeding $35M in value — including multi-tenant retail plazas across the GTA — they understand the complexities of large-scale deals and the importance of hands-on broker support.</p>
-                  <p>Their vision for Max Realty Solutions is simple: create a brokerage where agents can thrive, clients receive exceptional service, and every transaction is handled with professionalism and integrity.</p>
+                  <p>With 38 years of experience in commercial and residential real estate, Shahin Mirkhan is a seasoned broker recognized for delivering strategic, well-considered solutions across the Greater Toronto Area.</p>
+                  <p>Throughout his career, he has led and closed high-value transactions across the acquisition, leasing, and management of multi-tenant retail plazas and investment assets. His deep understanding of asset performance, tenant strategy, and value creation allows him to guide clients and investors through complex transactions with clarity and confidence.</p>
+                  <p>As Founder and Broker of Record of Max Realty Solutions, Shahin has built a boutique brokerage focused on high-quality advisory, long-term relationships, and measurable results. His approach combines direct, hands-on leadership with an enduring commitment to professionalism, integrity, and discerning client service — qualities that have earned him the trust of investors, families, and fellow brokers across the GTA for nearly four decades.</p>
                 </div>
               </div>
             </div>
