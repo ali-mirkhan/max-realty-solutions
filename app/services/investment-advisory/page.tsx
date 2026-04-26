@@ -17,7 +17,7 @@ import {
   FileText,
 } from "lucide-react";
 import StrategyForm from "./StrategyForm";
-import MarketReportForm from "./MarketReportForm";
+import BriefingForm from "./BriefingForm";
 import JsonLd from "@/components/seo/JsonLd";
 import { serviceSchema } from "@/lib/schemas";
 
@@ -320,43 +320,27 @@ export default function InvestmentAdvisoryPage() {
           </div>
 
           <div className="bg-white border border-stone-border rounded-xl p-7 lg:p-9">
-            <div className="flex items-start gap-4 mb-5">
+            <div className="flex items-start gap-4 mb-6">
               <div className="w-11 h-11 rounded-full bg-burgundy/10 flex items-center justify-center shrink-0">
                 <FileText size={20} className="text-burgundy" />
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-burgundy mb-1">
-                  Coming Soon
+                  Investor Briefing
                 </p>
                 <h3 className="font-serif text-xl font-semibold text-charcoal mb-2">
-                  Quarterly GTA Commercial Market Report
+                  The Off-Market Advantage
                 </h3>
-                <p className="text-sm text-charcoal/65 leading-relaxed">
-                  Comprehensive analysis of GTA commercial real estate trends. Available to
-                  qualified investors quarterly.
+                <p className="text-sm text-charcoal/70 leading-relaxed">
+                  The framework Max Realty uses to evaluate every off-market opportunity in
+                  the GTA. A 10-page briefing for serious investors deploying $1M to $100M
+                  in commercial real estate.
                 </p>
               </div>
             </div>
 
-            {/*
-              TODO: When the PDF report is ready, replace <MarketReportForm /> below with a
-              direct download link. Suggested pattern:
-
-                <a
-                  href="/reports/gta-commercial-q1-2026.pdf"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-burgundy rounded-md hover:opacity-90"
-                  download
-                >
-                  Download the Q1 2026 report <Download size={14} />
-                </a>
-
-              Drop the PDF in /public/reports/ and update the href accordingly.
-            */}
-            <div className="pt-4 border-t border-stone-border">
-              <p className="text-xs text-charcoal/55 mb-3">
-                Get notified when the next edition is ready.
-              </p>
-              <MarketReportForm />
+            <div className="pt-5 border-t border-stone-border">
+              <BriefingForm />
             </div>
           </div>
         </div>
@@ -371,8 +355,8 @@ export default function InvestmentAdvisoryPage() {
 
           <div className="grid grid-cols-3 gap-6">
             {[
-              { value: "$2B+", label: "In transactions negotiated" },
-              { value: "30+ Years", label: "Of GTA market experience" },
+              { value: "$750M+", label: "In transactions negotiated" },
+              { value: "38 Years", label: "Of GTA market experience" },
               { value: "Active Deal Flow", label: "Across the GTA and Ontario" },
             ].map((stat) => (
               <div key={stat.label}>
