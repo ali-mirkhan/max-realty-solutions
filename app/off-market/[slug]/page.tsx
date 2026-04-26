@@ -368,6 +368,20 @@ export default function OffMarketDetailPage({
               )}
 
               <CommissionProtectionNotice />
+
+              <div className="px-5 py-4 bg-stone-light/50 border-l-2 border-burgundy/50 rounded-r-md">
+                <p className="text-sm text-charcoal/75 leading-relaxed">
+                  <span className="font-semibold text-burgundy">Not ready to inquire on this deal?</span>{" "}
+                  Read{" "}
+                  <Link
+                    href="/services/investment-advisory#briefing"
+                    className="text-burgundy underline underline-offset-2 hover:opacity-80 transition-opacity"
+                  >
+                    The Off-Market Advantage
+                  </Link>
+                  {" "}— our framework for evaluating off-market commercial opportunities in the GTA.
+                </p>
+              </div>
             </div>
 
             {/* Right column — inquiry form */}

@@ -319,7 +319,7 @@ export default function InvestmentAdvisoryPage() {
             </p>
           </div>
 
-          <div className="bg-white border border-stone-border rounded-xl p-7 lg:p-9">
+          <div id="briefing" className="bg-white border border-stone-border rounded-xl p-7 lg:p-9 scroll-mt-24">
             <div className="flex items-start gap-4 mb-6">
               <div className="w-11 h-11 rounded-full bg-burgundy/10 flex items-center justify-center shrink-0">
                 <FileText size={20} className="text-burgundy" />

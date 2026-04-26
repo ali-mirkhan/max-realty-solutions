@@ -89,6 +89,20 @@ export default function OffMarketLandingPage() {
             </Link>
           </div>
 
+          <div className="mb-8 px-5 py-4 bg-stone-light/50 border-l-2 border-burgundy/50 rounded-r-md">
+            <p className="text-sm text-charcoal/75 leading-relaxed">
+              <span className="font-semibold text-burgundy">New here?</span>{" "}
+              Read{" "}
+              <Link
+                href="/services/investment-advisory#briefing"
+                className="text-burgundy underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                The Off-Market Advantage
+              </Link>
+              {" "}— our framework for evaluating off-market commercial opportunities in the GTA. A 10-page investor briefing.
+            </p>
+          </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map((listing) => (
               <OffMarketCard key={listing.slug} listing={listing} />
