@@ -138,11 +138,11 @@ export default async function HomePage() {
             <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-full border border-white/20 bg-black/30 px-6 py-3 text-sm text-white backdrop-blur-sm">
               <span className="font-semibold tracking-wide">Since 1988</span>
               <span className="opacity-60">·</span>
-              <span>38 Years GTA Experience</span>
-              <span className="opacity-60">·</span>
               <span>RECO Licensed</span>
               <span className="opacity-60">·</span>
-              <span>$750M+ Transacted</span>
+              <span>TRESA Regulated</span>
+              <span className="opacity-60">·</span>
+              <span>Thornhill-based</span>
             </div>
           </div>
         </div>
@@ -157,8 +157,8 @@ export default async function HomePage() {
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
-              { value: "$750M+", label: "In Total Transactions Since 2004" },
-              { value: "3,000+", label: "Clients Served Since 2004" },
+              { value: "$750M+", label: "In Total Transactions" },
+              { value: "3,000+", label: "Clients Served" },
               { value: "38 Years", label: "Industry Experience" },
               { value: "RECO", label: "Licensed & Regulated" },
             ].map((stat) => (
