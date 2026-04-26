@@ -135,13 +135,13 @@ export default async function HomePage() {
             </div>
 
             {/* Trust strip */}
-            <div className="mt-8 inline-flex flex-wrap items-center gap-x-5 gap-y-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-white/90 text-[11px] font-medium uppercase tracking-widest">
-              <span>Since 1988</span>
-              <span className="opacity-40">·</span>
-              <span>38 Years Experience</span>
-              <span className="opacity-40">·</span>
+            <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-full border border-white/20 bg-black/30 px-6 py-3 text-sm text-white backdrop-blur-sm">
+              <span className="font-semibold tracking-wide">Since 1988</span>
+              <span className="opacity-60">·</span>
+              <span>38 Years GTA Experience</span>
+              <span className="opacity-60">·</span>
               <span>RECO Licensed</span>
-              <span className="opacity-40">·</span>
+              <span className="opacity-60">·</span>
               <span>$750M+ Transacted</span>
             </div>
           </div>
@@ -338,7 +338,7 @@ export default async function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             {[
-              { icon: TrendingUp, title: "Market Expertise", desc: "Deep knowledge of GTA neighbourhoods, pricing trends, and investment opportunities built over decades of GTA transactions — operating since 1988 — over three decades of GTA real estate expertise." },
+              { icon: TrendingUp, title: "Market Expertise", desc: "Deep knowledge of GTA neighbourhoods, pricing trends, and investment opportunities built over decades of GTA transactions — Broker of Record licensed since 1988, brokerage operating since 2004." },
               { icon: Shield, title: "Fully Licensed & Regulated", desc: "RECO-registered brokerage with full compliance under TRESA. Your transaction is protected every step of the way." },
               { icon: Users, title: "Dedicated Agent Support", desc: "You work with one dedicated agent from search to close — not a call centre or rotating team." },
               { icon: BarChart3, title: "Free Tools & Resources", desc: "Use our free mortgage calculator, land transfer tax estimator, and affordability tools to plan your purchase with confidence." },

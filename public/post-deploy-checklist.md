@@ -1,52 +1,43 @@
 # Post-Deploy Cache Flush Checklist
 
-After deploys that change OG metadata, page metadata, or schema, force-refresh the following caches so external services pick up the changes:
+After any significant content or metadata change deploys to production, force-refresh external caches so social platforms and search engines pick up the new version.
 
-## Facebook / Meta
+## 1. Facebook OG Cache (Critical)
 
-1. Visit https://developers.facebook.com/tools/debug/
-2. Paste the URL (e.g., https://www.maxrealtysolutions.com/)
-3. Click "Scrape Again"
-4. Confirm the new OG image and metadata appear in the preview
+URL: https://developers.facebook.com/tools/debug/
 
-## LinkedIn
+- Paste each updated URL
+- Click "Scrape Again"
+- Confirms new OG image and metadata
 
-1. Visit https://www.linkedin.com/post-inspector/inspect/
-2. Paste the URL
-3. Click "Inspect"
-4. The cache is invalidated and re-scraped
+Do this for: homepage, services pages, blog posts, off-market listings, /join
 
-## Google Search Console
+## 2. LinkedIn Post Inspector
 
-1. Visit https://search.google.com/search-console
-2. Use the URL Inspection tool
-3. Paste the URL and request indexing
-4. For schema changes, also re-test in https://search.google.com/test/rich-results
+URL: https://linkedin.com/post-inspector/inspect/
 
-## iMessage / Apple
+- Paste each updated URL
+- Click "Inspect"
+- Invalidates LinkedIn's preview cache
 
-- iMessage caches link previews for 24-48 hours and provides NO manual refresh option
-- The cache will naturally clear over time
-- After 48 hours, send the link in a new conversation to verify the new preview displays correctly
+## 3. Google Search Console
 
-## WhatsApp
+URL: https://search.google.com/search-console
 
-- Similar to iMessage — no manual refresh available
-- Cache typically clears within 7 days
-- Test in a new conversation after 24-48 hours
+- Use URL Inspection tool for changed pages
+- Click "Request Indexing" for major content changes
 
-## Slack / Discord / Telegram
+## 4. iMessage / WhatsApp Cache
 
-- Each handles cache differently
-- Most clear within 24 hours of OG metadata changes
-- Force-refresh by sending the link in a private DM to yourself
+These caches naturally expire over 24-48 hours and CANNOT be manually purged.
 
-## Priority URLs to refresh after major deploys
+To test refresh:
+- Send the URL in a NEW iMessage/WhatsApp conversation (not one where you've shared it before)
+- Old conversations will continue showing the cached old preview until they naturally refresh
 
-- Homepage: https://www.maxrealtysolutions.com/
-- Off-market hub: https://www.maxrealtysolutions.com/off-market
-- Dufferin off-market detail: https://www.maxrealtysolutions.com/off-market/dufferin-orfus-plaza
-- Blog index: https://www.maxrealtysolutions.com/blog
-- Latest blog post
+## 5. Vercel Edge Cache
 
-Refresh the homepage and key entry points on Facebook + LinkedIn debuggers to ensure new content appears correctly.
+For static assets (SVGs, JPGs, etc.):
+- Vercel's CDN caches static assets aggressively
+- Force-refresh by deploying with rm -rf .next first
+- Or rename the asset (cache-bust via filename change) for guaranteed refresh
