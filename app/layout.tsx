@@ -22,11 +22,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
+    default: "Max Realty Solutions | GTA Real Estate Brokerage Since 1988",
     template: "%s | Max Realty Solutions",
   },
   description:
-    "Max Realty Solutions Ltd., Brokerage — serving buyers, sellers, investors and agents across the GTA since 2004. Residential, commercial, and investment real estate in Thornhill, Richmond Hill, Markham, Vaughan and Toronto.",
+    "RECO-licensed real estate brokerage serving the Greater Toronto Area since 1988. Commercial, residential, and investment real estate across Thornhill, Richmond Hill, Markham, Vaughan, and Toronto.",
   keywords: [
     "real estate",
     "GTA real estate",
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     locale: "en_CA",
     url: "https://www.maxrealtysolutions.com",
     siteName: "Max Realty Solutions",
-    title: "Max Realty Solutions | Real Estate Brokerage in Thornhill & GTA",
+    title: "Max Realty Solutions | GTA Real Estate Brokerage Since 1988",
     description:
-      "Serving buyers, sellers, investors and agents across the GTA since 1988. Residential, commercial, and investment real estate.",
+      "RECO-licensed real estate brokerage serving the Greater Toronto Area since 1988. Commercial, residential, and investment real estate across Thornhill, Richmond Hill, Markham, Vaughan, and Toronto.",
     images: [
       {
         url: "/og-default.jpg",
@@ -63,6 +63,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@MaxRealtyTO",
     creator: "@MaxRealtyTO",
+    title: "Max Realty Solutions | GTA Real Estate Brokerage Since 1988",
+    description:
+      "RECO-licensed real estate brokerage serving the Greater Toronto Area since 1988.",
     images: ["/og-default.jpg"],
   },
   robots: {
