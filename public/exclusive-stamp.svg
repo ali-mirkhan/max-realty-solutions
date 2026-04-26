@@ -41,7 +41,7 @@
       }
 
       .st11, .st12 {
-        fill: #fff;
+        fill: none;
         stroke-width: 26px;
       }
 
