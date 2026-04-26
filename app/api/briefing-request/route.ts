@@ -135,6 +135,56 @@ function buildHtml(firstName: string, lead: BriefingBody): string {
   `;
 }
 
+function buildInternalText(lead: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: Role;
+}): string {
+  return `New briefing request received.
+
+Name:  ${lead.firstName} ${lead.lastName}
+Email: ${lead.email}
+Phone: ${lead.phone || "(not provided)"}
+Role:  ${ROLE_LABEL[lead.role]}
+
+Source: investment-advisory briefing form
+Asset:  ${PDF_URL}
+`;
+}
+
+function buildInternalHtml(lead: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: Role;
+}): string {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
+      <div style="background: #7D1A2D; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 20px;">New Briefing Request</h1>
+        <p style="color: rgba(255,255,255,0.85); margin: 4px 0 0; font-size: 14px;">The Off-Market Advantage</p>
+      </div>
+      <div style="padding: 32px; background: #f9f9f9; color: #2C2C2C; line-height: 1.6;">
+        <h2 style="font-size: 15px; margin: 0 0 12px; color: #7D1A2D;">Lead</h2>
+        <p style="margin: 2px 0;"><strong>Name:</strong> ${esc(lead.firstName)} ${esc(lead.lastName)}</p>
+        <p style="margin: 2px 0;"><strong>Email:</strong> <a href="mailto:${esc(lead.email)}" style="color: #7D1A2D;">${esc(lead.email)}</a></p>
+        <p style="margin: 2px 0;"><strong>Phone:</strong> ${esc(lead.phone) || "(not provided)"}</p>
+        <p style="margin: 2px 0;"><strong>Role:</strong> ${esc(ROLE_LABEL[lead.role])}</p>
+
+        <h2 style="font-size: 15px; margin: 20px 0 8px; color: #7D1A2D;">Source</h2>
+        <p style="margin: 2px 0;">Investment-advisory briefing form (<code>/services/investment-advisory#briefing</code>)</p>
+        <p style="margin: 2px 0;">Asset delivered: <a href="${PDF_URL}" style="color: #7D1A2D;">The Off-Market Advantage</a></p>
+      </div>
+      <div style="padding: 16px; background: #2C2C2C; text-align: center;">
+        <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin: 0;">Max Realty Solutions Ltd., Brokerage · 8220 Bayview Avenue, Unit 200, Thornhill, ON L3T 2S2</p>
+      </div>
+    </div>
+  `;
+}
+
 export async function POST(request: Request) {
   let body: BriefingBody;
   try {
@@ -179,11 +229,12 @@ export async function POST(request: Request) {
     );
   }
 
+  // SEND 1 — Lead acknowledgment with the PDF link. This is the user-facing
+  // email and must succeed for the form to be considered successful.
   try {
-    await resend.emails.send({
+    const { data: leadData, error: leadError } = await resend.emails.send({
       from: FROM,
       to: email,
-      bcc: [INTERNAL_BCC_PRIMARY, INTERNAL_BCC_SECONDARY],
       replyTo: "info@maxrealtysolutions.com",
       subject: "Your Investor Briefing — The Off-Market Advantage",
       text: buildText(firstName),
@@ -194,18 +245,61 @@ export async function POST(request: Request) {
         phone,
         role,
       }),
-      headers: {
-        "X-Lead-Source": "investment-advisory-briefing",
-        "X-Lead-Role": role ? ROLE_LABEL[role] : "unknown",
-      },
     });
 
-    return NextResponse.json({ success: true });
+    if (leadError) {
+      console.error("[briefing-request] lead-email error:", leadError);
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Failed to send your briefing. Please try again or email info@maxrealtysolutions.com directly.",
+        },
+        { status: 500 }
+      );
+    }
+
+    console.log("[briefing-request] lead-email sent:", leadData?.id);
   } catch (err) {
-    console.error("[briefing-request] send failed:", err);
+    console.error("[briefing-request] lead-email threw:", err);
     return NextResponse.json(
-      { success: false, error: "Failed to send the briefing. Please try again or email info@maxrealtysolutions.com." },
+      {
+        success: false,
+        error:
+          "Failed to send your briefing. Please try again or email info@maxrealtysolutions.com directly.",
+      },
       { status: 500 }
     );
   }
+
+  // SEND 2 — Internal lead notification. Failure here does NOT break the
+  // user's experience: they already got their briefing via SEND 1.
+  try {
+    const { data: internalData, error: internalError } =
+      await resend.emails.send({
+        from: FROM,
+        to: INTERNAL_BCC_PRIMARY,
+        bcc: INTERNAL_BCC_SECONDARY,
+        replyTo: email,
+        subject: `New briefing request: ${firstName} ${lastName} (${ROLE_LABEL[role]})`,
+        text: buildInternalText({ firstName, lastName, email, phone, role }),
+        html: buildInternalHtml({ firstName, lastName, email, phone, role }),
+      });
+
+    if (internalError) {
+      console.error(
+        "[briefing-request] internal-notification error:",
+        internalError
+      );
+    } else {
+      console.log(
+        "[briefing-request] internal-notification sent:",
+        internalData?.id
+      );
+    }
+  } catch (err) {
+    console.error("[briefing-request] internal-notification threw:", err);
+  }
+
+  return NextResponse.json({ success: true });
 }
