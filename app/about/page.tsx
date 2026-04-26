@@ -124,7 +124,6 @@ export default function AboutPage() {
                       src={agent.photo}
                       alt={agent.name}
                       fill
-                      quality={90}
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       style={{ objectPosition: agent.objectPosition ?? "center top" }}
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
