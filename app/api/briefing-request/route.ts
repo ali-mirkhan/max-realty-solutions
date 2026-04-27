@@ -18,8 +18,12 @@ interface BriefingBody {
   email?: string;
   phone?: string;
   role?: Role;
-  /** Honeypot — bots fill this; humans never see it */
-  website?: string;
+  /**
+   * Honeypot — bots fill this; humans never see it.
+   * Field name deliberately nonsense to avoid browser-autofill misfires
+   * (Safari/Chrome autofill `website` / `url` / `company` automatically).
+   */
+  hp_field_xyz?: string;
 }
 
 const ROLE_LABEL: Record<Role, string> = {
@@ -190,14 +194,27 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as BriefingBody;
   } catch {
+    console.error("[briefing] failed to parse request body");
     return NextResponse.json(
       { success: false, error: "Invalid request body." },
       { status: 400 }
     );
   }
 
+  console.log("[briefing] entry", {
+    hasResendKey: !!process.env.RESEND_API_KEY,
+    keyLength: process.env.RESEND_API_KEY?.length || 0,
+    hasFirstName: !!body.firstName,
+    hasEmail: !!body.email,
+    hasHoneypot: !!body.hp_field_xyz,
+    role: body.role,
+  });
+
   // Honeypot: bots fill this; real users never see it. Pretend success silently.
-  if (body.website && body.website.trim().length > 0) {
+  if (body.hp_field_xyz && body.hp_field_xyz.trim().length > 0) {
+    console.log("[briefing] honeypot triggered, returning silent success", {
+      honeypotValue: body.hp_field_xyz,
+    });
     return NextResponse.json({ success: true });
   }
 
@@ -211,18 +228,21 @@ export async function POST(request: Request) {
       : undefined;
 
   if (!firstName || !lastName || !email) {
+    console.log("[briefing] validation failed", { reason: "missing-required-field" });
     return NextResponse.json(
       { success: false, error: "First name, last name, and email are required." },
       { status: 400 }
     );
   }
   if (!isValidEmail(email)) {
+    console.log("[briefing] validation failed", { reason: "invalid-email-format" });
     return NextResponse.json(
       { success: false, error: "Please provide a valid email address." },
       { status: 400 }
     );
   }
   if (!role) {
+    console.log("[briefing] validation failed", { reason: "missing-role" });
     return NextResponse.json(
       { success: false, error: "Please tell us who you are." },
       { status: 400 }
@@ -231,6 +251,7 @@ export async function POST(request: Request) {
 
   // SEND 1 — Lead acknowledgment with the PDF link. This is the user-facing
   // email and must succeed for the form to be considered successful.
+  console.log("[briefing] about to send lead email", { to: email });
   try {
     const { data: leadData, error: leadError } = await resend.emails.send({
       from: FROM,
@@ -247,8 +268,15 @@ export async function POST(request: Request) {
       }),
     });
 
+    console.log("[briefing] lead email send result", {
+      hasData: !!leadData,
+      dataId: leadData?.id,
+      hasError: !!leadError,
+      errorMessage: leadError?.message,
+    });
+
     if (leadError) {
-      console.error("[briefing-request] lead-email error:", leadError);
+      console.error("[briefing] lead-email error object:", leadError);
       return NextResponse.json(
         {
           success: false,
@@ -258,10 +286,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    console.log("[briefing-request] lead-email sent:", leadData?.id);
   } catch (err) {
-    console.error("[briefing-request] lead-email threw:", err);
+    console.error("[briefing] caught exception in lead-email", err);
     return NextResponse.json(
       {
         success: false,
@@ -274,6 +300,7 @@ export async function POST(request: Request) {
 
   // SEND 2 — Internal lead notification. Failure here does NOT break the
   // user's experience: they already got their briefing via SEND 1.
+  console.log("[briefing] about to send internal notification");
   try {
     const { data: internalData, error: internalError } =
       await resend.emails.send({
@@ -286,20 +313,23 @@ export async function POST(request: Request) {
         html: buildInternalHtml({ firstName, lastName, email, phone, role }),
       });
 
+    console.log("[briefing] internal notification send result", {
+      hasData: !!internalData,
+      dataId: internalData?.id,
+      hasError: !!internalError,
+      errorMessage: internalError?.message,
+    });
+
     if (internalError) {
       console.error(
-        "[briefing-request] internal-notification error:",
+        "[briefing] internal-notification error object:",
         internalError
-      );
-    } else {
-      console.log(
-        "[briefing-request] internal-notification sent:",
-        internalData?.id
       );
     }
   } catch (err) {
-    console.error("[briefing-request] internal-notification threw:", err);
+    console.error("[briefing] caught exception in internal-notification", err);
   }
 
+  console.log("[briefing] returning success");
   return NextResponse.json({ success: true });
 }

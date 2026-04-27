@@ -27,7 +27,7 @@ export default function BriefingForm() {
       email: String(data.get("email") ?? "").trim(),
       phone: String(data.get("phone") ?? "").trim(),
       role: String(data.get("role") ?? "").trim(),
-      website: String(data.get("website") ?? ""), // honeypot
+      hp_field_xyz: String(data.get("hp_field_xyz") ?? ""), // honeypot
     };
 
     if (!payload.firstName || !payload.lastName || !payload.email || !payload.role) {
@@ -62,10 +62,10 @@ export default function BriefingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Honeypot */}
+      {/* Honeypot — name deliberately nonsense to avoid browser-autofill triggering it */}
       <input
         type="text"
-        name="website"
+        name="hp_field_xyz"
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
