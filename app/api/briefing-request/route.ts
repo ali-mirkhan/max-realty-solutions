@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { brandedEmailHtml, brandedEmailText } from "@/lib/email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -45,7 +46,8 @@ function isValidEmail(e: string): boolean {
 }
 
 function buildText(firstName: string): string {
-  return `Hi ${firstName},
+  return brandedEmailText({
+    bodyText: `Hi ${firstName},
 
 Thank you for requesting "The Off-Market Advantage" — Max Realty's investor briefing on
 off-market commercial real estate in the Greater Toronto Area.
@@ -74,67 +76,61 @@ Max Realty Solutions Ltd., Brokerage
 Licensed Ontario Realtor since 1988
 
 ---
-This e-mail and any attachments are confidential. Cooperating brokerage commission protected on listings.
-`;
+This e-mail and any attachments are confidential. Cooperating brokerage commission protected on listings.`,
+  });
 }
 
 function buildHtml(firstName: string, lead: BriefingBody): string {
-  return `
-    <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 640px; margin: 0 auto; background: #FDF8EE; color: #2C2C2C;">
-      <div style="background: #7D1A2D; padding: 28px 32px; text-align: center;">
-        <h1 style="color: #FDF8EE; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.02em;">Max Realty Solutions</h1>
-        <p style="color: rgba(253,248,238,0.85); margin: 6px 0 0; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;">Investor Briefing</p>
-      </div>
+  const bodyHtml = `
+    <p style="margin:0 0 16px;">Hi ${esc(firstName)},</p>
 
-      <div style="padding: 32px; line-height: 1.65; font-size: 15px;">
-        <p style="margin: 0 0 16px;">Hi ${esc(firstName)},</p>
+    <p style="margin:0 0 16px;">Thank you for requesting <strong>The Off-Market Advantage</strong> — Max Realty's investor briefing on off-market commercial real estate in the Greater Toronto Area.</p>
 
-        <p style="margin: 0 0 16px;">Thank you for requesting <strong>The Off-Market Advantage</strong> — Max Realty's investor briefing on off-market commercial real estate in the Greater Toronto Area.</p>
+    <p style="margin:24px 0;">
+      <a href="${PDF_URL}"
+         style="display:inline-block;background:#7D1A2D;color:#FDF8EE;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:600;">
+        Download the Briefing
+      </a>
+    </p>
 
-        <p style="margin: 24px 0;">
-          <a href="${PDF_URL}"
-             style="display: inline-block; background: #7D1A2D; color: #FDF8EE; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; font-family: Georgia, serif;">
-            Download the Briefing
-          </a>
-        </p>
+    <hr style="border:none;border-top:2px solid #E5B649;margin:24px 0;width:100px;margin-left:0;" />
 
-        <hr style="border: none; border-top: 2px solid #E5B649; margin: 24px 0; width: 100px; margin-left: 0;" />
+    <p style="margin:0 0 8px;font-weight:600;">Inside (10 pages):</p>
+    <ul style="margin:0 0 24px;padding-left:20px;">
+      <li style="margin-bottom:6px;">The current state of GTA commercial real estate (Q1 2026)</li>
+      <li style="margin-bottom:6px;">Why off-market deal flow is increasingly the institutional default</li>
+      <li style="margin-bottom:6px;">A four-criteria framework for evaluating off-market opportunities</li>
+      <li style="margin-bottom:6px;">Three mistakes investors make in GTA commercial real estate</li>
+      <li>How Max Realty sources, qualifies, and presents off-market deals</li>
+    </ul>
 
-        <p style="margin: 0 0 8px; font-weight: 600;">Inside (10 pages):</p>
-        <ul style="margin: 0 0 24px; padding-left: 20px;">
-          <li style="margin-bottom: 6px;">The current state of GTA commercial real estate (Q1 2026)</li>
-          <li style="margin-bottom: 6px;">Why off-market deal flow is increasingly the institutional default</li>
-          <li style="margin-bottom: 6px;">A four-criteria framework for evaluating off-market opportunities</li>
-          <li style="margin-bottom: 6px;">Three mistakes investors make in GTA commercial real estate</li>
-          <li>How Max Realty sources, qualifies, and presents off-market deals</li>
-        </ul>
+    <p style="margin:0 0 16px;">If you'd like to discuss a specific deployment thesis, an active mandate, or whether your capital aligns with what we currently have access to off-market, I would welcome a thirty-minute confidential conversation.</p>
 
-        <p style="margin: 0 0 16px;">If you'd like to discuss a specific deployment thesis, an active mandate, or whether your capital aligns with what we currently have access to off-market, I would welcome a thirty-minute confidential conversation.</p>
+    <p style="margin:0 0 4px;"><strong>Direct:</strong> 416-226-6008</p>
+    <p style="margin:0 0 24px;"><strong>Email:</strong> info@maxrealtysolutions.com</p>
 
-        <p style="margin: 0 0 4px;"><strong>Direct:</strong> 416-226-6008</p>
-        <p style="margin: 0 0 24px;"><strong>Email:</strong> info@maxrealtysolutions.com</p>
+    <p style="margin:0 0 4px;">Best regards,</p>
+    <p style="margin:0;font-weight:600;">Shahin Mirkhan</p>
+    <p style="margin:2px 0 0;font-size:13px;color:#555;">Founder &amp; Broker of Record</p>
+    <p style="margin:2px 0 0;font-size:13px;color:#555;">Max Realty Solutions Ltd., Brokerage</p>
+    <p style="margin:2px 0 0;font-size:13px;color:#555;font-style:italic;">Licensed Ontario Realtor since 1988</p>
 
-        <p style="margin: 0 0 4px;">Best regards,</p>
-        <p style="margin: 0; font-weight: 600;">Shahin Mirkhan</p>
-        <p style="margin: 2px 0 0; font-size: 13px; color: #555;">Founder &amp; Broker of Record</p>
-        <p style="margin: 2px 0 0; font-size: 13px; color: #555;">Max Realty Solutions Ltd., Brokerage</p>
-        <p style="margin: 2px 0 0; font-size: 13px; color: #555; font-style: italic;">Licensed Ontario Realtor since 1988</p>
-      </div>
+    <p style="margin:24px 0 0;font-size:11px;color:#888;font-style:italic;">
+      This e-mail and any attachments are confidential. Cooperating brokerage commission protected on listings.
+    </p>
 
-      <div style="padding: 16px 32px; background: #2C2C2C; text-align: center;">
-        <p style="color: rgba(253,248,238,0.55); font-size: 11px; margin: 0; line-height: 1.5;">
-          This e-mail and any attachments are confidential. Cooperating brokerage commission protected on listings.<br>
-          Max Realty Solutions Ltd., Brokerage · 8220 Bayview Avenue, Unit 200, Thornhill, ON L3T 2S2
-        </p>
-      </div>
-
-      ${
-        lead
-          ? `<!-- internal lead context: ${esc(lead.firstName)} ${esc(lead.lastName)} | ${esc(lead.email)} | ${esc(lead.phone || "no phone")} | role: ${esc(lead.role)} -->`
-          : ""
-      }
-    </div>
+    ${
+      lead
+        ? `<!-- internal lead context: ${esc(lead.firstName)} ${esc(lead.lastName)} | ${esc(lead.email)} | ${esc(lead.phone || "no phone")} | role: ${esc(lead.role)} -->`
+        : ""
+    }
   `;
+
+  return brandedEmailHtml({
+    title: "Investor Briefing",
+    preheader: "Your download link to The Off-Market Advantage is inside.",
+    bodyHtml,
+  });
 }
 
 function buildInternalText(lead: {
@@ -144,7 +140,8 @@ function buildInternalText(lead: {
   phone?: string;
   role: Role;
 }): string {
-  return `New briefing request received.
+  return brandedEmailText({
+    bodyText: `New briefing request received.
 
 Name:  ${lead.firstName} ${lead.lastName}
 Email: ${lead.email}
@@ -152,8 +149,8 @@ Phone: ${lead.phone || "(not provided)"}
 Role:  ${ROLE_LABEL[lead.role]}
 
 Source: investment-advisory briefing form
-Asset:  ${PDF_URL}
-`;
+Asset:  ${PDF_URL}`,
+  });
 }
 
 function buildInternalHtml(lead: {
@@ -163,28 +160,23 @@ function buildInternalHtml(lead: {
   phone?: string;
   role: Role;
 }): string {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
-      <div style="background: #7D1A2D; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 20px;">New Briefing Request</h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 4px 0 0; font-size: 14px;">The Off-Market Advantage</p>
-      </div>
-      <div style="padding: 32px; background: #f9f9f9; color: #2C2C2C; line-height: 1.6;">
-        <h2 style="font-size: 15px; margin: 0 0 12px; color: #7D1A2D;">Lead</h2>
-        <p style="margin: 2px 0;"><strong>Name:</strong> ${esc(lead.firstName)} ${esc(lead.lastName)}</p>
-        <p style="margin: 2px 0;"><strong>Email:</strong> <a href="mailto:${esc(lead.email)}" style="color: #7D1A2D;">${esc(lead.email)}</a></p>
-        <p style="margin: 2px 0;"><strong>Phone:</strong> ${esc(lead.phone) || "(not provided)"}</p>
-        <p style="margin: 2px 0;"><strong>Role:</strong> ${esc(ROLE_LABEL[lead.role])}</p>
+  const bodyHtml = `
+    <h2 style="font-size:15px;margin:0 0 12px;color:#7D1A2D;">Lead</h2>
+    <p style="margin:2px 0;"><strong>Name:</strong> ${esc(lead.firstName)} ${esc(lead.lastName)}</p>
+    <p style="margin:2px 0;"><strong>Email:</strong> <a href="mailto:${esc(lead.email)}" style="color:#7D1A2D;">${esc(lead.email)}</a></p>
+    <p style="margin:2px 0;"><strong>Phone:</strong> ${esc(lead.phone) || "(not provided)"}</p>
+    <p style="margin:2px 0;"><strong>Role:</strong> ${esc(ROLE_LABEL[lead.role])}</p>
 
-        <h2 style="font-size: 15px; margin: 20px 0 8px; color: #7D1A2D;">Source</h2>
-        <p style="margin: 2px 0;">Investment-advisory briefing form (<code>/services/investment-advisory#briefing</code>)</p>
-        <p style="margin: 2px 0;">Asset delivered: <a href="${PDF_URL}" style="color: #7D1A2D;">The Off-Market Advantage</a></p>
-      </div>
-      <div style="padding: 16px; background: #2C2C2C; text-align: center;">
-        <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin: 0;">Max Realty Solutions Ltd., Brokerage · 8220 Bayview Avenue, Unit 200, Thornhill, ON L3T 2S2</p>
-      </div>
-    </div>
+    <h2 style="font-size:15px;margin:20px 0 8px;color:#7D1A2D;">Source</h2>
+    <p style="margin:2px 0;">Investment-advisory briefing form (<code>/services/investment-advisory#briefing</code>)</p>
+    <p style="margin:2px 0;">Asset delivered: <a href="${PDF_URL}" style="color:#7D1A2D;">The Off-Market Advantage</a></p>
   `;
+
+  return brandedEmailHtml({
+    title: "New Briefing Request",
+    preheader: `${lead.firstName} ${lead.lastName} (${ROLE_LABEL[lead.role]}) requested The Off-Market Advantage.`,
+    bodyHtml,
+  });
 }
 
 export async function POST(request: Request) {
