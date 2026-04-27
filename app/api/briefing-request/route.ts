@@ -127,7 +127,7 @@ function buildHtml(firstName: string, lead: BriefingBody): string {
   `;
 
   return brandedEmailHtml({
-    title: "Investor Briefing",
+    title: "Your Investor Briefing",
     preheader: "Your download link to The Off-Market Advantage is inside.",
     bodyHtml,
   });

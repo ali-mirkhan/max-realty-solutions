@@ -27,6 +27,7 @@
 
 const LOGO_URL = "https://www.maxrealtysolutions.com/logo.png";
 const BRAND_BURGUNDY = "#7D1A2D";
+const BRAND_GOLD = "#C9972B";
 const BRAND_CREAM = "#FDF8EE";
 const BRAND_CHARCOAL = "#2C2C2C";
 const FOOTER_TEXT_COLOR = "rgba(253,248,238,0.6)";
@@ -37,7 +38,7 @@ const CONTACT_LINE =
   "Phone 416-226-6008 · info@maxrealtysolutions.com · maxrealtysolutions.com";
 
 export function brandedEmailHtml(opts: {
-  title: string;
+  title?: string;
   preheader?: string;
   bodyHtml: string;
 }): string {
@@ -47,12 +48,22 @@ export function brandedEmailHtml(opts: {
     ? `<div style="display:none;font-size:1px;color:${BRAND_CREAM};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${preheader}</div>`
     : "";
 
+  // Title block: gold rule + serif burgundy title. Renders only when a title
+  // is provided; otherwise the cream header is just logo with bottom padding.
+  const titleBlock = title
+    ? `<div style="margin:24px auto 0;width:80px;height:1px;background:${BRAND_GOLD};line-height:1px;font-size:1px;">&nbsp;</div>
+              <div style="margin:20px 0 0;font-family:Georgia,'Times New Roman',serif;color:${BRAND_BURGUNDY};font-size:18px;font-weight:600;letter-spacing:0.5px;">${title}</div>`
+    : "";
+
+  // Header padding is slightly heavier on bottom when there's no title block.
+  const headerPaddingBottom = title ? "24px" : "36px";
+
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${title}</title>
+  <title>${title ?? "Max Realty Solutions"}</title>
 </head>
 <body style="margin:0;padding:0;background:${BRAND_CREAM};font-family:Arial,Helvetica,sans-serif;color:${BRAND_CHARCOAL};">
   ${preheaderBlock}
@@ -60,11 +71,11 @@ export function brandedEmailHtml(opts: {
     <tr>
       <td align="center" style="padding:24px 12px;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;">
-          <!-- Header band -->
+          <!-- Header (cream, logo, gold rule, optional serif title) -->
           <tr>
-            <td align="center" style="background:${BRAND_BURGUNDY};padding:24px 24px;">
-              <img src="${LOGO_URL}" alt="Max Realty Solutions" width="180" style="display:block;margin:0 auto;height:auto;max-width:180px;border:0;outline:none;text-decoration:none;" />
-              <div style="color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:600;margin-top:14px;letter-spacing:0.02em;">${title}</div>
+            <td align="center" style="background:${BRAND_CREAM};padding:36px 24px ${headerPaddingBottom};">
+              <img src="${LOGO_URL}" alt="Max Realty Solutions" width="200" style="display:block;margin:0 auto;height:auto;max-width:200px;border:0;outline:none;text-decoration:none;" />
+              ${titleBlock}
             </td>
           </tr>
 
