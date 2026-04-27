@@ -18,12 +18,10 @@ interface BriefingBody {
   email?: string;
   phone?: string;
   role?: Role;
-  /**
-   * Honeypot — bots fill this; humans never see it.
-   * Field name deliberately nonsense to avoid browser-autofill misfires
-   * (Safari/Chrome autofill `website` / `url` / `company` automatically).
-   */
-  hp_field_xyz?: string;
+  /** JS-set token; presence indicates the client ran JavaScript */
+  _t?: string;
+  /** Milliseconds elapsed between form mount and submit */
+  _e?: number;
 }
 
 const ROLE_LABEL: Record<Role, string> = {
@@ -206,17 +204,43 @@ export async function POST(request: Request) {
     keyLength: process.env.RESEND_API_KEY?.length || 0,
     hasFirstName: !!body.firstName,
     hasEmail: !!body.email,
-    hasHoneypot: !!body.hp_field_xyz,
+    hasJsToken: !!body._t,
+    elapsedMs: body._e,
     role: body.role,
   });
 
-  // Honeypot: bots fill this; real users never see it. Pretend success silently.
-  if (body.hp_field_xyz && body.hp_field_xyz.trim().length > 0) {
-    console.log("[briefing] honeypot triggered, returning silent success", {
-      honeypotValue: body.hp_field_xyz,
-    });
+  // SIGNAL 1: Origin / Referer must come from our own domain.
+  const origin = request.headers.get("origin") || "";
+  const referer = request.headers.get("referer") || "";
+  const allowedHosts = ["maxrealtysolutions.com", "www.maxrealtysolutions.com"];
+  const fromAllowedOrigin = allowedHosts.some(
+    (h) => origin.includes(h) || referer.includes(h)
+  );
+
+  if (!fromAllowedOrigin) {
+    console.log("[briefing] blocked: bad origin", { origin, referer });
+    return NextResponse.json(
+      { success: false, error: "Invalid request origin" },
+      { status: 403 }
+    );
+  }
+
+  // SIGNAL 2: JavaScript-set token must be present (proves client ran JS).
+  if (!body._t || typeof body._t !== "string" || body._t.length < 4) {
+    console.log("[briefing] blocked: missing JS token", { hasToken: !!body._t });
+    // Silent success — don't reveal the check exists
     return NextResponse.json({ success: true });
   }
+
+  // SIGNAL 3: Time-on-page must be at least 1500ms.
+  const elapsedMs = typeof body._e === "number" ? body._e : 0;
+  if (elapsedMs < 1500) {
+    console.log("[briefing] blocked: too fast", { elapsedMs });
+    // Silent success
+    return NextResponse.json({ success: true });
+  }
+
+  console.log("[briefing] bot checks passed", { elapsedMs, hasToken: true });
 
   const firstName = body.firstName?.trim();
   const lastName = body.lastName?.trim();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
 
@@ -15,10 +15,23 @@ export default function BriefingForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Bot signals: time-on-page + JS-set token. Set once on mount.
+  const formMountedAt = useRef<number>(0);
+  const [jsToken, setJsToken] = useState<string>("");
+
+  useEffect(() => {
+    formMountedAt.current = Date.now();
+    setJsToken("mrs_" + Math.random().toString(36).slice(2, 10));
+  }, []);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
+
+    const elapsedMs = formMountedAt.current
+      ? Date.now() - formMountedAt.current
+      : 0;
 
     const data = new FormData(e.currentTarget);
     const payload = {
@@ -27,7 +40,8 @@ export default function BriefingForm() {
       email: String(data.get("email") ?? "").trim(),
       phone: String(data.get("phone") ?? "").trim(),
       role: String(data.get("role") ?? "").trim(),
-      hp_field_xyz: String(data.get("hp_field_xyz") ?? ""), // honeypot
+      _t: jsToken,
+      _e: elapsedMs,
     };
 
     if (!payload.firstName || !payload.lastName || !payload.email || !payload.role) {
@@ -62,16 +76,6 @@ export default function BriefingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Honeypot — name deliberately nonsense to avoid browser-autofill triggering it */}
-      <input
-        type="text"
-        name="hp_field_xyz"
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        style={{ position: "absolute", left: "-9999px", height: 0, width: 0, opacity: 0 }}
-      />
-
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-medium text-charcoal/60 mb-1">
