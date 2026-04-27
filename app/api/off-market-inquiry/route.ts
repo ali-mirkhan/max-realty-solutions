@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { brandedEmailHtml } from "@/lib/email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -41,80 +42,62 @@ function buildInternalEmail(body: InquiryBody, timestamp: string): string {
   const roleLabel =
     body.role === "representative" ? "Licensed Buyer Representative" : "Principal / Direct Buyer";
 
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
-      <div style="background: #7D1A2D; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 20px;">Off-Market Inquiry</h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 4px 0 0; font-size: 14px;">${esc(body.listingTitle ?? "Off-Market Opportunity")}</p>
-      </div>
-      <div style="padding: 32px; background: #f9f9f9; color: #2C2C2C;">
-        <p style="margin: 0 0 16px; font-size: 13px; color: #666;">Received ${esc(timestamp)}</p>
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:13px;color:#666;">Received ${esc(timestamp)} — ${esc(body.listingTitle ?? "Off-Market Opportunity")}</p>
 
-        <h2 style="font-size: 15px; margin: 0 0 8px; color: #7D1A2D;">Contact</h2>
-        <p style="margin: 2px 0;"><strong>Name:</strong> ${esc(body.name)}</p>
-        <p style="margin: 2px 0;"><strong>Email:</strong> ${esc(body.email)}</p>
-        <p style="margin: 2px 0;"><strong>Phone:</strong> ${esc(body.phone)}</p>
-        ${body.company ? `<p style="margin: 2px 0;"><strong>Company / Entity:</strong> ${esc(body.company)}</p>` : ""}
+    <h2 style="font-size:15px;margin:0 0 8px;color:#7D1A2D;">Contact</h2>
+    <p style="margin:2px 0;"><strong>Name:</strong> ${esc(body.name)}</p>
+    <p style="margin:2px 0;"><strong>Email:</strong> ${esc(body.email)}</p>
+    <p style="margin:2px 0;"><strong>Phone:</strong> ${esc(body.phone)}</p>
+    ${body.company ? `<p style="margin:2px 0;"><strong>Company / Entity:</strong> ${esc(body.company)}</p>` : ""}
 
-        <h2 style="font-size: 15px; margin: 20px 0 8px; color: #7D1A2D;">Qualification</h2>
-        <p style="margin: 2px 0;"><strong>Role:</strong> ${esc(roleLabel)}</p>
-        ${body.brokerage ? `<p style="margin: 2px 0;"><strong>Brokerage:</strong> ${esc(body.brokerage)}</p>` : ""}
-        ${body.licenseNumber ? `<p style="margin: 2px 0;"><strong>License #:</strong> ${esc(body.licenseNumber)}</p>` : ""}
-        <p style="margin: 2px 0;"><strong>Capital Acknowledgment:</strong> ${body.capitalAcknowledged ? "Yes" : "Not confirmed"}</p>
-        <p style="margin: 2px 0;"><strong>Confidentiality Acknowledgment:</strong> ${body.confidentialityAcknowledged ? "Yes" : "No"}</p>
-        ${body.source ? `<p style="margin: 2px 0;"><strong>How they heard:</strong> ${esc(body.source)}</p>` : ""}
+    <h2 style="font-size:15px;margin:20px 0 8px;color:#7D1A2D;">Qualification</h2>
+    <p style="margin:2px 0;"><strong>Role:</strong> ${esc(roleLabel)}</p>
+    ${body.brokerage ? `<p style="margin:2px 0;"><strong>Brokerage:</strong> ${esc(body.brokerage)}</p>` : ""}
+    ${body.licenseNumber ? `<p style="margin:2px 0;"><strong>License #:</strong> ${esc(body.licenseNumber)}</p>` : ""}
+    <p style="margin:2px 0;"><strong>Capital Acknowledgment:</strong> ${body.capitalAcknowledged ? "Yes" : "Not confirmed"}</p>
+    <p style="margin:2px 0;"><strong>Confidentiality Acknowledgment:</strong> ${body.confidentialityAcknowledged ? "Yes" : "No"}</p>
+    ${body.source ? `<p style="margin:2px 0;"><strong>How they heard:</strong> ${esc(body.source)}</p>` : ""}
 
-        <h2 style="font-size: 15px; margin: 20px 0 8px; color: #7D1A2D;">Listing</h2>
-        <p style="margin: 2px 0;"><strong>Title:</strong> ${esc(body.listingTitle)}</p>
-        <p style="margin: 2px 0;"><strong>Slug:</strong> ${esc(body.listingSlug)}</p>
-        <p style="margin: 2px 0;"><strong>Link:</strong> <a href="${esc(listingUrl)}" style="color: #7D1A2D;">${esc(listingUrl)}</a></p>
-      </div>
-      <div style="padding: 16px; background: #2C2C2C; text-align: center;">
-        <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin: 0;">Max Realty Solutions Ltd., Brokerage · 8220 Bayview Avenue, Unit 200, Thornhill, ON L3T 2S2</p>
-      </div>
-    </div>
+    <h2 style="font-size:15px;margin:20px 0 8px;color:#7D1A2D;">Listing</h2>
+    <p style="margin:2px 0;"><strong>Title:</strong> ${esc(body.listingTitle)}</p>
+    <p style="margin:2px 0;"><strong>Slug:</strong> ${esc(body.listingSlug)}</p>
+    <p style="margin:2px 0;"><strong>Link:</strong> <a href="${esc(listingUrl)}" style="color:#7D1A2D;">${esc(listingUrl)}</a></p>
   `;
+  return brandedEmailHtml({
+    title: "New Off-Market Inquiry",
+    preheader: `${body.name} — ${roleLabel} — ${body.listingTitle ?? "Off-Market Opportunity"}.`,
+    bodyHtml,
+  });
 }
 
 function buildAcknowledgmentEmail(body: InquiryBody): string {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
-      <div style="background: #7D1A2D; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 20px;">Max Realty Solutions</h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 4px 0 0; font-size: 14px;">Off-Market Opportunities</p>
-      </div>
-      <div style="padding: 32px; background: #f9f9f9; color: #2C2C2C; line-height: 1.6;">
-        <p style="margin: 0 0 16px;">${body.name ? `Dear ${esc(body.name)},` : "Hello,"}</p>
+  const bodyHtml = `
+    <p style="margin:0 0 16px;">${body.name ? `Dear ${esc(body.name)},` : "Hello,"}</p>
 
-        <p style="margin: 0 0 16px;">
-          Thank you for your interest in <strong>${esc(body.listingTitle ?? "our off-market investment opportunities")}</strong>.
-          We've received your inquiry and appreciate the time you've taken to share your background.
-        </p>
+    <p style="margin:0 0 16px;">
+      Thank you for your interest in <strong>${esc(body.listingTitle ?? "our off-market investment opportunities")}</strong>.
+      We've received your inquiry and appreciate the time you've taken to share your background.
+    </p>
 
-        <p style="margin: 0 0 16px;">
-          A member of our investment team will reach out to you within <strong>one business day</strong> to discuss next steps.
-          Because this is an off-market, confidential opportunity, a formal Non-Disclosure Agreement will be provided for
-          signature before detailed financial and location information is released.
-        </p>
+    <p style="margin:0 0 16px;">
+      A member of our investment team will reach out to you within <strong>one business day</strong> to discuss next steps.
+      Because this is an off-market, confidential opportunity, a formal Non-Disclosure Agreement will be provided for
+      signature before detailed financial and location information is released.
+    </p>
 
-        <p style="margin: 0 0 16px;">
-          In the meantime, please do not hesitate to reply to this email if you have any immediate questions.
-        </p>
+    <p style="margin:0 0 16px;">
+      In the meantime, please do not hesitate to reply to this email if you have any immediate questions.
+    </p>
 
-        <p style="margin: 24px 0 4px;">Sincerely,</p>
-        <p style="margin: 0; font-weight: 600;">The Max Realty Solutions Team</p>
-      </div>
-      <div style="padding: 20px; background: #2C2C2C; text-align: center;">
-        <p style="color: rgba(255,255,255,0.85); font-size: 13px; margin: 0 0 6px; font-weight: 600;">Max Realty Solutions Ltd., Brokerage</p>
-        <p style="color: rgba(255,255,255,0.55); font-size: 12px; margin: 0;">
-          8220 Bayview Avenue, Unit 200, Thornhill, ON L3T 2S2
-        </p>
-        <p style="color: rgba(255,255,255,0.55); font-size: 12px; margin: 4px 0 0;">
-          <a href="https://www.maxrealtysolutions.com" style="color: rgba(255,255,255,0.7); text-decoration: none;">www.maxrealtysolutions.com</a>
-        </p>
-      </div>
-    </div>
+    <p style="margin:24px 0 4px;">Sincerely,</p>
+    <p style="margin:0;font-weight:600;">The Max Realty Solutions Team</p>
   `;
+  return brandedEmailHtml({
+    title: "Your Off-Market Inquiry",
+    preheader: "Our investment team will reach out within one business day. NDA required prior to detailed disclosure.",
+    bodyHtml,
+  });
 }
 
 function isValidEmail(e: string): boolean {
