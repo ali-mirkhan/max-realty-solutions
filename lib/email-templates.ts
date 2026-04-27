@@ -51,12 +51,12 @@ export function brandedEmailHtml(opts: {
   // Title block: gold rule + serif burgundy title. Renders only when a title
   // is provided; otherwise the cream header is just logo with bottom padding.
   const titleBlock = title
-    ? `<div style="margin:24px auto 0;width:80px;height:1px;background:${BRAND_GOLD};line-height:1px;font-size:1px;">&nbsp;</div>
-              <div style="margin:20px 0 0;font-family:Georgia,'Times New Roman',serif;color:${BRAND_BURGUNDY};font-size:18px;font-weight:600;letter-spacing:0.5px;">${title}</div>`
+    ? `<div style="margin:32px auto 0;width:80px;height:1px;background:${BRAND_GOLD};line-height:1px;font-size:1px;">&nbsp;</div>
+              <div style="margin:28px 0 0;font-family:Georgia,'Times New Roman',serif;color:${BRAND_BURGUNDY};font-size:18px;font-weight:600;letter-spacing:0.5px;">${title}</div>`
     : "";
 
-  // Header padding is slightly heavier on bottom when there's no title block.
-  const headerPaddingBottom = title ? "24px" : "36px";
+  // Bottom padding heavier when there's no title block.
+  const headerPaddingBottom = title ? "32px" : "44px";
 
   return `<!doctype html>
 <html lang="en">
@@ -70,18 +70,18 @@ export function brandedEmailHtml(opts: {
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:${BRAND_CREAM};">
     <tr>
       <td align="center" style="padding:24px 12px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="640" style="max-width:640px;width:100%;background:${BRAND_CREAM};">
           <!-- Header (cream, logo, gold rule, optional serif title) -->
           <tr>
             <td align="center" style="background:${BRAND_CREAM};padding:36px 24px ${headerPaddingBottom};">
-              <img src="${LOGO_URL}" alt="Max Realty Solutions" width="200" style="display:block;margin:0 auto;height:auto;max-width:200px;border:0;outline:none;text-decoration:none;" />
+              <img src="${LOGO_URL}" alt="Max Realty Solutions" width="140" style="display:block;margin:0 auto;height:auto;max-width:140px;border:0;outline:none;text-decoration:none;" />
               ${titleBlock}
             </td>
           </tr>
 
-          <!-- Body -->
+          <!-- Body — same cream surface as header for unified look -->
           <tr>
-            <td style="background:#FFFFFF;color:${BRAND_CHARCOAL};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;padding:32px 32px;">
+            <td style="background:${BRAND_CREAM};color:${BRAND_CHARCOAL};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;padding:32px 40px;">
               ${bodyHtml}
             </td>
           </tr>

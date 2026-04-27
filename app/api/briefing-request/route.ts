@@ -93,9 +93,7 @@ function buildHtml(firstName: string, lead: BriefingBody): string {
       </a>
     </p>
 
-    <hr style="border:none;border-top:2px solid #E5B649;margin:24px 0;width:100px;margin-left:0;" />
-
-    <p style="margin:0 0 8px;font-weight:600;">Inside (10 pages):</p>
+    <p style="margin:24px 0 8px;font-weight:600;">Inside (10 pages):</p>
     <ul style="margin:0 0 24px;padding-left:20px;">
       <li style="margin-bottom:6px;">The current state of GTA commercial real estate (Q1 2026)</li>
       <li style="margin-bottom:6px;">Why off-market deal flow is increasingly the institutional default</li>
