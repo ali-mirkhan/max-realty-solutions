@@ -93,26 +93,36 @@ const FIVE_AREAS = [
   },
 ];
 
-const FOUR_PHASES = [
+const RECOVERY_STAGES = [
   {
     icon: Search,
-    title: "Inspection & Verification",
-    body: "Occupancy verification, condition assessment, photo-documented report.",
+    title: "Initial Property Review",
+    body: "We help review the property-side requirements of the file — known occupancy status, property type, condition concerns, tenancy considerations, and the intended path toward lease, sale, or recovery. Output is a documented scope of support and a recommended sequence of next steps.",
+  },
+  {
+    icon: FileText,
+    title: "Occupancy & Condition Reporting",
+    body: "Where access is authorized, we coordinate occupancy observations, exterior and interior condition reporting, and time-stamped photo documentation. Reports are formatted for the lender's compliance and audit requirements and delivered within the timeline agreed at engagement.",
   },
   {
     icon: Lock,
-    title: "Securing & Preservation",
-    body: "Lock change where legally authorized, board-up, winterization, routine inspections, maintenance coordination.",
+    title: "Stabilization Coordination",
+    body: "If the property requires attention, we help coordinate appropriate third-party support — securing access points where legally authorized, winterization, cleaning, landscaping, snow removal, and urgent repair coordination through licensed insured trades. Max Realty does not perform field labour directly.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Communication & Documentation Coordination",
+    body: "For income-producing properties, we assist with property-side documentation and access coordination on behalf of the owner, lender, receiver, or legal counsel. Tenant communication, lease and contract documentation review, and operational records are coordinated under their direction. Tenant remedies, lease enforcement, and rent collection remain with the authorized professional, not with Max Realty.",
   },
   {
     icon: Wrench,
     title: "Market Preparation",
-    body: "Cleaning, light renovation, staging, cosmetic remediation.",
+    body: "When sale or leasing is the next step, we help coordinate cleaning, repairs, curb appeal, document organization, valuation support, and listing-readiness so the asset is presented professionally to the market.",
   },
   {
     icon: ArrowRight,
-    title: "Disposition",
-    body: "Comparative market analysis, listing through Max Realty Brokerage, MLS exposure, weekly reporting.",
+    title: "Disposition Support",
+    body: "Where Max Realty is engaged for sale, we support the listing and transaction process through pricing strategy, marketing coordination, showings, offer review support, due diligence coordination, and closing-related property handoff. Listings are handled through Max Realty Solutions Ltd., Brokerage.",
   },
 ];
 
@@ -275,18 +285,25 @@ export default function PropertyManagementSupportPage() {
         </div>
       </section>
 
-      {/* Four Operational Phases */}
+      {/* How We Support the Property Recovery Cycle */}
       <section className="bg-stone-warm py-16">
         <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <p className="section-label">Our Process</p>
-            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal">
-              Four Operational Phases
+            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
+              How We Support the Property Recovery Cycle
             </h2>
+            <p className="text-sm lg:text-base text-charcoal/70 leading-relaxed">
+              When a commercial or residential property moves into recovery — whether through default,
+              estate transition, or owner-directed disposition — the property side of the file needs
+              structured oversight from initial review through closing. The stages below outline how
+              Max Realty supports each phase, working alongside the lender&apos;s legal counsel, the
+              estate&apos;s representative, the receiver, or the owner&apos;s authorized professional.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {FOUR_PHASES.map(({ icon: Icon, title, body }, idx) => (
+            {RECOVERY_STAGES.map(({ icon: Icon, title, body }, idx) => (
               <div
                 key={title}
                 className="bg-white border border-stone-border rounded-lg p-6"
@@ -296,7 +313,7 @@ export default function PropertyManagementSupportPage() {
                     <Icon size={18} className="text-burgundy" />
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-burgundy">
-                    Phase {idx + 1}
+                    Stage {idx + 1}
                   </p>
                 </div>
                 <h3 className="font-serif text-lg font-semibold text-charcoal mb-1.5">
@@ -309,10 +326,19 @@ export default function PropertyManagementSupportPage() {
             ))}
           </div>
 
-          <p className="max-w-2xl mx-auto mt-10 text-center text-sm text-charcoal/65 leading-relaxed">
-            Each phase is scoped, priced, and reported on independently. Clients can engage at any stage and
-            at any depth.
-          </p>
+          <div className="max-w-3xl mx-auto mt-10 bg-white border border-stone-border rounded-lg p-6 lg:p-7">
+            <div className="flex items-start gap-4">
+              <AlertTriangle
+                size={18}
+                className="text-burgundy shrink-0 mt-0.5"
+              />
+              <p className="text-sm text-charcoal/70 leading-relaxed">
+                Our role is property-side coordination and reporting. Legal notices, enforcement decisions,
+                possession matters, court processes, insurance claims, tenant remedies, and rent collection
+                remain with the appropriate legal, insurance, or authorized professionals.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
