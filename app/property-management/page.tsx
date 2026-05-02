@@ -7,7 +7,7 @@ import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
   title: "Property Management",
-  description: "Full-service residential property management across the GTA. Tenant screening, rent collection, maintenance, lease administration, and financial reporting for residential and commercial properties.",
+  description: "Commercial-led property management across the Greater Toronto Area — retail plazas, mixed-use, multi-unit residential, and condos. 38 years of brokerage experience backing every engagement.",
 };
 
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
@@ -47,20 +47,20 @@ const services = [
 
 const propertyTypes = [
   {
-    title: "Residential Properties",
-    desc: "Single-family homes, townhouses, semi-detached. We manage your home as if it were our own.",
+    title: "Commercial Properties",
+    desc: "Retail plazas, strip malls, office buildings, and mixed-use properties. Backed by 38 years of GTA commercial real estate experience and $750M+ in real estate transacted.",
   },
   {
     title: "Multi-Unit Residential",
-    desc: "Duplexes, triplexes, and small apartment buildings. Streamlined management for multiple units under one roof.",
-  },
-  {
-    title: "Commercial Properties",
-    desc: "Retail plazas, strip malls, and mixed-use buildings. Backed by our $750M+ in real estate transacted.",
+    desc: "Apartment buildings, multi-unit rental properties, and small residential portfolios. Tenant screening, rent collection, lease administration, and full reporting.",
   },
   {
     title: "Condo Units",
-    desc: "Individual condo investment units across the GTA. We handle the tenant, the board, and everything in between.",
+    desc: "Individual condo units and small condo portfolios. Owner-friendly reporting, vetted maintenance coordination, and tenant management.",
+  },
+  {
+    title: "Single-Family Residential",
+    desc: "Individual rental homes and small residential holdings. Same standard of service, scaled to your portfolio.",
   },
 ];
 
@@ -83,7 +83,7 @@ export default function PropertyManagementPage() {
           "@id": "https://www.maxrealtysolutions.com/property-management/#service",
           name: "Property Management",
           description:
-            "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, lease administration, and financial reporting.",
+            "Commercial-led property management for retail, mixed-use, multi-unit residential, and condo properties across the Greater Toronto Area. Tenant screening, rent collection, maintenance coordination, lease administration, and financial reporting.",
           serviceType: "Property Management",
           url: "https://www.maxrealtysolutions.com/property-management",
           provider: {
@@ -112,21 +112,21 @@ export default function PropertyManagementPage() {
               Professional Property Management Across the GTA
             </h1>
             <p className="text-sm text-[#E8E4DE]/75 leading-relaxed mb-5">
-              Residential property management for individual landlords and property owners across the
-              Greater Toronto Area. For institutional asset oversight, mortgage enforcement support, or
-              estate-property coordination, see our{" "}
+              Commercial-led property management for retail plazas, mixed-use buildings, multi-unit
+              residential, and condo portfolios across the Greater Toronto Area. For institutional asset
+              oversight, mortgage enforcement support, or estate-property coordination, see our{" "}
               <Link
                 href="/services/property-management"
                 className="text-white underline decoration-burgundy/60 underline-offset-2 hover:decoration-burgundy"
               >
-                Property &amp; Asset Management Support service
+                Asset Oversight &amp; Lender Services service
               </Link>
               .
             </p>
             <p className="text-lg text-[#E8E4DE]/90 leading-relaxed mb-8">
               We protect your investment, maximize your returns, and handle every detail so you don&apos;t
-              have to — across single-family rentals, condos, multi-unit residential, and small commercial
-              portfolios.
+              have to — across retail plazas, office and mixed-use buildings, multi-unit residential, condo
+              portfolios, and single-family rentals.
             </p>
             <PropertyManagementCTA />
           </div>
@@ -138,8 +138,8 @@ export default function PropertyManagementPage() {
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
-              { value: "500+", label: "Units Managed" },
-              { value: "98%", label: "Tenant Retention Rate" },
+              { value: "Commercial-Led", label: "Property Management" },
+              { value: "$750M+", label: "Real Estate Transacted" },
               { value: "1988", label: "Brokerage Established" },
               { value: "GTA-Wide", label: "Coverage Area" },
             ].map((s) => (
@@ -203,9 +203,10 @@ export default function PropertyManagementPage() {
               <div className="space-y-4 text-sm text-charcoal/70 leading-relaxed">
                 <p>
                   Most property management companies have never bought or sold a building. Our team has.
-                  With over $750M+ in real estate transacted across residential, commercial, and
-                  investment-grade properties, we understand what makes a property perform — and we
-                  manage yours with that same investment mindset.
+                  With $750M+ in real estate transacted across commercial, residential, and
+                  investment-grade properties — including extensive retail plaza and mixed-use experience —
+                  we understand what makes a property perform. We manage yours with that same investment
+                  mindset.
                 </p>
                 <p>
                   We don&apos;t just collect rent. We protect your asset, optimize your returns, and keep you

@@ -6,7 +6,7 @@ const quickLinks = [
   { href: "/properties", label: "Properties" },
   { href: "/services", label: "Services" },
   { href: "/commercial", label: "Commercial" },
-  { href: "/property-management", label: "Residential Property Management" },
+  { href: "/property-management", label: "Property Management" },
   { href: "/services/property-management", label: "Asset Oversight & Lender Services" },
   { href: "/tools", label: "Tools" },
   { href: "/about", label: "About" },
