@@ -124,8 +124,9 @@ export default function PropertyManagementPage() {
               .
             </p>
             <p className="text-lg text-[#E8E4DE]/90 leading-relaxed mb-8">
-              From retail plazas to residential portfolios — we protect your investment, maximize your returns,
-              and handle every detail so you don&apos;t have to.
+              We protect your investment, maximize your returns, and handle every detail so you don&apos;t
+              have to — across single-family rentals, condos, multi-unit residential, and small commercial
+              portfolios.
             </p>
             <PropertyManagementCTA />
           </div>
