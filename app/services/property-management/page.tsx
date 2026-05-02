@@ -30,9 +30,6 @@ export const metadata: Metadata = {
   description:
     "Professional property oversight, reporting, and sale-preparation support for owners, investors, lenders, estate representatives, and legal professionals managing real estate that requires active attention.",
   alternates: { canonical: CANONICAL },
-  // Staged-private build: page is created but not yet linked from nav, sitemap,
-  // or other pages. Remove `robots` block to make publicly indexable at launch.
-  robots: { index: false, follow: false },
   openGraph: {
     title: "Property & Asset Management Support | Max Realty Solutions",
     description:
@@ -163,10 +160,21 @@ export default function PropertyManagementSupportPage() {
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
               Property & Asset Management Support
             </h1>
-            <p className="text-base lg:text-lg text-[#E8E4DE]/85 leading-relaxed mb-8">
+            <p className="text-base lg:text-lg text-[#E8E4DE]/85 leading-relaxed mb-5">
               Professional property oversight, reporting, and sale-preparation support for owners, investors,
               lenders, estate representatives, and legal professionals managing real estate that requires
               active attention.
+            </p>
+            <p className="text-sm text-[#E8E4DE]/70 leading-relaxed mb-8">
+              Institutional asset oversight, enforcement support, and sale-preparation coordination. For
+              residential property management for individual landlords, see our{" "}
+              <Link
+                href="/property-management"
+                className="text-white underline decoration-burgundy/60 underline-offset-2 hover:decoration-burgundy"
+              >
+                Property Management service
+              </Link>
+              .
             </p>
             <Link
               href="#consultation-form"

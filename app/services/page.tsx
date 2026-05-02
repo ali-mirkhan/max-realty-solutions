@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HomeIcon, TrendingUp, Building2, Key, BarChart3, Hammer, ArrowRight } from "lucide-react";
+import { HomeIcon, TrendingUp, Building2, Key, BarChart3, Hammer, ShieldCheck, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Real Estate Services",
@@ -19,7 +19,8 @@ const services = [
   { icon: Building2, title: "Commercial Real Estate", cta: "View Commercial", link: "/commercial", desc: "Our commercial division specializes in retail plazas, office spaces, and investment properties. With experience in large-scale transactions ranging from $10M to $35M+, we bring serious expertise to every commercial deal." },
   { icon: BarChart3, title: "Investment Advisory", cta: "Start Investing", link: "/services/investment-advisory", desc: "Strategic investment advisory across the GTA. Off-market deal access, cap rate analysis, and asset class expertise spanning multi-family, retail, industrial, land/development, and pre-construction. $2B+ in transactions negotiated." },
   { icon: Hammer, title: "Pre-Construction", cta: "Get Platinum Access", link: "/services/pre-construction", desc: "VIP and Platinum allocations from top GTA developers — first access to new condo, townhome, and detached projects before public launch. Better pricing, better unit selection, full senior-agent representation through APS review and closing." },
-  { icon: Building2, title: "Property Management", cta: "Learn More", link: "/property-management", desc: "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, LTB compliance, and financial reporting — all handled for you." },
+  { icon: Building2, title: "Property Management", cta: "Learn More", link: "/property-management", desc: "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, lease administration, and financial reporting — all handled for you." },
+  { icon: ShieldCheck, title: "Property & Asset Management Support", cta: "Learn More", link: "/services/property-management", desc: "Institutional property oversight, reporting, and sale-preparation support for lenders, MICs, estate trustees, legal teams, and investors." },
 ];
 
 export default function ServicesPage() {

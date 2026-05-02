@@ -33,6 +33,7 @@ const NAV: NavEntry[] = [
       { href: "/services/investment-advisory", label: "Investment Advisory" },
       { href: "/services/pre-construction", label: "Pre-Construction" },
       { href: "/property-management", label: "Property Management" },
+      { href: "/services/property-management", label: "Property & Asset Management Support" },
     ],
   },
   { type: "link", href: "/commercial", label: "Commercial" },

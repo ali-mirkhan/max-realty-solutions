@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/services/leasing`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/services/investment-advisory`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/services/pre-construction`, priority: 0.8, changeFrequency: "monthly" as const },
+    { url: `${base}/services/property-management`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/commercial`, priority: 0.8, changeFrequency: "monthly" as const },
     { url: `${base}/off-market`, priority: 0.9, changeFrequency: "weekly" as const },
     { url: `${base}/property-management`, priority: 0.8, changeFrequency: "monthly" as const },
