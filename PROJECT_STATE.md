@@ -3,8 +3,8 @@
 > **Living document.** Update this file at the end of every chat session that produces meaningful changes. New sessions should start by reading this file in full before any other action.
 
 **Last updated:** 2026-05-01
-**Last session:** Codebase audit completed + documentation alignment
-**Current production commit:** `f93dbe9` (verified via `git log --oneline -1`)
+**Last session:** Property & Asset Management Support — staged-private build, soft launch, residential PM cleanup.
+**Current production commit:** `576a976` (verified via `git log --oneline -1`)
 **Live URL:** https://www.maxrealtysolutions.com
 **Repo:** https://github.com/ali-mirkhan/max-realty-solutions
 **Local path:** `~/Projects/max-realty-next`
@@ -166,8 +166,18 @@
 - About page rewrite (Re/Max Hallmark 1988 → HomeLife 2004 → Independent 2010 narrative)
 - Shahin's polished bio
 - Trust strip on homepage ("Since 1988 · RECO Licensed · TRESA Regulated · Thornhill-based")
-- Site-wide stat normalization ($2B+ → $750M+, 30+ Years → 38 Years across homepage, About, all service pages, metadata descriptions)
+- Site-wide stat normalization ($2B+ → $750M+, 30+ Years → 38 Years across homepage, About, all service pages, metadata descriptions), and a follow-up sweep of /property-management page + services index cards (commits `4239e4e`, `576a976`)
 - About page agent photo bug fixed (commit `893ea79` — removed `quality={90}` prop forcing 404 from Next.js image optimizer; default `quality={75}` works)
+
+### Property & Asset Management Support (institutional service line)
+- **New page:** `/services/property-management` — institutional asset oversight, mortgage enforcement property support, estate property support, investor asset support, sale preparation. Coordinator-only model.
+- **Form:** `components/PropertyManagementForm.tsx`, posts to `/api/property-management-inquiry`
+- **API route:** `app/api/property-management-inquiry/route.ts` — mirrors briefing-request bot guard (3-signal: Origin + JS token + time-on-page) and two-send Resend pattern
+- **Thank-you:** `/services/property-management/thank-you` (noindex)
+- **Schema:** `propertyManagementServiceSchema()` in `lib/schemas.ts` with 5 sub-services as Offer items
+- **Wiring:** Header dropdown, Footer quick-links, services index card (ShieldCheck icon), sitemap (priority 0.8)
+- **Public soft launch:** Live, indexable, in nav. NO paid promotion until Phase A foundation work (insurance, legal, trades, reporting templates) complete.
+- **Coexistence:** Two property-management pages now active. `/property-management` = residential PM (individual landlords). `/services/property-management` = institutional asset oversight (lenders, MICs, estate trustees). Reciprocal clarifying lines + cross-links on both.
 
 ---
 
@@ -218,62 +228,72 @@ ALWAYS inspect `{ data, error }` return from `resend.emails.send()`. Log both br
 
 ### High Priority
 
-1. **Fix blog source-of-truth / sitemap bug**
+1. **Phase A operational foundation for Property & Asset Management Support**
+   - CGL ($5M) + E&O ($2M) insurance bound
+   - Master Service Agreement drafted by real estate / commercial litigator (Robins Appleby, Aird & Berlis, or Shahin's existing counsel)
+   - Trade partner roster vetted (locksmith, cleaning, plumbing, electrical, roofing, restoration, landscaping, GC)
+   - Standardized inspection report template + photo documentation protocol
+   - Internal pricing model finalized
+   - Until complete: page is live but no paid promotion, no direct outreach to MICs/lenders. Inquiry capture only.
+   - Reference: `property-asset-management-brief-v3.docx` Section 11 + Section 15.
+
+2. **Fix blog source-of-truth / sitemap bug**
    - `lib/blogData.ts` currently powers `/blog/[slug]` routes (3 posts: `interest-rates-gta-2026`, `gta-buyers-market-2026`, `gta-retail-plaza-investing`)
    - `data/blogPosts.json` appears to power `app/sitemap.ts` (3 different `post-001`-style IDs)
    - Pick one source of truth
    - Ensure sitemap only lists real live blog URLs
    - Verify all blog slugs return 200
 
-2. **Add basic error alerting**
+3. **Add basic error alerting**
    - Either Sentry or a simple internal Resend alert for API route failures
    - Catches the next silent email failure before a real lead complains
    - Keep it simple and operator-useful
 
-3. **Add analytics**
+4. **Add analytics**
    - Add GA4 or GTM
    - Prefer GTM if future tracking flexibility is needed
    - Track page views and all form submissions
    - Do not overcomplicate attribution yet
 
-4. **Apply bot protection to all form routes**
+5. **Apply bot protection to all form routes**
    - Extract the working 3-signal pattern from `briefing-request` into a shared helper (e.g., `lib/bot-guards.ts`)
-   - Apply consistently to all lead-capture endpoints: `contact`, `investment-inquiry`, `off-market-inquiry`, `selling-inquiry`, `leasing-inquiry`, `home-evaluation`, `pre-construction-inquiry`
+   - Apply consistently to all lead-capture endpoints: `contact`, `investment-inquiry`, `off-market-inquiry`, `selling-inquiry`, `leasing-inquiry`, `home-evaluation`, `pre-construction-inquiry`, `property-management-inquiry`
    - No honeypots
 
-5. **Standardize form handler observability**
+6. **Standardize form handler observability**
    - Email template fan-out: COMPLETED across the 6 inquiry routes, verified in recent commits `48cd319`, `74c61ac`, `b66f9bf`, `5106fe4`, and `f93dbe9`
    - Remaining work: ensure every route inspects Resend `{data, error}`, uses the two-send pattern (lead first, internal second), and has consistent logging at entry / validation failure / Resend send result / unexpected errors
    - Audit each route against the `briefing-request` reference implementation
 
-6. **Clean Storyblok decision**
+7. **Clean Storyblok decision**
    - Either remove Storyblok SDK + `lib/storyblok.ts` + `STORYBLOK_*` env references if not used
    - Or explicitly wire it to blog/content later
    - Current recommendation: do not expand Storyblok yet
 
-7. **Improve MLS caching**
+8. **Improve MLS caching**
    - Replace `cache: "no-store"` in `lib/ddf.ts` where appropriate with `next: { revalidate: 300 }`
    - Be careful not to break property freshness on `/properties/[id]`
 
-8. **Move hard-coded internal BCC to env var**
+9. **Move hard-coded internal BCC to env var**
    - Use `INTERNAL_BCC` or `MAX_INTERNAL_BCC`
    - Keep public-facing contact as `info@maxrealtysolutions.com`
 
 ### Deferred (saved in memory, ready when triggered)
-9. **Lead tracking upgrade** — currently leads only flow via Resend BCC. **Trigger after analytics/form standardization is complete.** Recommended first storage path is a Google Sheet or lightweight DB; CRM can come later.
-   - **Path A (Apps Script + Google Sheet):** Add `fetch()` to Apps Script Web App URL inside each form route after Resend send. Payload: `{timestamp, firstName, lastName, email, phone, role, source}`. Extend pattern to all 8 form endpoints with shared helper + `source` column.
-   - **Path B (Resend Audiences):** `resend.contacts.create({audienceId, email, firstName, lastName, unsubscribed: false})` after `resend.emails.send()`. Audience ID in `RESEND_AUDIENCE_ID` env var.
-   - Trigger phrase: "wire up Sheet logging" or "wire up Resend Audiences"
-10. **Formal NDA PDF** — broader brokerage forms work
-11. **Domain transfer name.com → Cloudflare Registrar** — deferred 6+ months
-12. **Custom quarterly market report PDF** — Path B Investment Advisory deliverable, deferred (evergreen Path A briefing already shipped)
-13. **`/join` page upgrade** — current page already strong, no upgrade needed unless adding real agent testimonials or video from Shahin (requires authentic source material)
+10. **Lead tracking upgrade** — currently leads only flow via Resend BCC. **Trigger after analytics/form standardization is complete.** Recommended first storage path is a Google Sheet or lightweight DB; CRM can come later.
+    - **Path A (Apps Script + Google Sheet):** Add `fetch()` to Apps Script Web App URL inside each form route after Resend send. Payload: `{timestamp, firstName, lastName, email, phone, role, source}`. Extend pattern to all 8 form endpoints with shared helper + `source` column.
+    - **Path B (Resend Audiences):** `resend.contacts.create({audienceId, email, firstName, lastName, unsubscribed: false})` after `resend.emails.send()`. Audience ID in `RESEND_AUDIENCE_ID` env var.
+    - Trigger phrase: "wire up Sheet logging" or "wire up Resend Audiences"
+11. **Formal NDA PDF** — broader brokerage forms work
+12. **Domain transfer name.com → Cloudflare Registrar** — deferred 6+ months
+13. **Custom quarterly market report PDF** — Path B Investment Advisory deliverable, deferred (evergreen Path A briefing already shipped)
+14. **`/join` page upgrade** — current page already strong, no upgrade needed unless adding real agent testimonials or video from Shahin (requires authentic source material)
 
 ### Low Urgency / Watching
-14. **Agent photo source files at `/files/agent_profile_pics/{ID}.jpg` are 404 at origin.** Vercel edge cache currently serving them; cache will eventually expire and break `/about` + `/agents` photos. **Pre-empt fix:** download photos while cache still serves them, drop into `public/agents/` with clean filenames (`shahin-mirkhan.jpg`, `hootan-ghovanloo.jpg`, `ali-mirkhan.jpg`, `fred-hamrahi.jpg`), update `data/agents.json` photo paths.
-15. **Property listings excluded from sitemap.** CREA-fed `/properties/[id]` URLs are dynamic, so they aren't in `sitemap.xml`. Acceptable for now; revisit if organic property traffic becomes a real channel.
-16. **Property JSON-LD uses `Product` schema** (`lib/schemas.ts:189`). Google's real-estate rich-result trigger expects `RealEstateListing`. Revisit when SEO of individual property pages becomes a priority.
-17. **No UI primitive components** (Button/Input/Card). Forms re-declare the same `inputClass` literal in every file. Extract a primitive layer when the next form-heavy feature lands.
+15. **Agent photo source files at `/files/agent_profile_pics/{ID}.jpg` are 404 at origin.** Vercel edge cache currently serving them; cache will eventually expire and break `/about` + `/agents` photos. **Pre-empt fix:** download photos while cache still serves them, drop into `public/agents/` with clean filenames (`shahin-mirkhan.jpg`, `hootan-ghovanloo.jpg`, `ali-mirkhan.jpg`, `fred-hamrahi.jpg`), update `data/agents.json` photo paths.
+16. **Property listings excluded from sitemap.** CREA-fed `/properties/[id]` URLs are dynamic, so they aren't in `sitemap.xml`. Acceptable for now; revisit if organic property traffic becomes a real channel.
+17. **Property JSON-LD uses `Product` schema** (`lib/schemas.ts:189`). Google's real-estate rich-result trigger expects `RealEstateListing`. Revisit when SEO of individual property pages becomes a priority.
+18. **No UI primitive components** (Button/Input/Card). Forms re-declare the same `inputClass` literal in every file. Extract a primitive layer when the next form-heavy feature lands.
+19. **Stale stats outside `/services` index** — homepage hero (`app/page.tsx:379` "$10M–$35M+"), About page (`app/about/page.tsx:50` "$10M–$35M+"), Commercial page (`app/commercial/page.tsx:69, 107` "$10M–$35M+" + "$35M+ Transaction Volume" stat), Selling page (`app/services/selling/page.tsx:231` "$2B+"), Home Evaluation page (`app/services/home-evaluation/page.tsx:255, 261` "$2B+" + "30+ years"). Site-wide normalization claim in Section 4 was incomplete; sweep these on a future copy pass.
 
 ---
 
@@ -281,6 +301,11 @@ ALWAYS inspect `{ data, error }` return from `resend.emails.send()`. Log both br
 
 | Commit | Date | Description |
 |---|---|---|
+| `576a976` | May 1, 2026 | Normalize services index card stats: $2B+ and $35M+ → $750M+ framework |
+| `1918509` | May 1, 2026 | Residential PM cleanup pass 2: hero subtitle aligned with clarifying line, CTA component audited (clean) |
+| `5a4300e` | May 1, 2026 | Public soft launch: institutional `/services/property-management` page — remove noindex, add to nav + footer + services index + sitemap |
+| `4239e4e` | May 1, 2026 | Cleanup residential PM page: remove 24/7 + LTB language, normalize stats to 38 Years / $750M+, add clarifying line + cross-link |
+| `b2c124b` | May 1, 2026 | Add Property & Asset Management Support page (staged private — not linked from nav, sitemap, or other pages) |
 | `0be3090` | Apr 26, 2026 | Briefing: replace honeypot with origin/JS-token/time-on-page bot checks (autofill kept silently rejecting real users) |
 | `5c213ce` | Apr 26, 2026 | Briefing API: add diagnostic logging at every decision branch + rename honeypot field to avoid browser autofill misfire |
 | `97617e7` | Apr 26, 2026 | Briefing API: split into two sends + inspect Resend responses + remove custom headers (fix silent email failure) |
@@ -347,6 +372,8 @@ Carry these forward across sessions until they're closed:
 5. **Quality whitelist in Next.js 15.4+.** `next/image` only allows `quality={75}` by default. Custom values (e.g., `quality={90}`) require explicit whitelisting in `next.config.js`. Without whitelisting, optimizer returns 404. Use default 75 unless absolutely necessary.
 6. **A codebase audit must be verified by actual file inspection, not working memory.** Every claim in the audit has to point to a specific file/line; "we probably have X" gets you stale `PROJECT_STATE.md` and bad decisions.
 7. **Documentation must be updated immediately after audits, otherwise future Claude sessions operate from stale assumptions.** Outstanding-Items, Tech Stack, and Env Vars rot the fastest — fix them in the same PR/session as the audit itself.
+8. **Two coexisting property-management pages can serve two different audiences without confusion if reciprocal clarifying lines + cross-links are added on both.** Different URLs, different value props, different schema, with explicit "this is for residential / this is for institutional" framing in each hero.
+9. **Never trust documentation that claims sweeping normalization is complete.** PROJECT_STATE.md Section 4 claimed site-wide stat unification was done; the services index card still carried "$2B+" and "$35M+", and the homepage / About / Commercial / Selling / Home Evaluation pages still carry similar stale stats. Verify with `grep -r` before claiming any cross-cutting cleanup is complete.
 
 ---
 
