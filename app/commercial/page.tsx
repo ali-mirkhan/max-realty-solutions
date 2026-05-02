@@ -66,8 +66,8 @@ export default function CommercialPage() {
               Investment-Grade Commercial Opportunities
             </h1>
             <p className="text-lg text-[#E8E4DE]/90 leading-relaxed mb-8">
-              Backed by real transaction experience in the $10M–$35M+ range. Retail plazas, investment
-              properties, and commercial leasing across the Greater Toronto Area.
+              Backed by real institutional-scale transaction experience in the GTA. Retail plazas,
+              investment properties, and commercial leasing across the Greater Toronto Area.
             </p>
             <CommercialCTA />
           </div>
@@ -104,7 +104,7 @@ export default function CommercialPage() {
         <div className="container py-10 lg:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
-              { value: "$35M+", label: "Transaction Volume" },
+              { value: "$750M+", label: "In Real Estate Transacted" },
               { value: "6.0%+", label: "Average Cap Rate" },
               { value: "100K+", label: "Sq Ft Managed" },
               { value: "GTA-Wide", label: "Market Coverage" },

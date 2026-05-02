@@ -252,13 +252,13 @@ export default function HomeEvaluationPage() {
             Prepared by Max Realty Solutions Ltd., Brokerage
           </h2>
           <p className="text-[#E8E4DE]/75 mb-10 leading-relaxed">
-            30+ years of GTA market experience. $2B+ in transactions negotiated.
+            38 years of GTA market experience. $750M+ in real estate transacted.
           </p>
 
           <div className="grid grid-cols-3 gap-6">
             {[
-              { value: "30+ Years", label: "Combined GTA market experience" },
-              { value: "$2B+", label: "In real estate transactions negotiated" },
+              { value: "38 Years", label: "Combined GTA market experience" },
+              { value: "$750M+", label: "In real estate transactions negotiated" },
               { value: "All of Ontario", label: "Service area, with focus on the GTA" },
             ].map((stat) => (
               <div key={stat.label}>

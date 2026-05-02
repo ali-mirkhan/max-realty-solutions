@@ -376,8 +376,8 @@ export default async function HomePage() {
             </h2>
             <p className="text-[#E8E4DE]/80 leading-relaxed mb-4">
               From retail plazas to leasing opportunities, Max Realty brings real commercial transaction
-              experience to the table — including large-scale retail plaza transactions in the $10M–$35M+
-              range across the GTA.
+              experience to the table — including institutional-scale retail plaza transactions across
+              the GTA.
             </p>
             <ul className="space-y-2 mb-8">
               {[

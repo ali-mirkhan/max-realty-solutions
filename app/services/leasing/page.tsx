@@ -25,12 +25,12 @@ const CANONICAL = "https://www.maxrealtysolutions.com/services/leasing";
 export const metadata: Metadata = {
   title: "Commercial Leasing — Tenant & Landlord Representation",
   description:
-    "Commercial leasing services across the GTA. Tenant representation for businesses seeking space and landlord representation for property owners. 30+ years experience, no cost to tenants.",
+    "Commercial leasing services across the GTA. Tenant representation for businesses seeking space and landlord representation for property owners. 38 years experience, no cost to tenants.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: "Commercial Leasing — Tenant & Landlord Representation | Max Realty Solutions",
     description:
-      "Commercial leasing services across the GTA. Tenant and landlord representation, 30+ years experience.",
+      "Commercial leasing services across the GTA. Tenant and landlord representation, 38 years experience.",
     url: CANONICAL,
     type: "website",
     siteName: "Max Realty Solutions",
@@ -255,7 +255,7 @@ export default function LeasingPage() {
                 <Award size={18} className="text-burgundy" />
               </div>
               <h3 className="font-serif text-lg font-semibold text-charcoal mb-2">
-                30+ Years of GTA Commercial Experience
+                38 Years of GTA Commercial Experience
               </h3>
               <p className="text-sm text-charcoal/65 leading-relaxed">
                 Decades of relationships with major landlords, retailers, professional services

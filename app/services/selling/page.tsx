@@ -188,7 +188,7 @@ export default function SellingPage() {
               The Max Realty Selling Process
             </h2>
             <p className="text-charcoal/65 leading-relaxed">
-              A repeatable process refined over 30+ years of GTA transactions.
+              A repeatable process refined over 38 years of GTA transactions.
             </p>
           </div>
 
@@ -228,8 +228,8 @@ export default function SellingPage() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
-              { value: "$2B+", label: "Negotiated across our team's transactions" },
-              { value: "30+ Years", label: "Combined GTA market experience" },
+              { value: "$750M+", label: "Negotiated across our team's transactions" },
+              { value: "38 Years", label: "Combined GTA market experience" },
               {
                 value: "Above Asking",
                 label: "Frequently achieved on well-prepared listings in active market segments",
