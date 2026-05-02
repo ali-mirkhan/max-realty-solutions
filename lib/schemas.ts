@@ -349,6 +349,79 @@ export function faqSchema(faqs: { question: string; answer: string }[]) {
   };
 }
 
+export function propertyManagementServiceSchema() {
+  const url = `${BUSINESS_INFO.url}/services/property-management`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${url}/#service`,
+    name: "Property & Asset Management Support",
+    description:
+      "Professional property oversight, reporting, and sale-preparation support for owners, investors, lenders, estate representatives, and legal professionals managing real estate that requires active attention.",
+    serviceType: "Property and Asset Management Support",
+    url,
+    provider: {
+      "@type": "RealEstateAgent",
+      "@id": ORG_ID,
+    },
+    areaServed: [
+      { "@type": "AdministrativeArea", name: "Greater Toronto Area" },
+      { "@type": "AdministrativeArea", name: "Golden Horseshoe" },
+    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Property & Asset Management Support",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Vacant Property Oversight",
+            description:
+              "Inspection, securing, preservation, and reporting for properties that are empty, at risk, or between ownership stages.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Mortgage Enforcement Property Support",
+            description:
+              "Property-side coordination and reporting for private lenders, MICs, and legal teams during default, power of sale, or recovery situations.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Estate & Trustee Property Support",
+            description:
+              "Inspection, maintenance coordination, valuation, and sale preparation for estate properties with outstanding obligations.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Investor Asset Support",
+            description:
+              "Reporting, oversight, and field coordination for out-of-area owners and commercial investors.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Sale Preparation & Listing Coordination",
+            description:
+              "Comparative market analysis, listing through Max Realty Brokerage, MLS exposure, and weekly reporting for properties moving toward disposition.",
+          },
+        },
+      ],
+    },
+  };
+}
+
 export function breadcrumbSchema(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
