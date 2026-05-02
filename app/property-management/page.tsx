@@ -7,7 +7,7 @@ import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
   title: "Property Management",
-  description: "Full-service property management across the GTA. Tenant screening, rent collection, maintenance, LTB compliance, and financial reporting for residential and commercial properties.",
+  description: "Full-service residential property management across the GTA. Tenant screening, rent collection, maintenance, lease administration, and financial reporting for residential and commercial properties.",
 };
 
 const COMMERCIAL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663473881448/NuD94N9hYijXSU2SwbeCEC/commercial-plaza-d5RPaNypjMPznC5dYLNvEH.webp";
@@ -26,17 +26,17 @@ const services = [
   {
     icon: Wrench,
     title: "Maintenance & Repairs",
-    desc: "24/7 maintenance coordination with trusted contractors. Preventive maintenance schedules, emergency response, and detailed work order tracking.",
+    desc: "Reliable maintenance coordination through licensed trades. Preventive maintenance schedules, responsive turnaround on requests, and detailed work order tracking.",
   },
   {
     icon: FileText,
     title: "Lease Administration",
-    desc: "Lease drafting, renewals, rent increases in compliance with Ontario LTB guidelines, and full documentation management.",
+    desc: "Lease drafting, renewals, rent increase coordination consistent with applicable Ontario regulations, and full documentation management.",
   },
   {
     icon: Shield,
-    title: "Legal & LTB Compliance",
-    desc: "Expert navigation of Ontario's Residential Tenancies Act. We handle LTB applications, N-forms, hearings, and eviction proceedings when necessary.",
+    title: "Compliance & Records",
+    desc: "Documented records, lease compliance tracking, and coordination with the landlord's legal counsel where applicable. We do not provide legal advice or representation in proceedings.",
   },
   {
     icon: BarChart3,
@@ -56,7 +56,7 @@ const propertyTypes = [
   },
   {
     title: "Commercial Properties",
-    desc: "Retail plazas, strip malls, and mixed-use buildings. Backed by our $35M+ commercial transaction experience.",
+    desc: "Retail plazas, strip malls, and mixed-use buildings. Backed by our $750M+ in real estate transacted.",
   },
   {
     title: "Condo Units",
@@ -69,7 +69,7 @@ const checklist = [
   "Dedicated property manager for your portfolio",
   "Online owner portal with real-time reporting",
   "Vetted contractor network for cost-effective repairs",
-  "Full LTB compliance and legal support",
+  "Coordinated documentation and recordkeeping",
   "Commercial and residential under one roof",
 ];
 
@@ -83,7 +83,7 @@ export default function PropertyManagementPage() {
           "@id": "https://www.maxrealtysolutions.com/property-management/#service",
           name: "Property Management",
           description:
-            "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, LTB compliance, and financial reporting.",
+            "Full-service property management for residential and commercial properties across the GTA. Tenant screening, rent collection, maintenance coordination, lease administration, and financial reporting.",
           serviceType: "Property Management",
           url: "https://www.maxrealtysolutions.com/property-management",
           provider: {
@@ -108,9 +108,21 @@ export default function PropertyManagementPage() {
         <div className="relative container">
           <div className="max-w-2xl">
             <p className="text-xs font-medium uppercase tracking-widest text-white/90 mb-3" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}>Property Management</p>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
               Professional Property Management Across the GTA
             </h1>
+            <p className="text-sm text-[#E8E4DE]/75 leading-relaxed mb-5">
+              Residential property management for individual landlords and property owners across the
+              Greater Toronto Area. For institutional asset oversight, mortgage enforcement support, or
+              estate-property coordination, see our{" "}
+              <Link
+                href="/services/property-management"
+                className="text-white underline decoration-burgundy/60 underline-offset-2 hover:decoration-burgundy"
+              >
+                Property &amp; Asset Management Support service
+              </Link>
+              .
+            </p>
             <p className="text-lg text-[#E8E4DE]/90 leading-relaxed mb-8">
               From retail plazas to residential portfolios — we protect your investment, maximize your returns,
               and handle every detail so you don&apos;t have to.
@@ -127,7 +139,7 @@ export default function PropertyManagementPage() {
             {[
               { value: "500+", label: "Units Managed" },
               { value: "98%", label: "Tenant Retention Rate" },
-              { value: "24/7", label: "Emergency Response" },
+              { value: "1988", label: "Brokerage Established" },
               { value: "GTA-Wide", label: "Coverage Area" },
             ].map((s) => (
               <div key={s.label}>
@@ -190,8 +202,9 @@ export default function PropertyManagementPage() {
               <div className="space-y-4 text-sm text-charcoal/70 leading-relaxed">
                 <p>
                   Most property management companies have never bought or sold a building. Our team has.
-                  With over $35M in commercial real estate transactions across the GTA, we understand what
-                  makes an investment property perform — and we manage yours with that same investment mindset.
+                  With over $750M+ in real estate transacted across residential, commercial, and
+                  investment-grade properties, we understand what makes a property perform — and we
+                  manage yours with that same investment mindset.
                 </p>
                 <p>
                   We don&apos;t just collect rent. We protect your asset, optimize your returns, and keep you
