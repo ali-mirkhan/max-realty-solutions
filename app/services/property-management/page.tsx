@@ -93,36 +93,63 @@ const FIVE_AREAS = [
   },
 ];
 
+type Responsibility =
+  | "Max Realty"
+  | "Qualified Partners"
+  | "Authorized Professionals";
+
+const RESPONSIBILITY_STYLES: Record<Responsibility, string> = {
+  "Max Realty": "bg-burgundy/10 text-burgundy border-burgundy/30",
+  "Qualified Partners": "bg-amber-100 text-amber-900 border-amber-300",
+  "Authorized Professionals": "bg-stone-100 text-stone-700 border-stone-300",
+};
+
+const RESPONSIBILITY_DESCRIPTIONS: Record<Responsibility, string> = {
+  "Max Realty":
+    "Brokerage-side coordination, reporting, valuation, listing, sale-preparation",
+  "Qualified Partners":
+    "Licensed trades, inspectors, locksmiths, cleaning, repairs, maintenance",
+  "Authorized Professionals":
+    "Legal counsel, receivers, insurers, court-appointed officers, appraisers",
+};
+
 const RECOVERY_STAGES = [
   {
     icon: Search,
-    title: "Initial Property Review",
-    body: "We help review the property-side requirements of the file — known occupancy status, property type, condition concerns, tenancy considerations, and the intended path toward lease, sale, or recovery. Output is a documented scope of support and a recommended sequence of next steps.",
+    title: "Initial File & Property Review",
+    responsibilities: ["Max Realty", "Authorized Professionals"] as const,
+    body: "We help review property-side requirements, known occupancy status, property type, condition concerns, tenant considerations, and the likely path toward stabilization, sale, lease, or recovery. Output is a documented scope of support and a recommended sequence of next steps, prepared in coordination with the file's authorized professional.",
   },
   {
     icon: FileText,
     title: "Occupancy & Condition Reporting",
-    body: "Where access is authorized, we coordinate occupancy observations, exterior and interior condition reporting, and time-stamped photo documentation. Reports are formatted for the lender's compliance and audit requirements and delivered within the timeline agreed at engagement.",
+    responsibilities: ["Max Realty", "Qualified Partners"] as const,
+    body: "Where access is authorized, we coordinate occupancy observations, exterior and interior condition reporting, and time-stamped photo documentation to help stakeholders understand the current state of the asset. Reports are formatted for the lender's compliance and audit requirements.",
   },
   {
     icon: Lock,
-    title: "Stabilization Coordination",
-    body: "If the property requires attention, we help coordinate appropriate third-party support — securing access points where legally authorized, winterization, cleaning, landscaping, snow removal, and urgent repair coordination through licensed insured trades. Max Realty does not perform field labour directly.",
+    title: "Stabilization & Site Coordination",
+    responsibilities: ["Qualified Partners"] as const,
+    responsibilityNote: "coordinated by Max Realty",
+    body: "When property-side work is required, we help coordinate approved third-party providers for access control, cleaning, winterization, landscaping, snow removal, repairs, or other maintenance needs. All field labour is performed by licensed insured trades, not by Max Realty directly.",
   },
   {
     icon: ClipboardList,
-    title: "Communication & Documentation Coordination",
-    body: "For income-producing properties, we assist with property-side documentation and access coordination on behalf of the owner, lender, receiver, or legal counsel. Tenant communication, lease and contract documentation review, and operational records are coordinated under their direction. Tenant remedies, lease enforcement, and rent collection remain with the authorized professional, not with Max Realty.",
+    title: "Tenant, Lease & Operational Documentation",
+    responsibilities: ["Max Realty", "Authorized Professionals"] as const,
+    body: "For income-producing properties, we help organize rent rolls, lease documents, service contracts, access details, and property records. Legal notices, rent direction, possession matters, enforcement decisions, tenant remedies, and rent collection remain with legal counsel, receivers, or other authorized professionals.",
   },
   {
     icon: Wrench,
-    title: "Market Preparation",
-    body: "When sale or leasing is the next step, we help coordinate cleaning, repairs, curb appeal, document organization, valuation support, and listing-readiness so the asset is presented professionally to the market.",
+    title: "Pre-Listing & Market Preparation",
+    responsibilities: ["Max Realty", "Qualified Partners"] as const,
+    body: "When sale or leasing is the next step, we coordinate cleaning, repairs, curb appeal, valuation support, property documentation, and listing-readiness so the asset can be presented professionally to the market.",
   },
   {
     icon: ArrowRight,
-    title: "Disposition Support",
-    body: "Where Max Realty is engaged for sale, we support the listing and transaction process through pricing strategy, marketing coordination, showings, offer review support, due diligence coordination, and closing-related property handoff. Listings are handled through Max Realty Solutions Ltd., Brokerage.",
+    title: "Listing, Sale & Closing Support",
+    responsibilities: ["Max Realty"] as const,
+    body: "Where Max Realty is engaged for disposition, we support pricing strategy, marketing coordination, showings, offer review support, due diligence coordination, and closing-related property handoff through Max Realty Solutions Ltd., Brokerage.",
   },
 ];
 
@@ -285,47 +312,93 @@ export default function PropertyManagementSupportPage() {
         </div>
       </section>
 
-      {/* How We Support the Property Recovery Cycle */}
+      {/* How We Coordinate the Property Recovery Cycle */}
       <section className="bg-stone-warm py-16">
         <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-10">
             <p className="section-label">Our Process</p>
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-charcoal mb-4">
-              How We Support the Property Recovery Cycle
+              How We Coordinate the Property Recovery Cycle
             </h2>
             <p className="text-sm lg:text-base text-charcoal/70 leading-relaxed">
-              When a commercial or residential property moves into recovery — whether through default,
-              estate transition, or owner-directed disposition — the property side of the file needs
-              structured oversight from initial review through closing. The stages below outline how
-              Max Realty supports each phase, working alongside the lender&apos;s legal counsel, the
-              estate&apos;s representative, the receiver, or the owner&apos;s authorized professional.
+              Every property recovery file is different. Max Realty&apos;s role is to help organize the
+              property-side process, coordinate the right professionals, document the condition of the
+              asset, and support the path toward stabilization, sale, lease, or recovery. The stages below
+              show how each phase is handled — what Max Realty does directly, what we coordinate through
+              qualified partners, and what stays with authorized professionals.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {RECOVERY_STAGES.map(({ icon: Icon, title, body }, idx) => (
-              <div
-                key={title}
-                className="bg-white border border-stone-border rounded-lg p-6"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center">
-                    <Icon size={18} className="text-burgundy" />
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-burgundy">
-                    Stage {idx + 1}
+          {/* Responsibility legend */}
+          <div className="max-w-4xl mx-auto mb-8 bg-white border border-stone-border rounded-lg p-5 lg:p-6">
+            <p className="text-xs font-semibold uppercase tracking-wider text-charcoal/50 mb-3">
+              Legend
+            </p>
+            <div className="flex flex-col gap-3 sm:gap-2.5">
+              {(Object.keys(RESPONSIBILITY_STYLES) as Responsibility[]).map((label) => (
+                <div
+                  key={label}
+                  className="flex items-start sm:items-center gap-3"
+                >
+                  <span
+                    className={`shrink-0 inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border whitespace-nowrap ${RESPONSIBILITY_STYLES[label]}`}
+                  >
+                    {label}
+                  </span>
+                  <p className="text-xs sm:text-sm text-charcoal/65 leading-relaxed">
+                    {RESPONSIBILITY_DESCRIPTIONS[label]}
                   </p>
                 </div>
-                <h3 className="font-serif text-lg font-semibold text-charcoal mb-1.5">
-                  {title}
-                </h3>
-                <p className="text-sm text-charcoal/70 leading-relaxed">
-                  {body}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
+          {/* Six stages */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            {RECOVERY_STAGES.map(
+              (
+                { icon: Icon, title, body, responsibilities, responsibilityNote },
+                idx
+              ) => (
+                <div
+                  key={title}
+                  className="bg-white border border-stone-border rounded-lg p-6"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-burgundy/10 flex items-center justify-center">
+                      <Icon size={18} className="text-burgundy" />
+                    </div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-burgundy">
+                      Stage {idx + 1}
+                    </p>
+                  </div>
+                  <h3 className="font-serif text-lg font-semibold text-charcoal mb-2">
+                    {title}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                    {responsibilities.map((r) => (
+                      <span
+                        key={r}
+                        className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${RESPONSIBILITY_STYLES[r]}`}
+                      >
+                        {r}
+                      </span>
+                    ))}
+                    {responsibilityNote && (
+                      <span className="text-[11px] italic text-charcoal/55">
+                        {responsibilityNote}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-charcoal/70 leading-relaxed">
+                    {body}
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Safety note */}
           <div className="max-w-3xl mx-auto mt-10 bg-white border border-stone-border rounded-lg p-6 lg:p-7">
             <div className="flex items-start gap-4">
               <AlertTriangle
@@ -333,9 +406,11 @@ export default function PropertyManagementSupportPage() {
                 className="text-burgundy shrink-0 mt-0.5"
               />
               <p className="text-sm text-charcoal/70 leading-relaxed">
-                Our role is property-side coordination and reporting. Legal notices, enforcement decisions,
-                possession matters, court processes, insurance claims, tenant remedies, and rent collection
-                remain with the appropriate legal, insurance, or authorized professionals.
+                Max Realty&apos;s role is property-side coordination, reporting, sale-preparation, and
+                brokerage support. Legal notices, possession matters, enforcement decisions, court
+                processes, insurance claims, tenant remedies, rent collection, and regulated professional
+                services remain with the appropriate legal, insurance, court-appointed, or authorized
+                professionals.
               </p>
             </div>
           </div>
